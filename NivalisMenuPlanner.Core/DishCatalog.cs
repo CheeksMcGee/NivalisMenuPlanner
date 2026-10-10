@@ -11,9 +11,6 @@ public sealed class DishCatalog
     readonly HashSet<string> _ingredientNames = new(StringComparer.OrdinalIgnoreCase);
     readonly List<string> _ingredientOrder = new();
 
-    // Customer-group weights per district: (Workers, Hipsters, Elite). Keys are the canon
-    // district names from the vendors dump ('Spire', not 'The Spire'). Values are ESTIMATES
-    // from community district-fit research — replace when a source exposes real mixes.
     static readonly Dictionary<string, float[]> DistrictMix = new()
     {
         ["Spire"] = new[] { .15f, .30f, .55f },
@@ -38,8 +35,6 @@ public sealed class DishCatalog
 
     public int Count => _byId.Count;
     public IReadOnlyList<string> Ids => _byId.Keys.ToArray();
-
-    /// <summary>Every ingredient name the catalog knows (asset names, deduplicated).</summary>
     public IReadOnlyList<string> IngredientNames => _ingredientOrder;
 
     // CSV: id,name,type,cap,hip,wrk,elt,ingredients — ingredients separated by ';' (never commas)
@@ -61,6 +56,27 @@ public sealed class DishCatalog
                 float.Parse(f[4]), float.Parse(f[5]), float.Parse(f[6]));
         }
         return cat;
+    }
+
+    /// <summary>
+    /// Real caps from the NPC price harvest replace the CSV's estimated ones
+    /// (input cost x type factor). Dishes with no observation keep the estimate.
+    /// Returns (overridden, kept) counts for the startup log.
+    /// </summary>
+    public (int overridden, int kept) OverrideCaps(PriceObservations observations)
+    {
+        int overridden = 0, kept = 0;
+        foreach (var id in _byId.Keys.ToList())
+        {
+            var measured = observations.CapOf(id);
+            if (measured is int cap)
+            {
+                _byId[id] = _byId[id] with { PriceCapHundredths = cap };
+                overridden++;
+            }
+            else kept++;
+        }
+        return (overridden, kept);
     }
 
     public DishInfo? ById(string id) => _byId.TryGetValue(id, out var d) ? d : null;

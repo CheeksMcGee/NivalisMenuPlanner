@@ -21,6 +21,7 @@ public class Plugin : BasePlugin
     internal static ManualLogSource L = null!;
     internal static ModSaveData Data = null!;
     static DishCatalog? _catalog;
+    static PriceObservations? _observations;
     static readonly List<Rotation> _rotation = new();
     static readonly Dictionary<string, int> _cooked = new();   // venueKey -> nothing; per-dish below
     static readonly Dictionary<string, Dictionary<string, int>> _cookedByVenue =
@@ -72,6 +73,7 @@ public class Plugin : BasePlugin
 
         DevCommands.Register(Guid, "plan", "venue=N: current menu suggestions as JSON (N = name fragment; omit for all)", PlanCommand);
         DevCommands.Register(Guid, "sales", "venue=N&day=N: stored SaleRecords as JSON", SalesCommand);
+        DevCommands.Register(Guid, "prices", "dish=N: observed city prices and measured caps as JSON", PricesCommand);
 
         L.LogInfo($"Menu Planner 0.1.0 loaded — hotkey {Hotkey.Value} (scheduler-polled), kit {ModKit.Version}.");
     }
@@ -85,6 +87,9 @@ public class Plugin : BasePlugin
             var csv = Path.Combine(Path.GetDirectoryName(typeof(Plugin).Assembly.Location)!, "dishdata.csv");
             _catalog = DishCatalog.LoadCsv(csv);
             L.LogInfo($"Catalog loaded: {_catalog.Count} dishes.");
+            _observations = GameAdapter.HarvestPrices();
+            var (overridden, kept) = _catalog!.OverrideCaps(_observations);
+            L.LogInfo($"Real caps: {overridden} measured, {kept} estimated (CSV fallback).");
             ReplanAll();
         }
         catch (Exception e) { L.LogError($"Startup failed: {e}"); _catalog = null; }
@@ -154,8 +159,7 @@ public class Plugin : BasePlugin
                     int cooked = cookedForVenue?.GetValueOrDefault(dish) ?? 0;
                     if (sold == 0 && cooked == 0) continue;   // dish never moved today; skip noise
                     var walked = Math.Max(0, cooked - sold);
-                    float? pop = null;   // popularity snapshot deferred: group-key mapping
-                                         // needs the CSV's group columns; Step B wires it
+                    float? pop = null;   // popularity deferred: PopularityOf's group shape needs runtime verification (GAPS #15)
                     var rec = new SaleRecord(day, price, sold, cooked, walked, pop);
                     Data.Set($"sales.{key}.{dish}.{day}", rec);
                     records++;
@@ -183,6 +187,23 @@ public class Plugin : BasePlugin
         }).Where(x => day == null || x.day == day.Value.ToString())
           .OrderBy(x => x.day).ThenBy(x => x.venue).ThenBy(x => x.dish)
           .ToList();
+    }
+    static object PricesCommand(CommandArgs args)
+    {
+        if (_observations == null) return new { error = "price sweep not run yet (no GameReady this session)" };
+        string? dishFilter = args.Has("dish") ? args.Get("dish", "") : null;
+        var dishes = _observations.ObservedDishes;
+        if (dishFilter != null)
+            dishes = dishes.Where(d => d.Contains(dishFilter, StringComparison.OrdinalIgnoreCase)).ToList();
+        return dishes.Select(d => new
+        {
+            dish = d,
+            measuredCap = _observations.CapOf(d),
+            observations = _observations.PricesOf(d).Count,
+            priceRange = _observations.PricesOf(d).Min() != _observations.PricesOf(d).Max()
+                ? $"{_observations.PricesOf(d).Min() / 100m:0.00}-{_observations.PricesOf(d).Max() / 100m:0.00}"
+                : $"{_observations.PricesOf(d).Min() / 100m:0.00}"
+        }).OrderBy(x => x.dish).ToList();
     }
 
     static void StartHotkeyPoll()

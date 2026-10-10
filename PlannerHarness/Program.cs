@@ -403,5 +403,4 @@ bool noPennyErrands = s17c.Shopping.All(s => s.ProtectedHundredths >= rules.MinE
 Check("T17c errand floor: entries protecting < 5 lims drop off the list",
     noPennyErrands,
     $"shopping: {string.Join(", ", s17c.Shopping.Select(s => $"{s.Item} x{s.Needed} (protects {s.ProtectedHundredths / 100m:0.00})"))}");
-Console.WriteLine($"DEBUG T17c: needed=1? {s17c.Shopping.Count} entries; ProtectedHundredths raw = {string.Join(",", s17c.Shopping.Select(s => s.ProtectedHundredths))}");
 return failed;

@@ -9,7 +9,6 @@ namespace NivalisMenuPlanner;
 /// <summary>Bridges live kit queries into planner snapshots. Main thread only (events/scheduler).</summary>
 public static class GameAdapter
 {
-    /// <summary>Dish ids the player knows that our catalog also carries (asset names).</summary>
     public static List<string> KnownIds(Core.DishCatalog cat)
     {
         var known = new List<string>();
@@ -23,11 +22,41 @@ public static class GameAdapter
         return known.Distinct().ToList();
     }
 
+    /// <summary>
+    /// NPC PRICE SWEEP: every menu in the city (Venues.All includes NPC venues),
+    /// each entry's actual price, grouped by the venue's district. One pass at
+    /// GameReady; menus are slow-changing, so no per-day refresh needed.
+    /// </summary>
+    public static Core.PriceObservations HarvestPrices()
+    {
+        var obs = new Core.PriceObservations();
+        int venues = 0;
+        foreach (var area in Venues.All)
+        {
+            venues++;
+            string? district = null;
+            try
+            {
+                var loc = Venues.DistrictOf(area);
+                district = loc == null ? null : World.NameOf(loc);
+            }
+            catch { }
+            foreach (var entry in Venues.MenuOf(area))
+            {
+                var dishName = Items.NameOf(entry.Dish);
+                if (dishName == null) continue;
+                obs.Add(dishName, district ?? "?", entry.Price);
+            }
+        }
+        Plugin.L.LogInfo($"Price sweep: {obs.ObservationCount} observations across {venues} venues.");
+        return obs;
+    }
+
     public static IEnumerable<(string Key, Core.VenueState Venue)> SnapshotAll(
         Core.DishCatalog cat, int lep, int maxSlots)
     {
         var known = KnownIds(cat);
-        var priceCache = new Dictionary<string, int>();   // ingredient prices are venue-independent per day
+        var priceCache = new Dictionary<string, int>();
 
         foreach (var area in Venues.PlayerOwned)
         {
@@ -58,7 +87,7 @@ public static class GameAdapter
                     int min = int.MaxValue;
                     foreach (var vendor in Economy.VendorsFor(item))
                     {
-                        var p = Economy.Price(vendor, item, default);   // freshness not modeled yet
+                        var p = Economy.Price(vendor, item, default);
                         if (p != null && p > 0 && p < min) min = (int)p;
                     }
                     best = min == int.MaxValue ? 0 : min;
@@ -72,7 +101,6 @@ public static class GameAdapter
         }
     }
 
-    /// <summary>All on-shift staff across owned venues, as Core payroll records (shared wallet).</summary>
     public static List<Core.StaffMember> AllStaff()
     {
         var all = new List<Core.StaffMember>();
@@ -82,7 +110,6 @@ public static class GameAdapter
             {
                 foreach (var s in Venues.StaffOf(area))
                 {
-                    // Wage: hundredths/hour. HoursLeftToday: hours remaining on shift.
                     all.Add(new Core.StaffMember(s.Name ?? "?", (decimal)s.Wage / 100m,
                         (int)Math.Round(s.HoursLeftToday * 60.0)));
                 }
