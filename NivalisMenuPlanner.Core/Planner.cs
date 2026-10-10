@@ -73,7 +73,7 @@ public static class Planner
                 continue;
             }
             cap++;                                    // variety relaxes before slots go empty
-            if (cap > known.Count) break;              // nothing left that clears the bar
+            if (cap > known.Count) break;             // nothing left that clears the bar
         }
 
         if (known.Count == 0)
@@ -143,6 +143,44 @@ public static class Planner
     // grade -> fraction of shelf price the manager pays (verified: 110% g1 -> 80% g10; player = 100%)
     public static decimal PriceMult(int grade) =>
         grade <= 0 ? 1.00m : grade >= 10 ? 0.80m : 1.10m - 0.30m * (grade - 1) / 9m;
+
+    // CAPACITY GUARD: most servings the pantry can plate of one dish right now —
+    // the binding input's stock. Zero inputs means zero servings. Craft-chain
+    // expansion: an input with no stock but a known recipe (Beer) is limited by
+    // what THAT recipe's own inputs can plate (Wheat), divided per unit needed.
+    public static int ServingsPossible(DishInfo d, VenueState v, DishCatalog cat, int depth = 0)
+    {
+        int servings = int.MaxValue;
+        foreach (var (item, amount) in d.Inputs)
+        {
+            v.Stock.TryGetValue(item, out var stock);
+            int byThisInput = amount <= 0 ? int.MaxValue : stock / amount;
+
+            if (byThisInput == 0 && depth < MaxCraftDepth)
+            {
+                DishInfo? sub = cat.ById(item);
+                if (sub != null && v.KnownDishIds.Contains(sub.Id))
+                {
+                    int subServings = ServingsPossible(sub, v, cat, depth + 1);
+                    if (subServings == 0) return 0;
+                    byThisInput = subServings / amount;
+                }
+            }
+            servings = Math.Min(servings, byThisInput);
+            if (servings == 0) return 0;
+        }
+        return servings == int.MaxValue ? 0 : servings;
+    }
+
+    // ESCROW VIEW: stock with committed amounts subtracted — what later dishes
+    // can still draw on. The planning use of the ingredient escrow: reserve what
+    // earlier menu dishes' expected orders have already claimed.
+    public static int AvailableStock(VenueState v, string item, Dictionary<string, int>? committed)
+    {
+        v.Stock.TryGetValue(item, out var stock);
+        var held = committed?.GetValueOrDefault(item) ?? 0;
+        return Math.Max(0, stock - held);
+    }
 
     // An input can come from: pantry stock, a vendor, or a known recipe that crafts it
     // (Beer Soup needs Beer, which no vendor sells — it must be brewed from Wheat).

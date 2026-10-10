@@ -72,7 +72,7 @@ Check("T2 exclusivity shifts cost", AvgCost(sLow, vLow) < AvgCost(sHigh, vHigh),
 Check("T3 PriceMult curve",
     Planner.PriceMult(0) == 1.00m && Planner.PriceMult(1) == 1.10m && Planner.PriceMult(10) == 0.80m
     && Planner.PriceMult(8) < Planner.PriceMult(1),
-    "player=100%, g1=110%, monotonic down");
+    "player=100%, g1=110%, g10=80%, monotonic down");
 
 var vG0 = Venue("T3-G0", 5, 0, cat.Ids);
 var vG1 = Venue("T3-G1", 5, 1, cat.Ids);
@@ -121,16 +121,16 @@ var v6Empty = new VenueState("T6-Empty", "T6-Empty", "Test District", 10, 2, 0,
 var v6Stocked = new VenueState("T6-Stocked", "T6-Stocked", "Test District", 10, 2, 0,
     t6Stock, t6Prices, t6Mix, t6Known);
 
-var s6Empty = Planner.Plan(cat, v6Stocked == null ? v6Empty : v6Empty, rules, t6State);
-var s6StockedS = Planner.Plan(cat, v6Stocked, rules, t6State);
+var s6Empty = Planner.Plan(cat, v6Empty, rules, t6State);
+var s6Stocked = Planner.Plan(cat, v6Stocked, rules, t6State);
 
-Check("T6 stock boosts profit", s6StockedS.EstProfitPerDay > s6Empty.EstProfitPerDay,
-    $"stocked {s6StockedS.EstProfitPerDay:0.00} vs empty {s6Empty.EstProfitPerDay:0.00} lims/day");
+Check("T6 stock boosts profit", s6Stocked.EstProfitPerDay > s6Empty.EstProfitPerDay,
+    $"stocked {s6Stocked.EstProfitPerDay:0.00} vs empty {s6Empty.EstProfitPerDay:0.00} lims/day");
 
-int stockDishes = s6StockedS.Dishes.Count(d => d.Dish.Inputs.Any(i => t6Stock.ContainsKey(i.Item)));
+int stockDishes = s6Stocked.Dishes.Count(d => d.Dish.Inputs.Any(i => t6Stock.ContainsKey(i.Item)));
 Check("T6 planner spends pantry", stockDishes > 0, $"{stockDishes} menu dishes consume pantry stock");
 
-bool potatoBought = s6StockedS.Shopping.Any(s => s.Item == "Potatoes");
+bool potatoBought = s6Stocked.Shopping.Any(s => s.Item == "Potatoes");
 Check("T6 shopping nets out pantry", !potatoBought,
     potatoBought ? "Potatoes still on shopping list" : "fully-stocked Potatoes not on shopping list");
 
@@ -155,8 +155,8 @@ var s8 = Planner.Plan(cat, v8, rules, new MenuState(Array.Empty<string>(), 8f));
 Check("T8 profit bar excludes losers (and preferences)", s8.Dishes.Count == 0,
     $"{s8.Dishes.Count} dishes planned; warnings: {string.Join(" | ", s8.Warnings)}");
 
-// T9 — role bonus tips close calls: Borsch takes slot 1 (margin 2150); Beer's base score
-//      (1370) sits just under Onion Rings' (1425), so the 10% beverage lift (1507) flips slot 2
+// T9 — role bonus tips close calls: Borsch takes slot 1; Beer's base score sits just under
+//      Onion Rings', so the 10% beverage lift flips slot 2 (numbers in evidence when run)
 var t9Prices = new Dictionary<string, int>
 { ["Tomatoes"] = 100, ["Potatoes"] = 100, ["Beef"] = 100, ["Onions"] = 195, ["Flour"] = 195, ["Wheat"] = 100 };
 var v9 = new VenueState("T9-Tie", "T9-Tie", "Test District", 2, 3, 0,
@@ -231,6 +231,70 @@ bool oldKeyIsDefault = cat.MixFor("The Spire").All(t => Math.Abs(t.Weight - 1f /
 Check("T12 district canon and mix skew",
     spireEliteHeavy && sewersWorkerHeavy && oldKeyIsDefault,
     $"Spire elite {spireMix.First(t => t.Group == "Elite").Weight:0.00}, Sewers workers {sewersMix.First(t => t.Group == "Workers").Weight:0.00}, 'The Spire' falls back to even mix");
+
+// T15 — capacity guard: the binding input caps servings. Stock for 3 Borsch
+//      (Tomatoes 3 / Potatoes plenty / Beef plenty) -> ServingsPossible == 3.
+//      The overbooking scenario you watched in-game, as a permanent regression test.
+var v15 = new VenueState("T15-Cap", "T15-Cap", "Test District", 10, 3, 0,
+    new Dictionary<string, int> { ["Tomatoes"] = 3, ["Potatoes"] = 50, ["Beef"] = 50 },
+    new Dictionary<string, int> { ["Tomatoes"] = 150, ["Potatoes"] = 100, ["Beef"] = 400 },
+    t6Mix,
+    new[] { "Borsch", "Beer", "Onion Rings" });
+var borsch = cat.ById("Borsch")!;
+int borschServings = Planner.ServingsPossible(borsch, v15, cat);
+Check("T15 capacity guard: binding input caps servings",
+    borschServings == 3,
+    $"Borsch servings possible: {borschServings} (Tomatoes x3 is the binding input; Potatoes/Beef plentiful)");
+
+// T15b — guard returns 0 when a binding input is empty (stock says no Borsch today)
+var v15b = new VenueState("T15b-Zero", "T15b-Zero", "Test District", 10, 3, 0,
+    new Dictionary<string, int> { ["Potatoes"] = 50, ["Beef"] = 50 },
+    new Dictionary<string, int> { ["Tomatoes"] = 150, ["Potatoes"] = 100, ["Beef"] = 400 },
+    t6Mix,
+    new[] { "Borsch", "Beer" });
+int borschZero = Planner.ServingsPossible(borsch, v15b, cat);
+Check("T15b capacity guard: zero stock means zero servings",
+    borschZero == 0,
+    $"Borsch servings with no Tomatoes: {borschZero}");
+
+// T15c — escrow view: committed amounts subtract from stock; uncommitted stock passes through
+var escrowStock = new Dictionary<string, int> { ["Tomatoes"] = 10, ["Potatoes"] = 50, ["Beef"] = 50 };
+var v15c = new VenueState("T15c-Escrow", "T15c-Escrow", "Test District", 10, 3, 0,
+    escrowStock,
+    new Dictionary<string, int> { ["Tomatoes"] = 150, ["Potatoes"] = 100, ["Beef"] = 400 },
+    t6Mix,
+    new[] { "Borsch", "Beer" });
+int freeTomatoes = Planner.AvailableStock(v15c, "Tomatoes", new Dictionary<string, int> { ["Tomatoes"] = 4 });
+int allTomatoes = Planner.AvailableStock(v15c, "Tomatoes", null);
+Check("T15c escrow view: committed stock is subtracted",
+    freeTomatoes == 6 && allTomatoes == 10,
+    $"Tomatoes free after committing 4: {freeTomatoes}; with no holds: {allTomatoes}");
+
+// T16 — craft-chain capacity: Beer Soup needs Beer (no stock), Beer needs Wheat (stock 5)
+//      -> Beer Soup servable from Wheat is 5 / 1 per soup (1 Beer per soup, 1 Wheat per Beer)
+var v16 = new VenueState("T16-Chain", "T16-Chain", "Test District", 10, 3, 0,
+    new Dictionary<string, int>
+    {
+        ["Wheat"] = 5,
+        ["Blue Cheese"] = 50,
+        ["Bacon"] = 50,
+        ["Onions"] = 50,
+        ["Wheat Bread"] = 50
+    },
+    new Dictionary<string, int>
+    {
+        ["Wheat"] = 100,
+        ["Blue Cheese"] = 200,
+        ["Bacon"] = 200,
+        ["Onions"] = 100,
+        ["Wheat Bread"] = 150
+    },
+    t6Mix,
+    new[] { "Beer Soup", "Beer", "Borsch" });
+int beerSoupServings = Planner.ServingsPossible(cat.ById("Beer Soup")!, v16, cat);
+Check("T16 capacity guard: craft-chain depth (Beer Soup via Wheat)",
+    beerSoupServings == 5,
+    $"Beer Soup servings from Wheat x5: {beerSoupServings} (chain: Beer Soup <- Beer <- Wheat)");
 
 Console.WriteLine($"\n{(failed == 0 ? "ALL TESTS PASS" : failed + " TEST(S) FAILED — paste output to me")}");
 return failed;
