@@ -24,11 +24,23 @@ public static class Planner
             warnings.Add($"{knownCatalog.Count - known.Count} known dish(es) skipped — inputs not stocked, sold, or craftable.");
         var mix = EffectiveMix(v);
 
+        // CAPACITY-ADJUSTED SCORING (Option B, ruled by operator): a dish cannot earn
+        // more than the pantry can plate. Purchasable-but-unbought inputs do NOT lift
+        // the cap - they grow the shopping list instead. Deliveries don't count until
+        // they land in possession. This keeps advisory menus honest ("works with what
+        // you hold plus this list") and makes overbooking impossible by construction.
+        double OrdersFor(DishInfo d)
+        {
+            double raw = st.DemandScale * Mix(mix, d);
+            int servable = ServingsPossible(d, v, cat);
+            return Math.Min(raw, servable);
+        }
+
         double BaseScore(DishInfo d)
         {
             var cost = EffCost(d, v, r, cat);
             var price = d.PriceCapHundredths;
-            var orders = st.DemandScale * Mix(mix, d);
+            var orders = OrdersFor(d);
             var churn = st.Yesterday.Contains(d.Id) ? 0.0 : r.ChurnPenalty;
             var gate = ExclusivityGate(d, v, cat);
             return orders * (price - cost) * gate * (1.0 - churn);
@@ -144,10 +156,11 @@ public static class Planner
     public static decimal PriceMult(int grade) =>
         grade <= 0 ? 1.00m : grade >= 10 ? 0.80m : 1.10m - 0.30m * (grade - 1) / 9m;
 
-    // CAPACITY GUARD: most servings the pantry can plate of one dish right now —
-    // the binding input's stock. Zero inputs means zero servings. Craft-chain
-    // expansion: an input with no stock but a known recipe (Beer) is limited by
-    // what THAT recipe's own inputs can plate (Wheat), divided per unit needed.
+    // CAPACITY GUARD (Option B): most servings the PANTRY can plate of one dish right
+    // now - the binding input's held stock. Vendor availability never lifts this cap;
+    // shortfalls belong on the shopping list. Craft-chain expansion: an input with no
+    // held stock but a known recipe (Beer) is limited by what THAT recipe's own inputs
+    // can plate (Wheat). Partial-stock top-up deferred: T16b, v0.2 backlog.
     public static int ServingsPossible(DishInfo d, VenueState v, DishCatalog cat, int depth = 0)
     {
         int servings = int.MaxValue;
@@ -175,6 +188,7 @@ public static class Planner
     // ESCROW VIEW: stock with committed amounts subtracted — what later dishes
     // can still draw on. The planning use of the ingredient escrow: reserve what
     // earlier menu dishes' expected orders have already claimed.
+    // Not yet called by Plan() — Step 4 wires the ledger (T17).
     public static int AvailableStock(VenueState v, string item, Dictionary<string, int>? committed)
     {
         v.Stock.TryGetValue(item, out var stock);
@@ -296,17 +310,29 @@ public static class Planner
         foreach (var d in menu)
         {
             var cost = EffCost(d, v, r, cat);
-            var orders = st.DemandScale * Mix(mix, d);
+            double rawOrders = st.DemandScale * Mix(mix, d);
+            int servable = ServingsPossible(d, v, cat);
+            var orders = Math.Min(rawOrders, servable);
+
+            // Planning-voice gap warning (voice ruling: fix-tomorrow here; the
+            // walked-out diagnostic belongs to the v0.2 service report).
+            if (rawOrders > servable)
+                warnings.Add($"{d.Name}: pantry serves {servable} of expected {(int)Math.Ceiling(rawOrders)} — the gap is on your shopping list.");
+
             profit += (decimal)orders * (d.PriceCapHundredths - cost) / 100m;
             lines.Add(new DishLine(d, d.PriceCapHundredths, cost, orders));
             foreach (var (item, amount) in d.Inputs)
             {
+                // RESCUE ENTRY (Option B): the dish survived demotion, so buy the
+                // shortfall. Held stock nets out first; what the pantry can't cover
+                // lands on the list. For stocked inputs this is the usual restock
+                // netting (need <= 0).
                 v.Stock.TryGetValue(item, out var stock);
                 int need = (int)Math.Ceiling(orders * amount) - stock;
                 if (need > 0) AddNeed(shopping, item, need, v, cat, 0);
             }
         }
-        var list = shopping.OrderBy(kv => kv.Key)
+        var list = shopping.OrderBy(kv => kv.Key)   // alphabetical until Step 4's urgency ordering
             .Select(kv => new ShoppingItem(kv.Key, kv.Value, v.BuyPrice.GetValueOrDefault(kv.Key)))
             .ToList();
         return new MenuSuggestion(lines, profit, list, warnings);

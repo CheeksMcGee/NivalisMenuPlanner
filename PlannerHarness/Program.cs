@@ -27,7 +27,19 @@ static int MarketPrice(string item)
     return 50 + sum % 450;
 }
 
-VenueState Venue(string name, int lep, int grade, IEnumerable<string> knownIds)
+// Plentiful pantry: every input of the known dishes, 20 each. Under Option B
+// (capacity-adjusted scoring), venues need stock to plan anything; tests whose
+// premise is scarcity or hand-tuned pricing build their own world instead.
+Dictionary<string, int> TestStock(IEnumerable<string> knownIds)
+{
+    var stock = new Dictionary<string, int>();
+    foreach (var dish in knownIds.Select(cat.ById).Where(d => d != null).Select(d => d!))
+        foreach (var input in dish.Inputs)
+            stock[input.Item] = Math.Max(stock.GetValueOrDefault(input.Item), 20);
+    return stock;
+}
+
+VenueState Venue(string name, int lep, int grade, IEnumerable<string> knownIds, bool stockIt = true)
 {
     var ids = knownIds.ToArray();
     var prices = new Dictionary<string, int>();
@@ -35,15 +47,14 @@ VenueState Venue(string name, int lep, int grade, IEnumerable<string> knownIds)
         foreach (var input in dish.Inputs)
             prices[input.Item] = MarketPrice(input.Item);
     return new VenueState(name, name, "Test District", 10, lep, grade,
-        new Dictionary<string, int>(), prices,
+        stockIt ? TestStock(ids) : new Dictionary<string, int>(), prices,
         new[] { ("Workers", 0.5f), ("Hipsters", 0.3f), ("Elite", 0.2f) }, ids);
 }
 
 decimal AvgCost(MenuSuggestion s, VenueState v) =>
     s.Dishes.Count == 0 ? 0m : s.Dishes.Average(d => Planner.RawCostLims(d.Dish, v));
 
-// T1 — profit-based fill: caps derived from cost keep every dish profitable,
-//      so the menu equals the full profitable set (veto coverage lives in T8)
+// T1 — profit-based fill with a plentiful pantry: every dish profitable and platable
 var v1 = Venue("T1-Diner", 2, 0,
     new[] { "Tonkotsu Ramen", "Beef Ramen", "Borsch", "Goulash", "Okroshka",
             "Fennel Soup with Bacon", "Sailor Soup", "Onion Rings", "Accordion Potatoes", "Beer" });
@@ -113,13 +124,15 @@ foreach (var dish in t6Known.Select(cat.ById).Where(d => d != null).Select(d => 
     foreach (var input in dish.Inputs)
         t6Prices[input.Item] = MarketPrice(input.Item);
 var t6Mix = new[] { ("Workers", 0.5f), ("Hipsters", 0.3f), ("Elite", 0.2f) };
-var t6Stock = new Dictionary<string, int> { ["Potatoes"] = 50, ["Onions"] = 50, ["Beef"] = 30, ["Wheat"] = 30 };
 var t6State = new MenuState(Array.Empty<string>(), 8f);
 
 var v6Empty = new VenueState("T6-Empty", "T6-Empty", "Test District", 10, 2, 0,
     new Dictionary<string, int>(), t6Prices, t6Mix, t6Known);
+var t6StockedStock = new Dictionary<string, int> { ["Potatoes"] = 50, ["Onions"] = 50, ["Beef"] = 30, ["Wheat"] = 30 };
+foreach (var kv in TestStock(t6Known))
+    t6StockedStock[kv.Key] = Math.Max(t6StockedStock.GetValueOrDefault(kv.Key), kv.Value);
 var v6Stocked = new VenueState("T6-Stocked", "T6-Stocked", "Test District", 10, 2, 0,
-    t6Stock, t6Prices, t6Mix, t6Known);
+    t6StockedStock, t6Prices, t6Mix, t6Known);
 
 var s6Empty = Planner.Plan(cat, v6Empty, rules, t6State);
 var s6Stocked = Planner.Plan(cat, v6Stocked, rules, t6State);
@@ -127,14 +140,14 @@ var s6Stocked = Planner.Plan(cat, v6Stocked, rules, t6State);
 Check("T6 stock boosts profit", s6Stocked.EstProfitPerDay > s6Empty.EstProfitPerDay,
     $"stocked {s6Stocked.EstProfitPerDay:0.00} vs empty {s6Empty.EstProfitPerDay:0.00} lims/day");
 
-int stockDishes = s6Stocked.Dishes.Count(d => d.Dish.Inputs.Any(i => t6Stock.ContainsKey(i.Item)));
+int stockDishes = s6Stocked.Dishes.Count(d => d.Dish.Inputs.Any(i => t6StockedStock.ContainsKey(i.Item)));
 Check("T6 planner spends pantry", stockDishes > 0, $"{stockDishes} menu dishes consume pantry stock");
 
 bool potatoBought = s6Stocked.Shopping.Any(s => s.Item == "Potatoes");
 Check("T6 shopping nets out pantry", !potatoBought,
     potatoBought ? "Potatoes still on shopping list" : "fully-stocked Potatoes not on shopping list");
 
-// T7 — early-game tolerance: 4 unlocked recipes → 4-dish menu, roles arrive naturally
+// T7 — early-game tolerance: 4 unlocked recipes with a pantry that can plate them
 var s7 = Planner.Plan(cat, Venue("T7-Early", 2, 0,
     new[] { "Borsch", "Goulash", "Onion Rings", "Beer" }),
     rules, new MenuState(Array.Empty<string>(), 8f));
@@ -144,25 +157,31 @@ bool t7Roles = s7.Dishes.Any(d => d.Dish.Type == DishType.Drink)
              && s7.Dishes.Any(d => rules.EntreeTypes.Contains(d.Dish.Type));
 Check("T7 roles hold in small menus", t7Roles, "beverage + entrée present");
 
-// T8 — price point outranks everything: losing dishes stay off even with empty slots
-var t8Prices = new Dictionary<string, int>
-{ ["Tomatoes"] = 8000, ["Potatoes"] = 8000, ["Beef"] = 8000, ["Onions"] = 8000, ["Flour"] = 8000, ["Wheat"] = 8000 };
-var v8 = new VenueState("T8-Ruin", "T8-Ruin", "Test District", 10, 2, 0,
-    new Dictionary<string, int>(), t8Prices,
-    new[] { ("Workers", 0.5f), ("Hipsters", 0.3f), ("Elite", 0.2f) },
-    new[] { "Borsch", "Onion Rings", "Beer" });
+// T8 — price point outranks everything: ruin prices, and (by design) an empty pantry too
+var v8 = Venue("T8-Ruin", 2, 0, new[] { "Borsch", "Onion Rings", "Beer" }, stockIt: false);
 var s8 = Planner.Plan(cat, v8, rules, new MenuState(Array.Empty<string>(), 8f));
 Check("T8 profit bar excludes losers (and preferences)", s8.Dishes.Count == 0,
     $"{s8.Dishes.Count} dishes planned; warnings: {string.Join(" | ", s8.Warnings)}");
 
-// T9 — role bonus tips close calls: Borsch takes slot 1; Beer's base score sits just under
-//      Onion Rings', so the 10% beverage lift flips slot 2 (numbers in evidence when run)
+// T9 — role bonus tips close calls. Under Option B the venue needs stock to plate, but
+//      stock triggers the 20% discount - so the near-tie is tuned for DISCOUNTED margins:
+//      Beer margin 330 (wheat 100, discounted), Onion Rings margin 350 (O+F 1500, discounted),
+//      ~6% apart - inside the 10% bonus window. Rings and Beer have identical CSV group
+//      scores (55/80/60), so their orders are equal and margins alone decide. LEP 5 keeps
+//      the gate off Rings (raw cost 15.0, exactly at LEP-5's cap). Borsch takes slot 1.
+var t9Known = new[] { "Borsch", "Onion Rings", "Beer" };
 var t9Prices = new Dictionary<string, int>
-{ ["Tomatoes"] = 100, ["Potatoes"] = 100, ["Beef"] = 100, ["Onions"] = 195, ["Flour"] = 195, ["Wheat"] = 100 };
-var v9 = new VenueState("T9-Tie", "T9-Tie", "Test District", 2, 3, 0,
-    new Dictionary<string, int>(), t9Prices,
-    new[] { ("Workers", 0.5f), ("Hipsters", 0.3f), ("Elite", 0.2f) },
-    new[] { "Borsch", "Onion Rings", "Beer" });
+{
+    ["Tomatoes"] = 100,
+    ["Potatoes"] = 100,
+    ["Beef"] = 100,
+    ["Onions"] = 750,
+    ["Flour"] = 750,
+    ["Wheat"] = 100
+};
+var v9 = new VenueState("T9-Tie", "T9-Tie", "Test District", 2, 5, 0,
+    TestStock(t9Known), t9Prices,
+    new[] { ("Workers", 0.5f), ("Hipsters", 0.3f), ("Elite", 0.2f) }, t9Known);
 var s9 = Planner.Plan(cat, v9, rules, new MenuState(Array.Empty<string>(), 8f));
 Check("T9 role bonus tips close calls",
     s9.Dishes.Count == 2 && s9.Dishes.Any(d => d.Dish.Type == DishType.Drink),
@@ -171,12 +190,12 @@ Check("T9 close loser yields",
     !s9.Dishes.Any(d => d.Dish.Id == "Onion Rings"),
     "Onion Rings displaced by bonus-lifted Beer");
 
-// T10 — preference yields to a clearly better dish: wheat at 500 pushes Beer under the profit bar
+// T10 — preference yields to a clearly better dish: wheat at 500 drops Beer's margin to
+//       250; even bonus-lifted it loses to Onion Rings' 350. Beer still clears the bar.
 var t10Prices = new Dictionary<string, int>(t9Prices) { ["Wheat"] = 500 };
-var v10 = new VenueState("T10-NoTie", "T10-NoTie", "Test District", 2, 3, 0,
-    new Dictionary<string, int>(), t10Prices,
-    new[] { ("Workers", 0.5f), ("Hipsters", 0.3f), ("Elite", 0.2f) },
-    new[] { "Borsch", "Onion Rings", "Beer" });
+var v10 = new VenueState("T10-NoTie", "T10-NoTie", "Test District", 2, 5, 0,
+    TestStock(t9Known), t10Prices,
+    new[] { ("Workers", 0.5f), ("Hipsters", 0.3f), ("Elite", 0.2f) }, t9Known);
 var s10 = Planner.Plan(cat, v10, rules, new MenuState(Array.Empty<string>(), 8f));
 Check("T10 preference yields to better dish",
     s10.Dishes.Count == 2 && !s10.Dishes.Any(d => d.Dish.Type == DishType.Drink),
@@ -185,9 +204,11 @@ Check("T10 notes the missing beverage",
     s10.Warnings.Any(w => w.Contains("beverage")),
     string.Join(" | ", s10.Warnings));
 
-// T11 — craft-chain inputs: Beer Soup needs Beer, which no vendor sells. It must stay
-// schedulable by brewing Beer from Wheat, costed at Wheat's price, and the shopping list
-// must name the base ingredient (Wheat) — never the unbuyable crafted one (Beer).
+// T11 — craft-chain inputs: Beer Soup needs Beer, which no vendor sells and which is
+//        deliberately NOT in the pantry (the crafted item). Stock covers Beer Soup's other
+//        inputs plus Wheat (for brewing). Beer itself prices through the Wheat recipe at
+//        FULL price (unstocked -> no discount); the other four inputs get the stock
+//        discount. Cost = Wheat-Beer 100 + 0.2x(200+200+100+150) = 100 + 130 = 230.
 var t11Prices = new Dictionary<string, int>
 { // 'Beer' deliberately absent from the market
     ["Wheat"] = 100,
@@ -199,30 +220,43 @@ var t11Prices = new Dictionary<string, int>
     ["Potatoes"] = 100,
     ["Beef"] = 400
 };
+var t11Known = new[] { "Beer Soup", "Beer", "Borsch" };
+var t11Stock = new Dictionary<string, int>
+{
+    ["Wheat"] = 20,
+    ["Blue Cheese"] = 20,
+    ["Bacon"] = 20,
+    ["Onions"] = 20,
+    ["Wheat Bread"] = 20
+};   // NO Beer: the crafted item stays unstocked
 var v11 = new VenueState("T11-Craft", "T11-Craft", "Test District", 10, 3, 0,
-    new Dictionary<string, int>(), t11Prices, t6Mix,
-    new[] { "Beer Soup", "Beer", "Borsch" });
+    t11Stock, t11Prices, t6Mix, t11Known);
 var s11 = Planner.Plan(cat, v11, rules, new MenuState(Array.Empty<string>(), 8f));
 Check("T11 craft inputs keep dish schedulable",
     s11.Dishes.Any(d => d.Dish.Id == "Beer Soup"),
     $"menu: {string.Join(", ", s11.Dishes.Select(d => d.Dish.Name))}");
 var beerSoup = s11.Dishes.FirstOrDefault(d => d.Dish.Id == "Beer Soup");
 Check("T11 crafted input priced via its recipe",
-    beerSoup?.CostHundredths == 750,
-    $"Beer Soup cost {beerSoup?.CostHundredths.ToString() ?? "n/a"} (want 750: Beer-as-Wheat 100 + Blue Cheese 200 + Bacon 200 + Onions 100 + Wheat Bread 150)");
-Check("T11 shopping expands crafted inputs",
-    !s11.Shopping.Any(s => s.Item == "Beer") && s11.Shopping.Any(s => s.Item == "Wheat" && s.Needed >= 10),
-    "shopping: " + string.Join(", ", s11.Shopping.Select(s => $"{s.Item} x{s.Needed}")));
+    beerSoup?.CostHundredths == 230,
+    $"Beer Soup cost {beerSoup?.CostHundredths.ToString() ?? "n/a"} (want 230: Beer-as-Wheat 100 at full price + discounted Blue Cheese 40 + Bacon 40 + Onions 20 + Wheat Bread 30)");
+// DESIGN CONSEQUENCE under Option B: capacity-capped orders never exceed the stock that
+// defined the capacity, so a single dish's needs are always covered -> shopping lists are
+// structurally empty per-dish. The list becomes non-empty only when multiple dishes compete
+// for the same stock (the Step 4 escrow ledger). Gap coverage moves to T17.
+Check("T11 shopping empty under Option B (gap coverage lands with Step 4 escrow, T17)",
+    s11.Shopping.Count == 0 && !s11.Shopping.Any(s => s.Item == "Beer"),
+    $"shopping has {s11.Shopping.Count} entries; Beer absent: {!s11.Shopping.Any(s => s.Item == "Beer")}");
+
+// T11b — the recipe-block premise: bare pantry (deliberately), venue knows Beer Soup
+//        but NOT the Beer recipe -> Beer Soup unschedulable -> skipped.
 var v11b = new VenueState("T11-NoRecipe", "T11-NoRecipe", "Test District", 10, 3, 0,
-    new Dictionary<string, int>(), t11Prices, t6Mix,
-    new[] { "Beer Soup", "Borsch" });
+    new Dictionary<string, int>(), t11Prices, t6Mix, new[] { "Beer Soup", "Borsch" });
 var s11b = Planner.Plan(cat, v11b, rules, new MenuState(Array.Empty<string>(), 8f));
 Check("T11 unknown craft recipe blocks the dish",
     !s11b.Dishes.Any(d => d.Dish.Id == "Beer Soup") && s11b.Warnings.Any(w => w.Contains("skipped")),
     $"menu: {string.Join(", ", s11b.Dishes.Select(d => d.Dish.Name))}; warnings: {string.Join(" | ", s11b.Warnings)}");
 
 // T12 — district canon: keys match the vendors dump ('Spire', not 'The Spire'); mixes skew
-// the way the districts read (Spire elite-heavy, Sewers worker-heavy; unknown -> even split)
 var spireMix = cat.MixFor("Spire");
 var sewersMix = cat.MixFor("Sewers");
 bool spireEliteHeavy = spireMix.First(t => t.Group == "Elite").Weight > 0.5f;
@@ -234,7 +268,6 @@ Check("T12 district canon and mix skew",
 
 // T15 — capacity guard: the binding input caps servings. Stock for 3 Borsch
 //      (Tomatoes 3 / Potatoes plenty / Beef plenty) -> ServingsPossible == 3.
-//      The overbooking scenario you watched in-game, as a permanent regression test.
 var v15 = new VenueState("T15-Cap", "T15-Cap", "Test District", 10, 3, 0,
     new Dictionary<string, int> { ["Tomatoes"] = 3, ["Potatoes"] = 50, ["Beef"] = 50 },
     new Dictionary<string, int> { ["Tomatoes"] = 150, ["Potatoes"] = 100, ["Beef"] = 400 },
@@ -246,7 +279,7 @@ Check("T15 capacity guard: binding input caps servings",
     borschServings == 3,
     $"Borsch servings possible: {borschServings} (Tomatoes x3 is the binding input; Potatoes/Beef plentiful)");
 
-// T15b — guard returns 0 when a binding input is empty (stock says no Borsch today)
+// T15b — guard returns 0 when a binding input is empty
 var v15b = new VenueState("T15b-Zero", "T15b-Zero", "Test District", 10, 3, 0,
     new Dictionary<string, int> { ["Potatoes"] = 50, ["Beef"] = 50 },
     new Dictionary<string, int> { ["Tomatoes"] = 150, ["Potatoes"] = 100, ["Beef"] = 400 },
@@ -257,7 +290,7 @@ Check("T15b capacity guard: zero stock means zero servings",
     borschZero == 0,
     $"Borsch servings with no Tomatoes: {borschZero}");
 
-// T15c — escrow view: committed amounts subtract from stock; uncommitted stock passes through
+// T15c — escrow view: committed amounts subtract from stock
 var escrowStock = new Dictionary<string, int> { ["Tomatoes"] = 10, ["Potatoes"] = 50, ["Beef"] = 50 };
 var v15c = new VenueState("T15c-Escrow", "T15c-Escrow", "Test District", 10, 3, 0,
     escrowStock,
@@ -271,7 +304,6 @@ Check("T15c escrow view: committed stock is subtracted",
     $"Tomatoes free after committing 4: {freeTomatoes}; with no holds: {allTomatoes}");
 
 // T16 — craft-chain capacity: Beer Soup needs Beer (no stock), Beer needs Wheat (stock 5)
-//      -> Beer Soup servable from Wheat is 5 / 1 per soup (1 Beer per soup, 1 Wheat per Beer)
 var v16 = new VenueState("T16-Chain", "T16-Chain", "Test District", 10, 3, 0,
     new Dictionary<string, int>
     {
