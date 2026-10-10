@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="NivalisMenuPlanner.Core/NivalisMenuPlanner.Core.csproj" />
+  <Project Path="NivalisMenuPlanner.Plugin/NivalisMenuPlanner.Plugin.csproj" Id="e39ced72-3b85-4dc6-aa17-c257df73c4ad" />
+  <Project Path="PlannerHarness/PlannerHarness.csproj" />
+</Solution>
