@@ -16,13 +16,15 @@ namespace NivalisMenuPlanner;
 [BepInDependency(ModKit.Guid, ">=0.6.2")]
 public class Plugin : BasePlugin
 {
-    public const string Guid = "CheeksMcGee.nivalis.menuplanner";   // TODO: your handle — set ONCE; save data keys off this
+    public const string Guid = "CheeksMcGee.nivalis.menuplanner";
 
     internal static ManualLogSource L = null!;
     internal static ModSaveData Data = null!;
     static DishCatalog? _catalog;
     static readonly List<Rotation> _rotation = new();
-    static readonly Dictionary<string, int> _cooked = new();   // dish -> cooked today (demand signal for v0.2)
+    static readonly Dictionary<string, int> _cooked = new();   // venueKey -> nothing; per-dish below
+    static readonly Dictionary<string, Dictionary<string, int>> _cookedByVenue =
+        new(StringComparer.OrdinalIgnoreCase);   // venueKey -> dishId -> cooked today
 
     internal static ConfigEntry<Key> Hotkey = null!;
     internal static ConfigEntry<int> MaxSlots = null!, MaxPerType = null!;
@@ -31,9 +33,8 @@ public class Plugin : BasePlugin
                                       RoleBonus = null!, NotifyGain = null!, RaiseBuffer = null!;
     internal static ConfigEntry<int> DefaultLocalExclusivity = null!;
 
-    // Hotkey polling via the kit's Scheduler (its own ticker is proven live in our sessions).
-    static int _pollGen;                     // each poll chain carries a generation; a newer chain supersedes an older one
-    static int _inputMode;                    // 0 unknown, 1 InputSystem, 2 legacy Input
+    static int _pollGen;
+    static int _inputMode;
     static UnityEngine.KeyCode _legacyKey = UnityEngine.KeyCode.None;
     static bool _pollWarned;
 
@@ -65,15 +66,19 @@ public class Plugin : BasePlugin
         if (!GameEvents.IsAvailable(nameof(GameEvents.DayStarted)))
             L.LogWarning("DayStarted unavailable — day-start replanning disabled this session.");
         GameEvents.DishCooked += OnDishCooked;
+        GameEvents.DayEnded += OnDayEnded;
+        if (!GameEvents.IsAvailable(nameof(GameEvents.DayEnded)))
+            L.LogWarning("DayEnded unavailable — sale harvesting disabled this session.");
 
         DevCommands.Register(Guid, "plan", "venue=N: current menu suggestions as JSON (N = name fragment; omit for all)", PlanCommand);
+        DevCommands.Register(Guid, "sales", "venue=N&day=N: stored SaleRecords as JSON", SalesCommand);
 
         L.LogInfo($"Menu Planner 0.1.0 loaded — hotkey {Hotkey.Value} (scheduler-polled), kit {ModKit.Version}.");
     }
 
     static void OnGameReady()
     {
-        StartHotkeyPoll();   // start/refresh polling first: input is live in gameplay, and even a failed catalog load keeps the hotkey working
+        StartHotkeyPoll();
         try
         {
             L.LogInfo($"Game ready — build: {GameBuild.Describe()}");
@@ -89,8 +94,8 @@ public class Plugin : BasePlugin
     {
         PlannerWindow.DestroyWindow();
         _rotation.Clear();
-        _cooked.Clear();
-        _inputMode = 0;   // re-probe input on the next save load
+        _cookedByVenue.Clear();
+        _inputMode = 0;
     }
 
     static void OnDishCooked(DishCookedArgs a)
@@ -98,31 +103,102 @@ public class Plugin : BasePlugin
         try
         {
             if (a?.Recipe == null || a.Area == null) return;
-            string? areaKey = Safe(() => Venues.NameOf(a.Area));
-            if (areaKey == null || _rotation.All(r => r.Key != areaKey)) return;   // player venues only
+            string? venueKey = Safe(() => Venues.NameOf(a.Area));
+            if (venueKey == null) return;
             var dish = Recipes.OutputOf(a.Recipe);
             var id = dish == null ? null : Items.NameOf(dish);
-            if (id != null) _cooked[id] = _cooked.GetValueOrDefault(id) + 1;
+            if (id != null)
+            {
+                var perVenue = _cookedByVenue.GetValueOrDefault(venueKey)
+                    ?? (_cookedByVenue[venueKey] = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase));
+                perVenue[id] = perVenue.GetValueOrDefault(id) + 1;
+            }
         }
-        catch { /* demand counting is best-effort */ }
+        catch { /* best-effort counting */ }
     }
 
-    // ---- hotkey polling (kit Scheduler; no injected MonoBehaviour needed) ----
+    // SALE HARVEST (Session 1 leftover, Step A): at DayEnded, persist one SaleRecord
+    // per menu dish per venue - actual menu price, sold from receipts, cooked from the
+    // counter, walked-out derived, popularity snapshot. The elasticity training set;
+    // the v0.2 pricing controller's eyes. Fires before the next DayStarted replan.
+    static void OnDayEnded(DayEndedArgs a)
+    {
+        try
+        {
+            int day = a.Day;
+            int venues = 0, records = 0;
+            foreach (var area in Venues.PlayerOwned)
+            {
+                string key = Safe(() => Venues.NameOf(area)) ?? "?";
+                venues++;
+                var menu = new List<(string dish, int price)>();
+                foreach (var entry in Venues.MenuOf(area))
+                {
+                    var dishName = Items.NameOf(entry.Dish);
+                    if (dishName == null) continue;
+                    menu.Add((dishName, entry.Price));
+                }
+                var soldByDish = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+                foreach (var receipt in Venues.ReceiptsOf(area, day))
+                {
+                    if (receipt.Type != "Restaurant") continue;
+                    var dishName = receipt.Dish == null ? null : Items.NameOf(receipt.Dish);
+                    if (dishName != null && receipt.Amount > 0)
+                        soldByDish[dishName] = soldByDish.GetValueOrDefault(dishName) + receipt.Count;
+                }
+                var cookedForVenue = _cookedByVenue.GetValueOrDefault(key);
+
+                foreach (var (dish, price) in menu)
+                {
+                    int sold = soldByDish.GetValueOrDefault(dish);
+                    int cooked = cookedForVenue?.GetValueOrDefault(dish) ?? 0;
+                    if (sold == 0 && cooked == 0) continue;   // dish never moved today; skip noise
+                    var walked = Math.Max(0, cooked - sold);
+                    float? pop = null;   // popularity snapshot deferred: group-key mapping
+                                         // needs the CSV's group columns; Step B wires it
+                    var rec = new SaleRecord(day, price, sold, cooked, walked, pop);
+                    Data.Set($"sales.{key}.{dish}.{day}", rec);
+                    records++;
+                }
+            }
+            _cookedByVenue.Clear();   // counters are per-day; reset for tomorrow
+            L.LogInfo($"Day {day} harvested: {records} sale records across {venues} venue(s).");
+        }
+        catch (Exception e) { L.LogWarning($"Sale harvest failed: {e.Message}"); }
+    }
+
+    static object SalesCommand(CommandArgs args)
+    {
+        string? venueFilter = args.Has("venue") ? args.Get("venue", "") : null;
+        int? day = args.Has("day") ? args.GetInt("day", -1) : null;
+        if (day == -1) day = null;
+        var keys = Data.Keys.Where(k => k.StartsWith("sales.", StringComparison.OrdinalIgnoreCase));
+        if (venueFilter != null)
+            keys = keys.Where(k => k.Contains(venueFilter, StringComparison.OrdinalIgnoreCase));
+        return keys.Select(k =>
+        {
+            var parts = k.Split('.');
+            var rec = Data.Get<SaleRecord>(k, null!);
+            return new { venue = parts[1], dish = parts[2], day = parts[3], record = rec };
+        }).Where(x => day == null || x.day == day.Value.ToString())
+          .OrderBy(x => x.day).ThenBy(x => x.venue).ThenBy(x => x.dish)
+          .ToList();
+    }
 
     static void StartHotkeyPoll()
     {
-        var gen = ++_pollGen;   // any chain still alive from an earlier load dies on its next frame (gen mismatch)
+        var gen = ++_pollGen;
         Scheduler.NextFrame(() => PollHotkey(gen));
     }
 
     static void PollHotkey(int gen)
     {
-        if (gen != _pollGen) return;                       // superseded by a newer chain: end without rescheduling
+        if (gen != _pollGen) return;
         try
         {
             if (GameEvents.IsInGame && Hotkey != null)
             {
-                if (_inputMode == 0) ProbeInputMode();    // once, in gameplay, when input is definitely live
+                if (_inputMode == 0) ProbeInputMode();
                 bool pressed = false;
                 if (_inputMode == 1)
                 {
@@ -141,7 +217,7 @@ public class Plugin : BasePlugin
         {
             if (!_pollWarned) { L.LogWarning($"Hotkey poll failed: {e}"); _pollWarned = true; }
         }
-        Scheduler.NextFrame(() => PollHotkey(gen));       // keep the chain alive
+        Scheduler.NextFrame(() => PollHotkey(gen));
     }
 
     static void ProbeInputMode()
@@ -154,18 +230,15 @@ public class Plugin : BasePlugin
             : $"Hotkey input mode: legacy Input (Keyboard.current null) — {Hotkey.Value} -> {_legacyKey}");
     }
 
-    // InputSystem Key names mostly match KeyCode names; fix the ones that don't.
     static UnityEngine.KeyCode MapKey(Key k)
     {
         var n = k.ToString();
-        if (n.StartsWith("Digit", StringComparison.OrdinalIgnoreCase)) n = "Alpha" + n[5..];        // Digit1 -> Alpha1
-        else if (n.StartsWith("Numpad", StringComparison.OrdinalIgnoreCase)) n = "Keypad" + n[6..]; // Numpad1 -> Keypad1
+        if (n.StartsWith("Digit", StringComparison.OrdinalIgnoreCase)) n = "Alpha" + n[5..];
+        else if (n.StartsWith("Numpad", StringComparison.OrdinalIgnoreCase)) n = "Keypad" + n[6..];
         else if (n.Equals("Enter", StringComparison.OrdinalIgnoreCase)) n = "Return";
-        else if (n.EndsWith("Ctrl", StringComparison.OrdinalIgnoreCase)) n = n[..^4] + "Control";    // LeftCtrl -> LeftControl
+        else if (n.EndsWith("Ctrl", StringComparison.OrdinalIgnoreCase)) n = n[..^4] + "Control";
         return Enum.TryParse<UnityEngine.KeyCode>(n, out var c) ? c : UnityEngine.KeyCode.None;
     }
-
-    // ---- planning ----
 
     internal static bool CatalogLoaded => _catalog != null;
 
@@ -178,11 +251,6 @@ public class Plugin : BasePlugin
     internal static void ReplanAll()
     {
         if (_catalog == null || !GameEvents.IsInGame) return;
-
-        if (_cooked.Count > 0)
-            L.LogInfo($"Yesterday's cooks at your venues: {string.Join(", ",
-                _cooked.OrderByDescending(k => k.Value).Select(k => $"{k.Key} x{k.Value}"))}");
-        _cooked.Clear();
 
         _rotation.Clear();
         foreach (var (key, venue) in GameAdapter.SnapshotAll(_catalog!, DefaultLocalExclusivity.Value, MaxSlots.Value))
@@ -217,7 +285,7 @@ public class Plugin : BasePlugin
         {
             var staff = GameAdapter.AllStaff();
             if (staff.Count == 0) return null;
-            decimal wallet = (Economy.PlayerMoney ?? 0) / 100m;      // hundredths -> lims
+            decimal wallet = (Economy.PlayerMoney ?? 0) / 100m;
             decimal owed = Payroll.Obligation(staff);
             decimal spendable = Payroll.Spendable(wallet, staff, (decimal)RaiseBuffer.Value);
             return $"Wallet {wallet:0.00} lims - wages owed {owed:0.00} - spendable {spendable:0.00} (full shift escrowed).";
