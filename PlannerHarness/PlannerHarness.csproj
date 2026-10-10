@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFramework>net10.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<LangVersion>latest</LangVersion>
+		<ImplicitUsings>enable</ImplicitUsings>
+	</PropertyGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\NivalisMenuPlanner.Core\NivalisMenuPlanner.Core.csproj" />
+	</ItemGroup>
+	<ItemGroup>
+		<Content Include="..\NivalisMenuPlanner.Core\Data\dishdata.csv" Link="Data\dishdata.csv" CopyToOutputDirectory="PreserveNewest" />
+	</ItemGroup>
+</Project>

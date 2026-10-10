@@ -1,0 +1,9169 @@
+[
+  {
+    "asset": "Accordion Potatoes",
+    "guid": "a532ce86-8d6b-436d-ac50-03e19ae31adf",
+    "custom": false,
+    "output": "Accordion Potatoes",
+    "amount": 1,
+    "type": "Snack",
+    "unlockCost": 1,
+    "known": true,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [],
+    "inputs": [
+      {
+        "item": "Potatoes",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Cooker",
+        "substitutes": []
+      },
+      {
+        "item": "Garlic",
+        "amount": 1,
+        "slot": "Sauce",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Neutral Oil",
+        "amount": 1,
+        "slot": "Sauce",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Almond Crusted Zander",
+    "guid": "b78624fe-18f0-43c5-868c-eb73d0c9adda",
+    "custom": false,
+    "output": "Almond Crusted Zander",
+    "amount": 1,
+    "type": "Fish",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Pike Poke"
+    ],
+    "inputs": [
+      {
+        "item": "Zander",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Grill",
+        "substitutes": [
+          "Fish"
+        ]
+      },
+      {
+        "item": "Almonds",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Thyme",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Rosemary",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "None",
+        "substitutes": [
+          "Herb",
+          "Spice"
+        ]
+      }
+    ]
+  },
+  {
+    "asset": "Apple Pie",
+    "guid": "85891985-f2ab-4d73-9b41-1558d7b0d90d",
+    "custom": false,
+    "output": "Apple Pie",
+    "amount": 1,
+    "type": "Dessert",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [],
+    "inputs": [
+      {
+        "item": "Flour",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Oven, Blender",
+        "substitutes": []
+      },
+      {
+        "item": "Butter",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Apples",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Vanilla",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Cinnamon",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Aqua Freeze",
+    "guid": "8f8d9470-6fff-4918-b01c-afa94109907a",
+    "custom": false,
+    "output": "Aqua Freeze",
+    "amount": 1,
+    "type": "Drink",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Pizza Cocktail"
+    ],
+    "inputs": [
+      {
+        "item": "Lemons",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Spirulina",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Tonic Water",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Liquid Nitrogen",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Mint",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "None",
+        "substitutes": [
+          "Spice",
+          "Herb"
+        ]
+      }
+    ]
+  },
+  {
+    "asset": "Aurora",
+    "guid": "b659eb5c-94a4-4774-9ea5-2f920443745c",
+    "custom": false,
+    "output": "Aurora",
+    "amount": 1,
+    "type": "Drink",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Boba Tea"
+    ],
+    "inputs": [
+      {
+        "item": "Vodka",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Tonic Water",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Lemons",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Cranberries",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Roses",
+        "amount": 1,
+        "slot": "Sides",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Azores Chicharros",
+    "guid": "1cece46b-7459-4afd-87aa-00f9ad5f2b90",
+    "custom": false,
+    "output": "Azores Chicharros",
+    "amount": 1,
+    "type": "Fish",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Pike Poke"
+    ],
+    "inputs": [
+      {
+        "item": "Stickleback",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "DeepFryer",
+        "substitutes": [
+          "Fish"
+        ]
+      },
+      {
+        "item": "Cinnamon",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Bacon Avocado Salad",
+    "guid": "0ff0b242-91c8-4c69-a93d-3d0d8c91d2ee",
+    "custom": false,
+    "output": "Bacon Avocado Salad",
+    "amount": 1,
+    "type": "Salad",
+    "unlockCost": 1,
+    "known": true,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Spinach Apple Salad",
+      "Roasted Yam Seaweed Salad"
+    ],
+    "inputs": [
+      {
+        "item": "Cucumbers",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Raw",
+        "substitutes": []
+      },
+      {
+        "item": "Avocados",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Raw",
+        "substitutes": []
+      },
+      {
+        "item": "Bacon",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Grill",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Bacon Bloody Mary",
+    "guid": "77450358-ec5d-42cd-979c-739a9d0ed907",
+    "custom": false,
+    "output": "Bacon Bloody Mary",
+    "amount": 1,
+    "type": "Drink",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": true,
+    "prerequisites": [
+      "Spiced Shroom Coffee"
+    ],
+    "inputs": [
+      {
+        "item": "Vodka",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Tomatoes",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Blender",
+        "substitutes": []
+      },
+      {
+        "item": "Chili",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Bacon",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Celery",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Baked Ide",
+    "guid": "8be64aaa-86a5-43b9-9314-e1e29cdc67da",
+    "custom": false,
+    "output": "Baked Ide",
+    "amount": 1,
+    "type": "Fish",
+    "unlockCost": 1,
+    "known": true,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Honey Marinated Sabrefish",
+      "Salted Taimen"
+    ],
+    "inputs": [
+      {
+        "item": "Ide",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Oven, Blender",
+        "substitutes": [
+          "Fish"
+        ]
+      },
+      {
+        "item": "Lemons",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Olive Oil",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "None",
+        "substitutes": [
+          "Oil"
+        ]
+      }
+    ]
+  },
+  {
+    "asset": "Balut",
+    "guid": "25df15c9-9c26-414d-8be5-3d6387a381fc",
+    "custom": false,
+    "output": "Balut",
+    "amount": 1,
+    "type": "Snack",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Beet Pickled Deviled Eggs"
+    ],
+    "inputs": [
+      {
+        "item": "Eggs",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Cooker",
+        "substitutes": []
+      },
+      {
+        "item": "Lime",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Coriander",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Chili",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Soy Sauce",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Barbudian Fish Wata",
+    "guid": "df10cf41-7dfa-4e44-b94a-80a17874f446",
+    "custom": false,
+    "output": "Barbudian Fish Wata",
+    "amount": 1,
+    "type": "Fish",
+    "unlockCost": 1,
+    "known": true,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Baked Ide"
+    ],
+    "inputs": [
+      {
+        "item": "Bream",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Oven, Blender",
+        "substitutes": [
+          "Fish"
+        ]
+      },
+      {
+        "item": "Okra",
+        "amount": 1,
+        "slot": "Sides",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Thyme",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Beef Ramen",
+    "guid": "8d756a98-d8aa-4768-8c92-d0b0925c6d55",
+    "custom": false,
+    "output": "Beef Ramen",
+    "amount": 1,
+    "type": "Soup",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Chicken Noodle Soup"
+    ],
+    "inputs": [
+      {
+        "item": "Ramen Noodles",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Cooker",
+        "substitutes": []
+      },
+      {
+        "item": "Pork",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Pan",
+        "substitutes": []
+      },
+      {
+        "item": "Beef",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "Grill",
+        "substitutes": []
+      },
+      {
+        "item": "Bamboo",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Beer",
+    "guid": "e975da56-b48e-4b59-a2f1-300c2bacf65e",
+    "custom": false,
+    "output": "Beer",
+    "amount": 1,
+    "type": "Drink",
+    "unlockCost": 1,
+    "known": true,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [],
+    "inputs": [
+      {
+        "item": "Wheat",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Beer Soup",
+    "guid": "6ebe6393-bea6-4d0d-92a0-3f4c4c331a06",
+    "custom": false,
+    "output": "Beer Soup",
+    "amount": 1,
+    "type": "Soup",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Tonkotsu Ramen",
+      "Magic Potion"
+    ],
+    "inputs": [
+      {
+        "item": "Beer",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Cooker",
+        "substitutes": []
+      },
+      {
+        "item": "Blue Cheese",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Bacon",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Onions",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Wheat Bread",
+        "amount": 1,
+        "slot": "Sides",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Beet Pickled Deviled Eggs",
+    "guid": "290425d5-5732-48e5-bf66-dc9e5b8c2a40",
+    "custom": false,
+    "output": "Beet Pickled Deviled Eggs",
+    "amount": 1,
+    "type": "Snack",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Crispy Bugs Platter"
+    ],
+    "inputs": [
+      {
+        "item": "Eggs",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Cooker",
+        "substitutes": []
+      },
+      {
+        "item": "Beetroots",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Vinegar",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Mayonnaise",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Mustard",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Beondegi Soup",
+    "guid": "01d6d2fd-9108-47cc-a44e-acba8503155c",
+    "custom": false,
+    "output": "Beondegi Soup",
+    "amount": 1,
+    "type": "Soup",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Onion Soup"
+    ],
+    "inputs": [
+      {
+        "item": "Silkworm Pupae",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Cooker",
+        "substitutes": []
+      },
+      {
+        "item": "Peppers",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Cooking Wine",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Sesame Oil",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Garlic",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Bird's Nest",
+    "guid": "d6f7a003-6579-40c3-99de-ecdcb801725b",
+    "custom": false,
+    "output": "Bird's Nest",
+    "amount": 1,
+    "type": "Salad",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Eastern Salad"
+    ],
+    "inputs": [
+      {
+        "item": "Lettuce",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Raw",
+        "substitutes": []
+      },
+      {
+        "item": "Bean Sprouts",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Raw",
+        "substitutes": []
+      },
+      {
+        "item": "Eggs",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "Cooker",
+        "substitutes": []
+      },
+      {
+        "item": "Corn",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "Raw",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Black Widow",
+    "guid": "76583c7f-3c12-4ae4-bbf3-d94957694480",
+    "custom": false,
+    "output": "Black Widow",
+    "amount": 1,
+    "type": "Drink",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Jalapeno Juice"
+    ],
+    "inputs": [
+      {
+        "item": "Vodka",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Lemons",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Blackberries",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Vanilla",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Blue Smoothie Bowl",
+    "guid": "a05a7d33-72f0-4078-85ca-9749b039eedc",
+    "custom": false,
+    "output": "Blue Smoothie Bowl",
+    "amount": 1,
+    "type": "Dessert",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Brownie Milkshake"
+    ],
+    "inputs": [
+      {
+        "item": "Butterfly Pea Flower",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": [
+          "Flower"
+        ]
+      },
+      {
+        "item": "Milk",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Yoghurt",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Strawberries",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "None",
+        "substitutes": [
+          "Fruit"
+        ]
+      },
+      {
+        "item": "Banana",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "None",
+        "substitutes": [
+          "Fruit"
+        ]
+      }
+    ]
+  },
+  {
+    "asset": "Blue Taco",
+    "guid": "0bfaeee1-dee0-48eb-bf57-1b9e77905a59",
+    "custom": false,
+    "output": "Blue Taco",
+    "amount": 1,
+    "type": "Sandwich",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [],
+    "inputs": [
+      {
+        "item": "Corn Bread",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Butterfly Pea Flower",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Oven",
+        "substitutes": []
+      },
+      {
+        "item": "Tomatoes",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Mango",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Coriander",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Blueberry Avocado Smoothie",
+    "guid": "3f7c96c7-397c-41ba-93eb-dd81bafcb587",
+    "custom": false,
+    "output": "Blueberry Avocado Smoothie",
+    "amount": 1,
+    "type": "Drink",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": true,
+    "prerequisites": [
+      "Drunken Master"
+    ],
+    "inputs": [
+      {
+        "item": "Milk",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Avocados",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Blender",
+        "substitutes": []
+      },
+      {
+        "item": "Banana",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Blender",
+        "substitutes": []
+      },
+      {
+        "item": "Protein Powder",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Blueberries",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "Blender",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Boba Pizza",
+    "guid": "463384c0-b847-4bdd-bc5a-b013ffc804d4",
+    "custom": false,
+    "output": "Boba Pizza",
+    "amount": 1,
+    "type": "Pizza",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Chapulines Pizza"
+    ],
+    "inputs": [
+      {
+        "item": "Pizza Dough",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Oven",
+        "substitutes": []
+      },
+      {
+        "item": "Parmesan",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": [
+          "Cheese"
+        ]
+      },
+      {
+        "item": "Boba",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Honey",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Boba Tea",
+    "guid": "119a7d76-4d59-4004-9e43-05103d0d991d",
+    "custom": false,
+    "output": "Boba Tea",
+    "amount": 1,
+    "type": "Drink",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Bacon Bloody Mary"
+    ],
+    "inputs": [
+      {
+        "item": "Milk",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Boba",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Sugar",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Tea Leafs",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Bombies",
+    "guid": "73d5527c-ab62-4934-b98b-d52466980568",
+    "custom": false,
+    "output": "Bombies",
+    "amount": 1,
+    "type": "Meat",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Sunrise"
+    ],
+    "inputs": [
+      {
+        "item": "Potatoes",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Grill",
+        "substitutes": []
+      },
+      {
+        "item": "Beef",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Oven",
+        "substitutes": []
+      },
+      {
+        "item": "Pork",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Oven",
+        "substitutes": []
+      },
+      {
+        "item": "Eggs",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Garlic",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Borsch",
+    "guid": "d0613b0f-d8f6-4f3d-9804-e94a76a2c171",
+    "custom": false,
+    "output": "Borsch",
+    "amount": 1,
+    "type": "Soup",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Beer Soup"
+    ],
+    "inputs": [
+      {
+        "item": "Tomatoes",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Cooker",
+        "substitutes": []
+      },
+      {
+        "item": "Potatoes",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Beef",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Breakfast Salad",
+    "guid": "1f89c0b6-f902-4f96-8ac7-f4881f061bc4",
+    "custom": false,
+    "output": "Breakfast Salad",
+    "amount": 1,
+    "type": "Salad",
+    "unlockCost": 1,
+    "known": true,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Vinegret Salad"
+    ],
+    "inputs": [
+      {
+        "item": "Lettuce",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Raw",
+        "substitutes": []
+      },
+      {
+        "item": "Cucumbers",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Raw",
+        "substitutes": []
+      },
+      {
+        "item": "Tomatoes",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Raw",
+        "substitutes": []
+      },
+      {
+        "item": "Eggs",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "Grill",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Brook Trout with Asparagus",
+    "guid": "854f3474-7c3d-461b-af3f-ddf8808935a8",
+    "custom": false,
+    "output": "Brook Trout with Asparagus",
+    "amount": 1,
+    "type": "Fish",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Fried Carp",
+      "Teriyaki Rainbow Trout"
+    ],
+    "inputs": [
+      {
+        "item": "Brook Trout",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Grill",
+        "substitutes": [
+          "Fish"
+        ]
+      },
+      {
+        "item": "Asparagus",
+        "amount": 1,
+        "slot": "Sides",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Potatoes",
+        "amount": 1,
+        "slot": "Sides",
+        "processing": "Cooker",
+        "substitutes": []
+      },
+      {
+        "item": "Olive Oil",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Brownie",
+    "guid": "cfcbdff7-26b1-4ced-baff-d67383344b63",
+    "custom": false,
+    "output": "Brownie",
+    "amount": 1,
+    "type": "Dessert",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Apple Pie"
+    ],
+    "inputs": [
+      {
+        "item": "Flour",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Oven, Blender",
+        "substitutes": []
+      },
+      {
+        "item": "Butter",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Cocoa Powder",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Vanilla",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "None",
+        "substitutes": [
+          "Spice"
+        ]
+      }
+    ]
+  },
+  {
+    "asset": "Brownie Milkshake",
+    "guid": "8d674e78-8ead-43f5-85b0-c24ffb8045c4",
+    "custom": false,
+    "output": "Brownie Milkshake",
+    "amount": 1,
+    "type": "Dessert",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Frushi"
+    ],
+    "inputs": [
+      {
+        "item": "Whipped Cream",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Chocolate",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Milk",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Calypso Island Iced Tea",
+    "guid": "1a4155f6-497d-4be3-8a0b-85b6f4ee9e4b",
+    "custom": false,
+    "output": "Calypso Island Iced Tea",
+    "amount": 1,
+    "type": "Drink",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": true,
+    "prerequisites": [
+      "Blueberry Avocado Smoothie"
+    ],
+    "inputs": [
+      {
+        "item": "Vodka",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Rum",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Tequila",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Gin",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Lemons",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Canapés",
+    "guid": "92b7b34e-f82a-497d-87bd-b22279cef796",
+    "custom": false,
+    "output": "Canapés",
+    "amount": 1,
+    "type": "Snack",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [],
+    "inputs": [
+      {
+        "item": "Melon",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Cooker",
+        "substitutes": []
+      },
+      {
+        "item": "Blue Cheese",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Prosciutto",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Basil",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "None",
+        "substitutes": [
+          "Herb"
+        ]
+      }
+    ]
+  },
+  {
+    "asset": "Cendol",
+    "guid": "ad04b3f9-fd8f-416b-b5ab-e12d91288471",
+    "custom": false,
+    "output": "Cendol",
+    "amount": 1,
+    "type": "Soup",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [],
+    "inputs": [
+      {
+        "item": "Rice",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Cooker",
+        "substitutes": []
+      },
+      {
+        "item": "Coconut",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Green Beans",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Red Beans",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Chapulines Pizza",
+    "guid": "83d2e4c6-6aaa-401b-ae0c-a384e4c0ed2b",
+    "custom": false,
+    "output": "Chapulines Pizza",
+    "amount": 1,
+    "type": "Pizza",
+    "unlockCost": 1,
+    "known": true,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [],
+    "inputs": [
+      {
+        "item": "Pizza Dough",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Oven",
+        "substitutes": []
+      },
+      {
+        "item": "Cheddar",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": [
+          "Cheese"
+        ]
+      },
+      {
+        "item": "Tomatoes",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Chapulines",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "Pan",
+        "substitutes": []
+      },
+      {
+        "item": "Avocados",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Cheese Burger",
+    "guid": "b892a03a-063c-4f2d-937e-13bbb762d062",
+    "custom": false,
+    "output": "Cheese Burger",
+    "amount": 1,
+    "type": "Sandwich",
+    "unlockCost": 1,
+    "known": true,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [],
+    "inputs": [
+      {
+        "item": "Burger Bun",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Raw",
+        "substitutes": []
+      },
+      {
+        "item": "Beef",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Grill",
+        "substitutes": [
+          "Meat"
+        ]
+      },
+      {
+        "item": "Cheese",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Raw",
+        "substitutes": [
+          "Cheese"
+        ]
+      }
+    ]
+  },
+  {
+    "asset": "Cheese Dream",
+    "guid": "8d395c54-ea5d-47d6-8a36-8f1b66d943e5",
+    "custom": false,
+    "output": "Cheese Dream",
+    "amount": 1,
+    "type": "Pizza",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Pizza Napoli"
+    ],
+    "inputs": [
+      {
+        "item": "Pizza Dough",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Oven",
+        "substitutes": []
+      },
+      {
+        "item": "Tomatoes",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": [
+          "Vegetable"
+        ]
+      },
+      {
+        "item": "Mozarella",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "None",
+        "substitutes": [
+          "Cheese"
+        ]
+      },
+      {
+        "item": "Cheddar",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "None",
+        "substitutes": [
+          "Cheese"
+        ]
+      },
+      {
+        "item": "Blue Cheese",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "None",
+        "substitutes": [
+          "Cheese"
+        ]
+      }
+    ]
+  },
+  {
+    "asset": "Chef Hugo Ortega’s Mescal Worm Tacos",
+    "guid": "173d83b7-1d77-4094-afff-45bbe10e8dd5",
+    "custom": false,
+    "output": "Chef Hugo Ortega’s Mescal Worm Tacos",
+    "amount": 1,
+    "type": "Sandwich",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Chicken Sandwich"
+    ],
+    "inputs": [
+      {
+        "item": "Corn Bread",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Grasshopers",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Oven",
+        "substitutes": []
+      },
+      {
+        "item": "Peppers",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Olives",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Parsley",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Chic Salmon and Cucumber Sandwiches",
+    "guid": "897a453c-50ba-42c1-b58d-79cb0b3192e9",
+    "custom": false,
+    "output": "Chic Salmon and Cucumber Sandwiches",
+    "amount": 1,
+    "type": "Sandwich",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Mutant Burger"
+    ],
+    "inputs": [
+      {
+        "item": "Wheat Bread",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Salmon",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Pan",
+        "substitutes": []
+      },
+      {
+        "item": "Cucumbers",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Cream Cheese",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Onions",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Chicken Noodle Soup",
+    "guid": "d0327d29-1f1b-4053-93b0-dc758b1a3f81",
+    "custom": false,
+    "output": "Chicken Noodle Soup",
+    "amount": 1,
+    "type": "Soup",
+    "unlockCost": 1,
+    "known": true,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [],
+    "inputs": [
+      {
+        "item": "Ramen Noodles",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Cooker",
+        "substitutes": []
+      },
+      {
+        "item": "Chicken",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Cooker",
+        "substitutes": []
+      },
+      {
+        "item": "Onions",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Cooker",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Chicken Sandwich",
+    "guid": "c9134875-7479-4104-9203-468e5b6c3d66",
+    "custom": false,
+    "output": "Chicken Sandwich",
+    "amount": 1,
+    "type": "Sandwich",
+    "unlockCost": 1,
+    "known": true,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [],
+    "inputs": [
+      {
+        "item": "Toast",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Raw",
+        "substitutes": []
+      },
+      {
+        "item": "Chicken",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Grill",
+        "substitutes": []
+      },
+      {
+        "item": "Lettuce",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Raw",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Chicken Shake",
+    "guid": "3b4c3246-f661-4b3e-9294-1b873c08b442",
+    "custom": false,
+    "output": "Chicken Shake",
+    "amount": 1,
+    "type": "Drink",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Molotov Cocktail"
+    ],
+    "inputs": [
+      {
+        "item": "Milk",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Chicken",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Cooker",
+        "substitutes": []
+      },
+      {
+        "item": "Banana",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Blender",
+        "substitutes": []
+      },
+      {
+        "item": "Honey",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Citrus Juice",
+    "guid": "f8b4093c-ad29-4e94-b3ad-e1f6a13195cd",
+    "custom": false,
+    "output": "Citrus Juice",
+    "amount": 1,
+    "type": "Drink",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Calypso Island Iced Tea"
+    ],
+    "inputs": [
+      {
+        "item": "Tequila",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Lemons",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Oranges",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Grapefruit",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Honey",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "ClamZest",
+    "guid": "6150d229-a4af-4378-9ce9-8b049bda7ad0",
+    "custom": false,
+    "output": "ClamZest",
+    "amount": 1,
+    "type": "Drink",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": true,
+    "prerequisites": [
+      "Black Widow"
+    ],
+    "inputs": [
+      {
+        "item": "Clam",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Tomatoes",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Blender",
+        "substitutes": []
+      },
+      {
+        "item": "Chili",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Celery",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "Blender",
+        "substitutes": []
+      },
+      {
+        "item": "Bacon",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Cloudplugs",
+    "guid": "83fda087-7c01-4d0d-8fe8-41e191cfd86a",
+    "custom": false,
+    "output": "Cloudplugs",
+    "amount": 1,
+    "type": "Meat",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Sunrise"
+    ],
+    "inputs": [
+      {
+        "item": "Flour",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Cooker",
+        "substitutes": []
+      },
+      {
+        "item": "Eggs",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Beef",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": [
+          "Meat"
+        ]
+      },
+      {
+        "item": "Onions",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Black Mushroom",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Cola Chicken",
+    "guid": "e95184c4-bae0-4f23-b93f-205cb958ab24",
+    "custom": false,
+    "output": "ColaChicken",
+    "amount": 1,
+    "type": "Meat",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Eyeball Pasta"
+    ],
+    "inputs": [
+      {
+        "item": "Chicken",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Cooker",
+        "substitutes": []
+      },
+      {
+        "item": "Black Soda",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Black Mushroom",
+        "amount": 1,
+        "slot": "Sides",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Onions",
+        "amount": 1,
+        "slot": "Sides",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Crispy Bugs Platter",
+    "guid": "312eba19-c958-4378-8865-f54f8baeba52",
+    "custom": false,
+    "output": "Crispy Bugs Platter",
+    "amount": 1,
+    "type": "Snack",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": true,
+    "prerequisites": [
+      "Accordion Potatoes"
+    ],
+    "inputs": [
+      {
+        "item": "Grasshopers",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Pan",
+        "substitutes": []
+      },
+      {
+        "item": "Cockroaches",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Pan",
+        "substitutes": []
+      },
+      {
+        "item": "Grub",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Pan",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Crispy Chicken Burger",
+    "guid": "c33f6cfb-d18c-4f7b-b3ae-510e70964c28",
+    "custom": false,
+    "output": "Crispy Chicken Burger",
+    "amount": 1,
+    "type": "Sandwich",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Blue Taco",
+      "Chic Salmon and Cucumber Sandwiches"
+    ],
+    "inputs": [
+      {
+        "item": "Burger Bun",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Raw",
+        "substitutes": []
+      },
+      {
+        "item": "Chicken",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Pan",
+        "substitutes": []
+      },
+      {
+        "item": "Flour",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Tomatoes",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "Raw",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Croquettes",
+    "guid": "8095cc05-6ca7-4792-937d-b2e71e1d720b",
+    "custom": false,
+    "output": "Croquettes",
+    "amount": 1,
+    "type": "Meat",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Steak"
+    ],
+    "inputs": [
+      {
+        "item": "Milk",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Eggs",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Pork",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": [
+          "Meat"
+        ]
+      },
+      {
+        "item": "Chicken",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Cooker",
+        "substitutes": []
+      },
+      {
+        "item": "Chickpeas",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Cyber Shot",
+    "guid": "2c7876a0-6f0d-4f31-a086-36cc90f6abd8",
+    "custom": false,
+    "output": "Cyber Shot",
+    "amount": 1,
+    "type": "Drink",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": true,
+    "prerequisites": [
+      "Purple Magic"
+    ],
+    "inputs": [
+      {
+        "item": "Gin",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Chlorophyll",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Cucumbers",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Blender",
+        "substitutes": []
+      },
+      {
+        "item": "Lime",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Muskmelon",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Blender",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Dace Kalatusha",
+    "guid": "02d46d03-6a35-4b47-befe-717c1bb42dfb",
+    "custom": false,
+    "output": "Dace Kalatusha",
+    "amount": 1,
+    "type": "Fish",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [],
+    "inputs": [
+      {
+        "item": "Dace",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Pan",
+        "substitutes": [
+          "Fish"
+        ]
+      },
+      {
+        "item": "Black Mushroom",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Grinder",
+        "substitutes": [
+          "Mushroom"
+        ]
+      },
+      {
+        "item": "Carrots",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Grinder",
+        "substitutes": []
+      },
+      {
+        "item": "Parsley",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "None",
+        "substitutes": [
+          "Herb"
+        ]
+      }
+    ]
+  },
+  {
+    "asset": "Dango",
+    "guid": "a6152fd5-4d80-45bf-88c2-58509ba7e739",
+    "custom": false,
+    "output": "Dango",
+    "amount": 1,
+    "type": "Dessert",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [],
+    "inputs": [
+      {
+        "item": "Rice",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Cooker",
+        "substitutes": []
+      },
+      {
+        "item": "Sugar",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Matcha Powder",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "None",
+        "substitutes": [
+          "Spice"
+        ]
+      }
+    ]
+  },
+  {
+    "asset": "Drunken Master",
+    "guid": "eb02fae4-1388-434a-a050-19701fe3dbf3",
+    "custom": false,
+    "output": "Drunken Master",
+    "amount": 1,
+    "type": "Drink",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Insect Milkshake"
+    ],
+    "inputs": [
+      {
+        "item": "Rice Wine",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Vodka",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Ginseng",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Jujube",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "None",
+        "substitutes": [
+          "Fruit"
+        ]
+      },
+      {
+        "item": "Wolfberries",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "None",
+        "substitutes": [
+          "Fruit"
+        ]
+      }
+    ]
+  },
+  {
+    "asset": "Eastern Salad",
+    "guid": "a4e69428-a76e-4210-9d42-46680b220408",
+    "custom": false,
+    "output": "Eastern Salad",
+    "amount": 1,
+    "type": "Salad",
+    "unlockCost": 1,
+    "known": true,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Summer Salad",
+      "Orange Avocado Dream"
+    ],
+    "inputs": [
+      {
+        "item": "Buckwheat",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Cooker",
+        "substitutes": []
+      },
+      {
+        "item": "Chicken",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Pan",
+        "substitutes": [
+          "Meat"
+        ]
+      },
+      {
+        "item": "Peppers",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Pan",
+        "substitutes": []
+      },
+      {
+        "item": "Straw Mushrooms",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Pan",
+        "substitutes": []
+      },
+      {
+        "item": "Fennel",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Egg Coffee",
+    "guid": "c3f044df-82e6-4bd8-8db5-4ce8bd35343b",
+    "custom": false,
+    "output": "Egg Coffee",
+    "amount": 1,
+    "type": "Drink",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Ultra 64"
+    ],
+    "inputs": [
+      {
+        "item": "Coffee Beans",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Milk",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Eggs",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Vanilla",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "None",
+        "substitutes": [
+          "Spice",
+          "Herb"
+        ]
+      }
+    ]
+  },
+  {
+    "asset": "Espresso Martini",
+    "guid": "4da97aef-8889-43d4-885f-183aa3ce4b39",
+    "custom": false,
+    "output": "Espresso Martini",
+    "amount": 1,
+    "type": "Drink",
+    "unlockCost": 1,
+    "known": true,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Galaxy Lemonade"
+    ],
+    "inputs": [
+      {
+        "item": "Coffee Beans",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Kahlua",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Vodka",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Sugar",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Eyeball Pasta",
+    "guid": "6b30cfae-a7aa-40ff-b058-638398959571",
+    "custom": false,
+    "output": "Eyeball Pasta",
+    "amount": 1,
+    "type": "Meat",
+    "unlockCost": 1,
+    "known": true,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Purple Potato Bombs"
+    ],
+    "inputs": [
+      {
+        "item": "Spaghetti Noodles",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Cooker",
+        "substitutes": []
+      },
+      {
+        "item": "Spinach",
+        "amount": 1,
+        "slot": "Sauce",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Tomatoes",
+        "amount": 1,
+        "slot": "Sauce",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Blue Cheese",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Olives",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Fennel Soup with Bacon",
+    "guid": "ffac7bc1-37f9-4238-a499-3fc2aa1e3ed1",
+    "custom": false,
+    "output": "Fennel Soup with Bacon",
+    "amount": 1,
+    "type": "Soup",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Beef Ramen",
+      "Garlic Soup"
+    ],
+    "inputs": [
+      {
+        "item": "Fennel",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Cooker",
+        "substitutes": []
+      },
+      {
+        "item": "Potatoes",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Cream",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Bacon",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Fish Burger",
+    "guid": "92adbfc7-dda4-4c16-84d3-e28642fa6469",
+    "custom": false,
+    "output": "Fish Burger",
+    "amount": 1,
+    "type": "Sandwich",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [],
+    "inputs": [
+      {
+        "item": "Burger Bun",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Raw",
+        "substitutes": []
+      },
+      {
+        "item": "Carp",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Grill",
+        "substitutes": [
+          "Fish"
+        ]
+      },
+      {
+        "item": "Lettuce",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Fish Salad",
+    "guid": "d97e59b6-7457-49b2-836b-bd060822330e",
+    "custom": false,
+    "output": "Fish Salad",
+    "amount": 1,
+    "type": "Salad",
+    "unlockCost": 1,
+    "known": true,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [],
+    "inputs": [
+      {
+        "item": "Carp",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Raw",
+        "substitutes": [
+          "Fish"
+        ]
+      },
+      {
+        "item": "Cucumbers",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Raw",
+        "substitutes": []
+      },
+      {
+        "item": "Bean Sprouts",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Cooker",
+        "substitutes": []
+      },
+      {
+        "item": "Asparagus",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Cooker",
+        "substitutes": []
+      },
+      {
+        "item": "Tomatoes",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Flask Fizz",
+    "guid": "ce1bc983-dfc3-4e6a-a62f-52b64cc5660c",
+    "custom": false,
+    "output": "Flask Fizz",
+    "amount": 1,
+    "type": "Drink",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": true,
+    "prerequisites": [
+      "Mushroom Hot Cocoa"
+    ],
+    "inputs": [
+      {
+        "item": "Gin",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Vodka",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Tonic Water",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Liquid Nitrogen",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Blueberries",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "Blender",
+        "substitutes": [
+          "Fruit"
+        ]
+      }
+    ]
+  },
+  {
+    "asset": "Fried Carp",
+    "guid": "9522e529-bd13-4d60-b7d8-992040bbdb5c",
+    "custom": false,
+    "output": "Fried Carp",
+    "amount": 1,
+    "type": "Fish",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [],
+    "inputs": [
+      {
+        "item": "Carp",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Pan",
+        "substitutes": [
+          "Fish"
+        ]
+      },
+      {
+        "item": "Flour",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Frosted Murder",
+    "guid": "891786ea-de3d-4684-82d4-51bf9143a444",
+    "custom": false,
+    "output": "Frosted Murder",
+    "amount": 1,
+    "type": "Drink",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": true,
+    "prerequisites": [
+      "Immortalitea"
+    ],
+    "inputs": [
+      {
+        "item": "Vodka",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Liquid Nitrogen",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Cherries",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Fruity Burger",
+    "guid": "c5050fb5-de80-4c2f-b5d6-393a57330209",
+    "custom": false,
+    "output": "Fruity Burger",
+    "amount": 1,
+    "type": "Sandwich",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Ice Cream Burger"
+    ],
+    "inputs": [
+      {
+        "item": "Burger Bun",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Watermelon",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "Grill",
+        "substitutes": []
+      },
+      {
+        "item": "Pineapple",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "Grill",
+        "substitutes": []
+      },
+      {
+        "item": "Oranges",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Parmesan",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Frushi",
+    "guid": "0a9e5489-fffa-41f1-9113-8b738262bdd3",
+    "custom": false,
+    "output": "Frushi",
+    "amount": 1,
+    "type": "Dessert",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Sweet Waffle"
+    ],
+    "inputs": [
+      {
+        "item": "Rice",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Cooker",
+        "substitutes": []
+      },
+      {
+        "item": "Coconut",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Mango",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "None",
+        "substitutes": [
+          "Fruit"
+        ]
+      },
+      {
+        "item": "Strawberries",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "None",
+        "substitutes": [
+          "Fruit"
+        ]
+      },
+      {
+        "item": "Kiwi",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "None",
+        "substitutes": [
+          "Fruit"
+        ]
+      }
+    ]
+  },
+  {
+    "asset": "Fuh",
+    "guid": "eec9e470-085e-4f4b-a00c-8ed20da646c1",
+    "custom": false,
+    "output": "Fuh",
+    "amount": 1,
+    "type": "Drink",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": true,
+    "prerequisites": [
+      "Aqua Freeze"
+    ],
+    "inputs": [
+      {
+        "item": "Gin",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Lime",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Aloe Vera",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Star Anise",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Coriander",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Futu-Rice",
+    "guid": "298c8019-b2de-42a2-b77b-9347bf16640a",
+    "custom": false,
+    "output": "Futu-Rice",
+    "amount": 1,
+    "type": "Meat",
+    "unlockCost": 1,
+    "known": true,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Steak"
+    ],
+    "inputs": [
+      {
+        "item": "Rice",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Cooker",
+        "substitutes": []
+      },
+      {
+        "item": "Pork",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Broccoli",
+        "amount": 1,
+        "slot": "Sides",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Cucumbers",
+        "amount": 1,
+        "slot": "Sides",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Carrots",
+        "amount": 1,
+        "slot": "Sides",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Galaxy Lemonade",
+    "guid": "9f793ca3-9329-4f38-aea8-40d5b6f75bc1",
+    "custom": false,
+    "output": "Galaxy Lemonade",
+    "amount": 1,
+    "type": "Drink",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Oyster Shooter"
+    ],
+    "inputs": [
+      {
+        "item": "Tonic Water",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Lemons",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Butterfly Pea Flower",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Blender",
+        "substitutes": []
+      },
+      {
+        "item": "Roses",
+        "amount": 1,
+        "slot": "Sides",
+        "processing": "None",
+        "substitutes": [
+          "Flower"
+        ]
+      }
+    ]
+  },
+  {
+    "asset": "Galician-Style-Octopus",
+    "guid": "f0e1fdfc-f79d-42f0-9f64-3f555ec310a5",
+    "custom": false,
+    "output": "Galician-Style-Octopus",
+    "amount": 1,
+    "type": "Seafood",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [],
+    "inputs": [
+      {
+        "item": "Potatoes",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Pan",
+        "substitutes": []
+      },
+      {
+        "item": "Squid",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Cooker",
+        "substitutes": []
+      },
+      {
+        "item": "Olive Oil",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "Raw",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Garlic Soup",
+    "guid": "121a3839-c057-4608-bb27-e37f3e318bda",
+    "custom": false,
+    "output": "Garlic Soup",
+    "amount": 1,
+    "type": "Soup",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Chicken Noodle Soup"
+    ],
+    "inputs": [
+      {
+        "item": "Chicken",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Eggs",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Pork",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Garlic",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "Cooker",
+        "substitutes": []
+      },
+      {
+        "item": "Wheat Bread",
+        "amount": 1,
+        "slot": "Sides",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Ginger Lime Espresso Tonic",
+    "guid": "f14fdd6a-3218-49e9-941a-cdc2ccc64293",
+    "custom": false,
+    "output": "Ginger Lime Espresso Tonic",
+    "amount": 1,
+    "type": "Drink",
+    "unlockCost": 1,
+    "known": true,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Green Snake"
+    ],
+    "inputs": [
+      {
+        "item": "Tonic Water",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Coffee Beans",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Ginger",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "Blender",
+        "substitutes": []
+      },
+      {
+        "item": "Lime",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Golden Rings",
+    "guid": "a0e890b6-efe4-4aca-9b9b-fe1a103a90b2",
+    "custom": false,
+    "output": "Golden Rings",
+    "amount": 1,
+    "type": "Sandwich",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [],
+    "inputs": [
+      {
+        "item": "Burger Bun",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Squid",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Pan",
+        "substitutes": []
+      },
+      {
+        "item": "Lemons",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Garlic",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Goulash",
+    "guid": "45eb236d-5f3b-4c01-838c-0db989ff7178",
+    "custom": false,
+    "output": "Goulash",
+    "amount": 1,
+    "type": "Soup",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Snake Soup"
+    ],
+    "inputs": [
+      {
+        "item": "Beef",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Cooker",
+        "substitutes": []
+      },
+      {
+        "item": "Potatoes",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Peppers",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Grandma's Cake",
+    "guid": "1ff2ab44-3a50-46e3-97ca-a89b719ddb23",
+    "custom": false,
+    "output": "Grandma's Cake",
+    "amount": 1,
+    "type": "Dessert",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Orange Creme Caramel"
+    ],
+    "inputs": [
+      {
+        "item": "Butter",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Chocolate",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Oven, Blender",
+        "substitutes": []
+      },
+      {
+        "item": "Milk",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Sugar",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Biscuits",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Great Green Salad",
+    "guid": "343dbbef-eff0-46d7-9300-8d0dd06912d7",
+    "custom": false,
+    "output": "Great Green Salad",
+    "amount": 1,
+    "type": "Salad",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Vinegret Salad"
+    ],
+    "inputs": [
+      {
+        "item": "Lettuce",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Raw",
+        "substitutes": []
+      },
+      {
+        "item": "Cucumbers",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Raw",
+        "substitutes": []
+      },
+      {
+        "item": "Bean Sprouts",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Cooker",
+        "substitutes": []
+      },
+      {
+        "item": "Asparagus",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Cooker",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Green Essence",
+    "guid": "7adb3bef-a14d-4a2b-95de-cb55d996d8f3",
+    "custom": false,
+    "output": "Green Essence",
+    "amount": 1,
+    "type": "Drink",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": true,
+    "prerequisites": [
+      "Pi Pa"
+    ],
+    "inputs": [
+      {
+        "item": "Spinach",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Blender",
+        "substitutes": []
+      },
+      {
+        "item": "Cucumbers",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Blender",
+        "substitutes": []
+      },
+      {
+        "item": "Vodka",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Blender",
+        "substitutes": [
+          "Alcohol"
+        ]
+      },
+      {
+        "item": "Ginger",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "Blender",
+        "substitutes": []
+      },
+      {
+        "item": "Celery",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Green Snake",
+    "guid": "f1605f65-f7c4-45cb-acfb-2c5cef711e3a",
+    "custom": false,
+    "output": "Green Snake",
+    "amount": 1,
+    "type": "Drink",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": true,
+    "prerequisites": [
+      "Egg Coffee"
+    ],
+    "inputs": [
+      {
+        "item": "Snake Wine",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Absinthe",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Chartreuse",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Coriander",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Mint",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "Blender",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Gyudon",
+    "guid": "c97d679e-88c9-45b1-b2a9-c77a57d71da2",
+    "custom": false,
+    "output": "Gyudon",
+    "amount": 1,
+    "type": "Meat",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [],
+    "inputs": [
+      {
+        "item": "Rice",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Cooker",
+        "substitutes": []
+      },
+      {
+        "item": "Beef",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Cooker",
+        "substitutes": []
+      },
+      {
+        "item": "Eggs",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Pan",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Hawaiian Pizza",
+    "guid": "b3530719-fb37-4ac0-b004-18c8b9599f68",
+    "custom": false,
+    "output": "Hawaiian Pizza",
+    "amount": 1,
+    "type": "Pizza",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Watermelon Pizza"
+    ],
+    "inputs": [
+      {
+        "item": "Pizza Dough",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Oven",
+        "substitutes": []
+      },
+      {
+        "item": "Mozarella",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": [
+          "Cheese"
+        ]
+      },
+      {
+        "item": "Tomatoes",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Pineapple",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Bacon",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Honey Marinated Sabrefish",
+    "guid": "194b81cf-feaa-4b28-b23d-3789183d5fc0",
+    "custom": false,
+    "output": "Honey Marinated Sabrefish",
+    "amount": 1,
+    "type": "Fish",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Roasted Crucian in Sour Cream Sauce"
+    ],
+    "inputs": [
+      {
+        "item": "SabreFish",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Grill",
+        "substitutes": [
+          "Fish"
+        ]
+      },
+      {
+        "item": "Rice",
+        "amount": 1,
+        "slot": "Sides",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Honey",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Soy Sauce",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Garlic",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Hotate Nigiri",
+    "guid": "08fdc87f-9b30-442f-902c-f0f5752dfb50",
+    "custom": false,
+    "output": "Hotate Nigiri",
+    "amount": 1,
+    "type": "Seafood",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Pineapple Fried Rice"
+    ],
+    "inputs": [
+      {
+        "item": "Rice",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Cooker",
+        "substitutes": []
+      },
+      {
+        "item": "Scallops",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "Raw",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Ice Cream Burger",
+    "guid": "a23695b1-a1c9-440a-ba4b-1d1ea6dd5d91",
+    "custom": false,
+    "output": "Ice Cream Burger",
+    "amount": 1,
+    "type": "Dessert",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": true,
+    "prerequisites": [
+      "Vege Burger",
+      "Pickle Corn Dog"
+    ],
+    "inputs": [
+      {
+        "item": "Burger Bun",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Milk",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Whipped Cream",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Cocoa Powder",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Strawberries",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Ika Nigiri",
+    "guid": "36e195de-9b66-4eda-84d8-55ec7d9dfb3b",
+    "custom": false,
+    "output": "Ika Nigiri",
+    "amount": 1,
+    "type": "Seafood",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Katsu Ika Odori Don"
+    ],
+    "inputs": [
+      {
+        "item": "Rice",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Cooker",
+        "substitutes": []
+      },
+      {
+        "item": "Squid",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "Raw",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Ikasumi",
+    "guid": "294237c8-0d85-483f-a197-2a58a81e1ed3",
+    "custom": false,
+    "output": "Ikasumi",
+    "amount": 1,
+    "type": "Drink",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": true,
+    "prerequisites": [
+      "Ocean Latte"
+    ],
+    "inputs": [
+      {
+        "item": "Gin",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Vermouth",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Squid Ink",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "Grill",
+        "substitutes": []
+      },
+      {
+        "item": "Olives",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Immortalitea",
+    "guid": "8370575c-7ed8-4e2e-8ec1-9ed64e2b5f19",
+    "custom": false,
+    "output": "Immortalitea",
+    "amount": 1,
+    "type": "Drink",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": true,
+    "prerequisites": [
+      "Scarlet Shot"
+    ],
+    "inputs": [
+      {
+        "item": "Oolong",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Ginseng",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Jasmine",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Osmanthus",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Honey",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Insect Milkshake",
+    "guid": "4f7bc5e6-8820-4bfe-9880-547c28d9613d",
+    "custom": false,
+    "output": "Insect Milkshake",
+    "amount": 1,
+    "type": "Drink",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Pina Colada"
+    ],
+    "inputs": [
+      {
+        "item": "Milk",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Cricket",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Blender",
+        "substitutes": []
+      },
+      {
+        "item": "Vanilla",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Whipped Cream",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Insect Sushi",
+    "guid": "ae763936-0287-413b-8f8c-b8ae0b4b3c55",
+    "custom": false,
+    "output": "Insect Sushi",
+    "amount": 1,
+    "type": "Snack",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": true,
+    "prerequisites": [
+      "Taiyaki"
+    ],
+    "inputs": [
+      {
+        "item": "Rice",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Cooker",
+        "substitutes": []
+      },
+      {
+        "item": "Seaweed",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Cockroaches",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Grasshopers",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Grub",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Jalapeno Juice",
+    "guid": "24988dbf-ed73-4a93-aedf-ee6081242e87",
+    "custom": false,
+    "output": "Jalapeno Juice",
+    "amount": 1,
+    "type": "Drink",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": true,
+    "prerequisites": [
+      "VapoBooze"
+    ],
+    "inputs": [
+      {
+        "item": "Cucumbers",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Blender",
+        "substitutes": []
+      },
+      {
+        "item": "Mango",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Blender",
+        "substitutes": []
+      },
+      {
+        "item": "Lime",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Pineapple",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Peppers",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Jellied Volga Zander",
+    "guid": "c4f10bbb-d676-45b5-bbd6-18ba9a43c67f",
+    "custom": false,
+    "output": "Jellied Volga Zander",
+    "amount": 1,
+    "type": "Fish",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Zope with Cherry Salsa"
+    ],
+    "inputs": [
+      {
+        "item": "Volga Zander",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Grill",
+        "substitutes": [
+          "Fish"
+        ]
+      },
+      {
+        "item": "Onions",
+        "amount": 1,
+        "slot": "Sides",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Carrots",
+        "amount": 1,
+        "slot": "Sides",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Kaisen Don",
+    "guid": "10631d24-fb62-4f24-9993-255bcb2fe4f2",
+    "custom": false,
+    "output": "Kaisen Don",
+    "amount": 1,
+    "type": "Seafood",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [],
+    "inputs": [
+      {
+        "item": "Rice",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Cooker",
+        "substitutes": []
+      },
+      {
+        "item": "Salmon",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "Raw",
+        "substitutes": [
+          "Fish"
+        ]
+      },
+      {
+        "item": "Squid",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "Raw",
+        "substitutes": [
+          "Seafood"
+        ]
+      },
+      {
+        "item": "Shrimp",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "Raw",
+        "substitutes": [
+          "Seafood"
+        ]
+      }
+    ]
+  },
+  {
+    "asset": "Katsu Ika Odori Don",
+    "guid": "cc28b6c1-93ad-4de7-98ef-b76231196e1b",
+    "custom": false,
+    "output": "Katsu Ika Odori Don",
+    "amount": 1,
+    "type": "Seafood",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Hotate Nigiri",
+      "Veggie Roll"
+    ],
+    "inputs": [
+      {
+        "item": "Rice",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Cooker",
+        "substitutes": []
+      },
+      {
+        "item": "Squid",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "Raw",
+        "substitutes": []
+      },
+      {
+        "item": "Fish Roe",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "Raw",
+        "substitutes": []
+      },
+      {
+        "item": "Seaweed",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Soy Sauce",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "King Mushroom Steak",
+    "guid": "01255b88-a94f-4f30-bb16-bc7e4680ced0",
+    "custom": false,
+    "output": "King Mushroom Steak",
+    "amount": 1,
+    "type": "Meat",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Bombies",
+      "Cloudplugs"
+    ],
+    "inputs": [
+      {
+        "item": "King Mushroom",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Cooker",
+        "substitutes": []
+      },
+      {
+        "item": "Almonds",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Lemons",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Black Pepper",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Basil",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Kompot",
+    "guid": "791308d7-ec83-438c-a7f9-4d7435273d52",
+    "custom": false,
+    "output": "Kompot",
+    "amount": 1,
+    "type": "Drink",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Strawberry Stinger"
+    ],
+    "inputs": [
+      {
+        "item": "Apples",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": [
+          "Fruit"
+        ]
+      },
+      {
+        "item": "Melon",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": [
+          "Fruit"
+        ]
+      }
+    ]
+  },
+  {
+    "asset": "Kung Pao Chicken",
+    "guid": "b0e5145b-d352-42a5-ae47-c96d5242232f",
+    "custom": false,
+    "output": "Kung Pao Chicken",
+    "amount": 1,
+    "type": "Meat",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Croquettes",
+      "Futu-Rice"
+    ],
+    "inputs": [
+      {
+        "item": "Rice",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Chicken",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Cooker",
+        "substitutes": []
+      },
+      {
+        "item": "Peanuts",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Ginger",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Chili",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Kushiyaki",
+    "guid": "7e410bd0-ed1e-4824-8839-7ecc6e2c640c",
+    "custom": false,
+    "output": "Kushiyaki",
+    "amount": 1,
+    "type": "Snack",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Balut"
+    ],
+    "inputs": [
+      {
+        "item": "Chicken",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Grill",
+        "substitutes": []
+      },
+      {
+        "item": "Beef",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Grill",
+        "substitutes": []
+      },
+      {
+        "item": "Salmon",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Grill",
+        "substitutes": []
+      },
+      {
+        "item": "King Mushroom",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Grill",
+        "substitutes": []
+      },
+      {
+        "item": "Okra",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Grill",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Kvass",
+    "guid": "d6b1deb2-d473-46c1-9482-5ec26350f92a",
+    "custom": false,
+    "output": "Kvass",
+    "amount": 1,
+    "type": "Drink",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Frosted Murder"
+    ],
+    "inputs": [
+      {
+        "item": "Rye",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Yeast",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Lizard Tonic",
+    "guid": "0ac609f9-3a87-41a7-b6ac-b371be7c3d15",
+    "custom": false,
+    "output": "Lizard Tonic",
+    "amount": 1,
+    "type": "Drink",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Mint Mojito Iced Coffee"
+    ],
+    "inputs": [
+      {
+        "item": "Rum",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Lizard",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Blender",
+        "substitutes": []
+      },
+      {
+        "item": "Mint",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "Blender",
+        "substitutes": []
+      },
+      {
+        "item": "Lime",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Luxury Island Flower",
+        "amount": 1,
+        "slot": "Sides",
+        "processing": "None",
+        "substitutes": [
+          "Flower"
+        ]
+      }
+    ]
+  },
+  {
+    "asset": "Magic Potion",
+    "guid": "361c40b6-d179-46df-884c-27ba7de3b978",
+    "custom": false,
+    "output": "Magic Potion",
+    "amount": 1,
+    "type": "Soup",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Solyanka Soup"
+    ],
+    "inputs": [
+      {
+        "item": "Tomatoes",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Cucumbers",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Cooker",
+        "substitutes": []
+      },
+      {
+        "item": "Onions",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Olive Oil",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Garlic",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Mei Ling",
+    "guid": "988b2ba4-d5f1-46fa-b616-6a60787a7840",
+    "custom": false,
+    "output": "Mei Ling",
+    "amount": 1,
+    "type": "Drink",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": true,
+    "prerequisites": [
+      "Green Essence"
+    ],
+    "inputs": [
+      {
+        "item": "Brandy",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Amaro",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Lime",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Ginger",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Mint",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Meridian Pizza",
+    "guid": "56bf8356-ebec-4308-b782-8dbada3ee5a7",
+    "custom": false,
+    "output": "Meridian Pizza",
+    "amount": 1,
+    "type": "Pizza",
+    "unlockCost": 1,
+    "known": true,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Pizza Creativo"
+    ],
+    "inputs": [
+      {
+        "item": "Pizza Dough",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Oven",
+        "substitutes": []
+      },
+      {
+        "item": "Spirulina",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Chicken",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "None",
+        "substitutes": [
+          "Meat"
+        ]
+      },
+      {
+        "item": "Hibiscus Flower",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "None",
+        "substitutes": [
+          "Flower"
+        ]
+      }
+    ]
+  },
+  {
+    "asset": "Mini Hotpot",
+    "guid": "723a8838-7304-4e21-9bb8-28b08d02a0da",
+    "custom": false,
+    "output": "Mini Hotpot",
+    "amount": 1,
+    "type": "Seafood",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Taste of Lobster"
+    ],
+    "inputs": [
+      {
+        "item": "Chicken",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Cooker",
+        "substitutes": []
+      },
+      {
+        "item": "Cabbage",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Squid",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Shrimp",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Mint Mojito Iced Coffee",
+    "guid": "effc598e-6d9e-45a6-9ab4-e7c4116f0909",
+    "custom": false,
+    "output": "Mint Mojito Iced Coffee",
+    "amount": 1,
+    "type": "Drink",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": true,
+    "prerequisites": [
+      "Beer"
+    ],
+    "inputs": [
+      {
+        "item": "Milk",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Coffee Beans",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Mint",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Sugar",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Molotov Cocktail",
+    "guid": "afa47d6a-d97c-40df-9f11-5352967ba990",
+    "custom": false,
+    "output": "Molotov Cocktail",
+    "amount": 1,
+    "type": "Drink",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": true,
+    "prerequisites": [
+      "Serenity"
+    ],
+    "inputs": [
+      {
+        "item": "Tequila",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Raspberries",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "Blender",
+        "substitutes": []
+      },
+      {
+        "item": "Pineapple",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Blender",
+        "substitutes": []
+      },
+      {
+        "item": "Chili",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "Blender",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Mushroom Hot Cocoa",
+    "guid": "4f3eae33-5b58-4fd6-93b3-b39988d662a0",
+    "custom": false,
+    "output": "Mushroom Hot Cocoa",
+    "amount": 1,
+    "type": "Drink",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": true,
+    "prerequisites": [
+      "Cyber Shot"
+    ],
+    "inputs": [
+      {
+        "item": "Milk",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Cocoa Powder",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Black Mushroom",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Blender",
+        "substitutes": []
+      },
+      {
+        "item": "Vanilla",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "Blender",
+        "substitutes": [
+          "Herb",
+          "Spice"
+        ]
+      },
+      {
+        "item": "Cinnamon",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "None",
+        "substitutes": [
+          "Herb",
+          "Spice"
+        ]
+      }
+    ]
+  },
+  {
+    "asset": "Mutant Burger",
+    "guid": "a7dbad5e-2b93-4e78-806a-41bf3ecf4ee2",
+    "custom": false,
+    "output": "Mutant Burger",
+    "amount": 1,
+    "type": "Sandwich",
+    "unlockCost": 1,
+    "known": true,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [],
+    "inputs": [
+      {
+        "item": "Burger Bun",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Beef",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Pan",
+        "substitutes": []
+      },
+      {
+        "item": "Lettuce",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Blue Cheese",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Tomatoes",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Nitro Espresso Tonic",
+    "guid": "e6e0336c-b00a-45fb-8cc9-af53a83c8ace",
+    "custom": false,
+    "output": "Nitro Espresso Tonic",
+    "amount": 1,
+    "type": "Drink",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Lizard Tonic"
+    ],
+    "inputs": [
+      {
+        "item": "Tonic Water",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Coffee Beans",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Liquid Nitrogen",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Oranges",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Rosemary",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Nivalis",
+    "guid": "3439a0f3-6963-43cd-af0a-39be6e9b489e",
+    "custom": false,
+    "output": "Nivalis",
+    "amount": 1,
+    "type": "Drink",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Kompot"
+    ],
+    "inputs": [
+      {
+        "item": "Gin",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Rum",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Lemons",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Roses",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Blender",
+        "substitutes": []
+      },
+      {
+        "item": "Butterfly Pea Flower",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Blender",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Nivalis Sunset",
+    "guid": "06cae883-2b42-4fd5-9cc0-a3a00c1769d2",
+    "custom": false,
+    "output": "Nivalis Sunset",
+    "amount": 1,
+    "type": "Drink",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Chicken Shake"
+    ],
+    "inputs": [
+      {
+        "item": "Rum",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Tequila",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Mango",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Blender",
+        "substitutes": []
+      },
+      {
+        "item": "Peach",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Blender",
+        "substitutes": []
+      },
+      {
+        "item": "Oranges",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Nivalis-Brochette",
+    "guid": "e09ad29f-7510-4764-91c2-74588aed2361",
+    "custom": false,
+    "output": "Nivalis-Brochette",
+    "amount": 1,
+    "type": "Meat",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [],
+    "inputs": [
+      {
+        "item": "Rat Meat",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "DeepFryer",
+        "substitutes": []
+      },
+      {
+        "item": "Shrimp",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "DeepFryer",
+        "substitutes": [
+          "Seafood"
+        ]
+      },
+      {
+        "item": "Pike",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "DeepFryer",
+        "substitutes": [
+          "Fish"
+        ]
+      },
+      {
+        "item": "Potatoes",
+        "amount": 1,
+        "slot": "Sides",
+        "processing": "DeepFryer",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Ocean Latte",
+    "guid": "488b556f-0de8-4126-a81f-0c4bb5ca6739",
+    "custom": false,
+    "output": "Ocean Latte",
+    "amount": 1,
+    "type": "Drink",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Aurora"
+    ],
+    "inputs": [
+      {
+        "item": "Milk",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Coffee Beans",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Blueberries",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Blender",
+        "substitutes": []
+      },
+      {
+        "item": "Butterfly Pea Flower",
+        "amount": 1,
+        "slot": "Sides",
+        "processing": "Blender",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Okroshka",
+    "guid": "c9cd6087-9ea1-4e92-b1d9-4106efbf5114",
+    "custom": false,
+    "output": "Okroshka",
+    "amount": 1,
+    "type": "Soup",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Beer Soup"
+    ],
+    "inputs": [
+      {
+        "item": "Kvass",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Cooker",
+        "substitutes": []
+      },
+      {
+        "item": "Cucumbers",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Radishes",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Potatoes",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Pork",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Olivier Salad",
+    "guid": "cda4dee8-ec0e-401e-8393-2ba58a3934da",
+    "custom": false,
+    "output": "Olivier Salad",
+    "amount": 1,
+    "type": "Salad",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Great Green Salad",
+      "Breakfast Salad"
+    ],
+    "inputs": [
+      {
+        "item": "Potatoes",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Eggs",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Cooker",
+        "substitutes": []
+      },
+      {
+        "item": "Cucumbers",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Peas",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Pork",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Onigiri",
+    "guid": "4ad8d1ca-2be2-4d4b-b34a-76c9b710a7c6",
+    "custom": false,
+    "output": "Onigiri",
+    "amount": 1,
+    "type": "Seafood",
+    "unlockCost": 1,
+    "known": true,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Spider Roll"
+    ],
+    "inputs": [
+      {
+        "item": "Rice",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Cooker",
+        "substitutes": []
+      },
+      {
+        "item": "Seaweed",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Salmon",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Pan",
+        "substitutes": []
+      },
+      {
+        "item": "Soy Beans",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Eggs",
+        "amount": 1,
+        "slot": "Sides",
+        "processing": "Cooker",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Onion Rings",
+    "guid": "326d3e2f-a441-44bf-b10d-7c6e98444beb",
+    "custom": false,
+    "output": "Onion Rings",
+    "amount": 1,
+    "type": "Snack",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Kushiyaki"
+    ],
+    "inputs": [
+      {
+        "item": "Onions",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Flour",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Cooker",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Onion Soup",
+    "guid": "2cbec315-e636-44d6-ba95-29f32e061820",
+    "custom": false,
+    "output": "Onion Soup",
+    "amount": 1,
+    "type": "Soup",
+    "unlockCost": 1,
+    "known": true,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Sailor Soup",
+      "Cendol"
+    ],
+    "inputs": [
+      {
+        "item": "Onions",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Cooker",
+        "substitutes": []
+      },
+      {
+        "item": "Pork",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Cream Cheese",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Wheat Bread",
+        "amount": 1,
+        "slot": "Sides",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Orange Avocado Dream",
+    "guid": "4524e4fc-2911-431c-bff1-58cc558958dc",
+    "custom": false,
+    "output": "Orange Avocado Dream",
+    "amount": 1,
+    "type": "Salad",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Olivier Salad"
+    ],
+    "inputs": [
+      {
+        "item": "Lettuce",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Raw",
+        "substitutes": []
+      },
+      {
+        "item": "Oranges",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Raw",
+        "substitutes": []
+      },
+      {
+        "item": "Avocados",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Raw",
+        "substitutes": []
+      },
+      {
+        "item": "Cheese",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Raw",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Orange Creme Caramel",
+    "guid": "1ef80cf6-a04c-4926-b2e5-d6e84dc70ffc",
+    "custom": false,
+    "output": "Orange Creme Caramel",
+    "amount": 1,
+    "type": "Dessert",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Rain Drop Cake"
+    ],
+    "inputs": [
+      {
+        "item": "Eggs",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Milk",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Sugar",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Oranges",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "Cooker",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Oyster Shooter",
+    "guid": "a778aea3-84c7-4ce2-a564-c4a93e8a66fd",
+    "custom": false,
+    "output": "Oyster Shooter",
+    "amount": 1,
+    "type": "Drink",
+    "unlockCost": 1,
+    "known": true,
+    "disabled": false,
+    "playerOnly": true,
+    "prerequisites": [
+      "VegCoffee"
+    ],
+    "inputs": [
+      {
+        "item": "Tequila",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Oysters",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Lemons",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Chili",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Parmesan Crumbled Whitefish",
+    "guid": "b9245e2f-b13e-4204-99c3-913caf37516a",
+    "custom": false,
+    "output": "Parmesan Crumbled Whitefish",
+    "amount": 1,
+    "type": "Fish",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [],
+    "inputs": [
+      {
+        "item": "WhiteFish",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Grill",
+        "substitutes": [
+          "Fish"
+        ]
+      },
+      {
+        "item": "Parmesan",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Wheat Bread",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Mustard",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "PB&J",
+    "guid": "c51ff473-3756-4bb4-a30b-620b68df5a0f",
+    "custom": false,
+    "output": "PB&J",
+    "amount": 1,
+    "type": "Drink",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Citrus Juice"
+    ],
+    "inputs": [
+      {
+        "item": "Whiskey",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Peanuts",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Raspberries",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Pemmican",
+    "guid": "f498e8d5-fba0-4dfd-8325-c9bbd60ebded",
+    "custom": false,
+    "output": "Pemmican",
+    "amount": 1,
+    "type": "Meat",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [],
+    "inputs": [
+      {
+        "item": "Beef",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Grill",
+        "substitutes": []
+      },
+      {
+        "item": "Duck",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Grill",
+        "substitutes": []
+      },
+      {
+        "item": "Pork",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Grill",
+        "substitutes": []
+      },
+      {
+        "item": "Walnuts",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Cranberries",
+        "amount": 1,
+        "slot": "Sides",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Pi Pa",
+    "guid": "1f4533d2-ba29-4ade-a60d-000ae39dda6b",
+    "custom": false,
+    "output": "Pi Pa",
+    "amount": 1,
+    "type": "Drink",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Ginger Lime Espresso Tonic"
+    ],
+    "inputs": [
+      {
+        "item": "Tonic Water",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Whiskey",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Pi Pa Gao",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Kumquat",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Pickle Corn Dog",
+    "guid": "5c4759ba-f75d-4c17-b937-49b81f090bcb",
+    "custom": false,
+    "output": "Pickle Corn Dog",
+    "amount": 1,
+    "type": "Sandwich",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Crispy Chicken Burger"
+    ],
+    "inputs": [
+      {
+        "item": "Hot Dog Bun",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Oven",
+        "substitutes": []
+      },
+      {
+        "item": "Pork",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Flour",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Eggs",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Cucumbers",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Pike Poke",
+    "guid": "d563a7bd-0fab-4530-99a2-0f636671666b",
+    "custom": false,
+    "output": "Pike Poke",
+    "amount": 1,
+    "type": "Fish",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Steamed Tench",
+      "Dace Kalatusha"
+    ],
+    "inputs": [
+      {
+        "item": "Pike",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Pan",
+        "substitutes": [
+          "Fish"
+        ]
+      },
+      {
+        "item": "Rice",
+        "amount": 1,
+        "slot": "Sides",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Onions",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Sesame Oil",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Pina Colada",
+    "guid": "1bf05d1a-0d32-4a18-844d-e3026fb00e27",
+    "custom": false,
+    "output": "Pina Colada",
+    "amount": 1,
+    "type": "Drink",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "SoyBoost"
+    ],
+    "inputs": [
+      {
+        "item": "Rum",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Coconut",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Blender",
+        "substitutes": []
+      },
+      {
+        "item": "Cherries",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Pineapple",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Pineapple Fried Rice",
+    "guid": "d246664b-39bf-4a57-b603-ab9abb6d5b11",
+    "custom": false,
+    "output": "Pineapple Fried Rice",
+    "amount": 1,
+    "type": "Seafood",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Mini Hotpot"
+    ],
+    "inputs": [
+      {
+        "item": "Pineapple",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Pan",
+        "substitutes": []
+      },
+      {
+        "item": "Rice",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Cooker",
+        "substitutes": []
+      },
+      {
+        "item": "Shrimp",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Carrots",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Eggs",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Pizza Cocktail",
+    "guid": "53e638bf-16b0-42a3-bdac-130dba6846b4",
+    "custom": false,
+    "output": "Pizza Cocktail",
+    "amount": 1,
+    "type": "Drink",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Ruby Red"
+    ],
+    "inputs": [
+      {
+        "item": "Vodka",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Tomatoes",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Blender",
+        "substitutes": []
+      },
+      {
+        "item": "Cheese",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Blender",
+        "substitutes": []
+      },
+      {
+        "item": "Pepperoni",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "Blender",
+        "substitutes": [
+          "Herb",
+          "Spice"
+        ]
+      },
+      {
+        "item": "Basil",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "None",
+        "substitutes": [
+          "Herb",
+          "Spice"
+        ]
+      }
+    ]
+  },
+  {
+    "asset": "Pizza Creativo",
+    "guid": "da665d14-403d-42fc-b144-8fbf2ea4396e",
+    "custom": false,
+    "output": "Pizza Creativo",
+    "amount": 1,
+    "type": "Pizza",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Pizza Speciale"
+    ],
+    "inputs": [
+      {
+        "item": "Pizza Dough",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Oven",
+        "substitutes": []
+      },
+      {
+        "item": "Mayonnaise",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Bacon",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Black Mushroom",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "None",
+        "substitutes": [
+          "Mushroom"
+        ]
+      }
+    ]
+  },
+  {
+    "asset": "Pizza Frutti Di Mare",
+    "guid": "3f07f3cc-7545-448c-8d3e-f6adcfa3279a",
+    "custom": false,
+    "output": "Pizza Frutti di Mare",
+    "amount": 1,
+    "type": "Pizza",
+    "unlockCost": 1,
+    "known": true,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Meridian Pizza"
+    ],
+    "inputs": [
+      {
+        "item": "Pizza Dough",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Oven",
+        "substitutes": []
+      },
+      {
+        "item": "Cheese",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": [
+          "Cheese"
+        ]
+      },
+      {
+        "item": "Clam",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Shrimp",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Squid",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Pizza Napoli",
+    "guid": "1b3949a4-ca76-4b53-a3dc-11e73b231cda",
+    "custom": false,
+    "output": "Pizza Napoli",
+    "amount": 1,
+    "type": "Pizza",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Hawaiian Pizza"
+    ],
+    "inputs": [
+      {
+        "item": "Pizza Dough",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Oven",
+        "substitutes": []
+      },
+      {
+        "item": "Mozarella",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": [
+          "Cheese"
+        ]
+      },
+      {
+        "item": "Tomatoes",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Basil",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "None",
+        "substitutes": [
+          "Herb"
+        ]
+      }
+    ]
+  },
+  {
+    "asset": "Pizza Speciale",
+    "guid": "cadc0bff-46b0-43ed-bb75-3ecdf8d3b171",
+    "custom": false,
+    "output": "Pizza Speciale",
+    "amount": 1,
+    "type": "Pizza",
+    "unlockCost": 1,
+    "known": true,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Cheese Dream"
+    ],
+    "inputs": [
+      {
+        "item": "Pizza Dough",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Oven",
+        "substitutes": []
+      },
+      {
+        "item": "Mozarella",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": [
+          "Cheese"
+        ]
+      },
+      {
+        "item": "Tomatoes",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Prosciutto",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "King Mushroom",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "None",
+        "substitutes": [
+          "Mushroom"
+        ]
+      }
+    ]
+  },
+  {
+    "asset": "Poached Roaches",
+    "guid": "49213b55-7e1b-46e6-aac7-e6f39464d51d",
+    "custom": false,
+    "output": "Poached Roaches",
+    "amount": 1,
+    "type": "Fish",
+    "unlockCost": 1,
+    "known": true,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Almond Crusted Zander",
+      "Azores Chicharros"
+    ],
+    "inputs": [
+      {
+        "item": "Roach",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Grill",
+        "substitutes": [
+          "Fish"
+        ]
+      },
+      {
+        "item": "Vinegar",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Thyme",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Oranges",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Mint",
+        "amount": 1,
+        "slot": "Sides",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Potato Mushroom Salad",
+    "guid": "55068e0f-d55c-44fd-aa53-9ce88c7a33ce",
+    "custom": false,
+    "output": "Potato Mushroom Salad",
+    "amount": 1,
+    "type": "Salad",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Eastern Salad"
+    ],
+    "inputs": [
+      {
+        "item": "Potatoes",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Cooker",
+        "substitutes": []
+      },
+      {
+        "item": "Black Mushroom",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Grill",
+        "substitutes": [
+          "Mushroom"
+        ]
+      },
+      {
+        "item": "Onions",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Pumpkin Juice",
+    "guid": "3457b020-7ac8-4f93-96b1-664dd5490585",
+    "custom": false,
+    "output": "Pumpkin Juice",
+    "amount": 1,
+    "type": "Drink",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Flask Fizz"
+    ],
+    "inputs": [
+      {
+        "item": "Pumpkin",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Blender",
+        "substitutes": []
+      },
+      {
+        "item": "Apples",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Blender",
+        "substitutes": []
+      },
+      {
+        "item": "Peach",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "Blender",
+        "substitutes": []
+      },
+      {
+        "item": "Pineapple",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "Blender",
+        "substitutes": []
+      },
+      {
+        "item": "Cinnamon",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Purple Magic",
+    "guid": "66a4f5ad-3c68-4d09-8a12-fedded95aae1",
+    "custom": false,
+    "output": "Purple Magic",
+    "amount": 1,
+    "type": "Drink",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Fuh"
+    ],
+    "inputs": [
+      {
+        "item": "Kombucha",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Sugar",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Butterfly Pea Flower",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "Blender",
+        "substitutes": []
+      },
+      {
+        "item": "Basil",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Kiwi",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Purple Potato Bombs",
+    "guid": "bb633b46-0b40-42a1-991d-0988149da904",
+    "custom": false,
+    "output": "Purple Potato Bombs",
+    "amount": 1,
+    "type": "Meat",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "King Mushroom Steak"
+    ],
+    "inputs": [
+      {
+        "item": "Potatoes",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Cooker",
+        "substitutes": []
+      },
+      {
+        "item": "Cashew",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Butter",
+        "amount": 1,
+        "slot": "Sauce",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Chervil",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Rain Drop Cake",
+    "guid": "411dc064-be68-463d-aece-bd577f3e96da",
+    "custom": false,
+    "output": "Rain Drop Cake",
+    "amount": 1,
+    "type": "Dessert",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Brownie"
+    ],
+    "inputs": [
+      {
+        "item": "Agar",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Soy Beans",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Sugar",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Cherries",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "Cooker",
+        "substitutes": [
+          "Fruit"
+        ]
+      }
+    ]
+  },
+  {
+    "asset": "Ramen Burger",
+    "guid": "94cd6644-b481-4027-9216-e321f6a26c66",
+    "custom": false,
+    "output": "Ramen Burger",
+    "amount": 1,
+    "type": "Sandwich",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": true,
+    "prerequisites": [
+      "Chef Hugo Ortega’s Mescal Worm Tacos"
+    ],
+    "inputs": [
+      {
+        "item": "Ramen Noodles",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Pan",
+        "substitutes": []
+      },
+      {
+        "item": "Cream Cheese",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Beef",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Oven",
+        "substitutes": []
+      },
+      {
+        "item": "Tomatoes",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Lettuce",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Rassolnik Soup",
+    "guid": "44898869-5cc9-4361-810f-37b8f422e81a",
+    "custom": false,
+    "output": "Rassolnik Soup",
+    "amount": 1,
+    "type": "Soup",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": true,
+    "prerequisites": [
+      "Onion Soup"
+    ],
+    "inputs": [
+      {
+        "item": "Cucumbers",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Cooker",
+        "substitutes": []
+      },
+      {
+        "item": "Pearl Barley",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Pork",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Roasted Crucian in Sour Cream Sauce",
+    "guid": "71aa891a-f55a-4441-b168-e8b49bb8a40b",
+    "custom": false,
+    "output": "Roasted Crucian in Sour Cream Sauce",
+    "amount": 1,
+    "type": "Fish",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": true,
+    "prerequisites": [
+      "Rudd Kebab",
+      "Parmesan Crumbled Whitefish"
+    ],
+    "inputs": [
+      {
+        "item": "Crucian",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Oven",
+        "substitutes": [
+          "Fish"
+        ]
+      },
+      {
+        "item": "Flour",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Sour Cream",
+        "amount": 1,
+        "slot": "Sauce",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Peppers",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Roasted Tofu Lollipops with Pesto",
+    "guid": "38acd453-899e-4363-bef3-0794c38393a4",
+    "custom": false,
+    "output": "Roasted Tofu Lollipops with Pesto",
+    "amount": 1,
+    "type": "Meat",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Kung Pao Chicken"
+    ],
+    "inputs": [
+      {
+        "item": "Tofu",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Cooker",
+        "substitutes": []
+      },
+      {
+        "item": "Olive Oil",
+        "amount": 1,
+        "slot": "Sauce",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Paprika",
+        "amount": 1,
+        "slot": "Sauce",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Basil",
+        "amount": 1,
+        "slot": "Sauce",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Roasted Yam Seaweed Salad",
+    "guid": "8cb3bcd0-c534-42b9-8b73-47c3e7569400",
+    "custom": false,
+    "output": "Roasted Yam Seaweed Salad",
+    "amount": 1,
+    "type": "Salad",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": true,
+    "prerequisites": [
+      "Spicy Lemon Chicken Feet Salad"
+    ],
+    "inputs": [
+      {
+        "item": "Seaweed",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Raw",
+        "substitutes": []
+      },
+      {
+        "item": "Yam",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Oven",
+        "substitutes": []
+      },
+      {
+        "item": "Onions",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Raw",
+        "substitutes": []
+      },
+      {
+        "item": "Eggs",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "Cooker",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Ruby Red",
+    "guid": "deb1383e-e701-42d8-99d0-11bd507d64ce",
+    "custom": false,
+    "output": "Ruby Red",
+    "amount": 1,
+    "type": "Drink",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": true,
+    "prerequisites": [
+      "Espresso Martini"
+    ],
+    "inputs": [
+      {
+        "item": "Spinach",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Blender",
+        "substitutes": []
+      },
+      {
+        "item": "Cucumbers",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Blender",
+        "substitutes": []
+      },
+      {
+        "item": "Celery",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Apples",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Blender",
+        "substitutes": []
+      },
+      {
+        "item": "Ginger",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Rudd Kebab",
+    "guid": "122329d2-c1a8-4046-b31d-a2149b4fd615",
+    "custom": false,
+    "output": "Rudd Kebab",
+    "amount": 1,
+    "type": "Fish",
+    "unlockCost": 1,
+    "known": true,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Poached Roaches"
+    ],
+    "inputs": [
+      {
+        "item": "Rudd",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Grill",
+        "substitutes": [
+          "Fish"
+        ]
+      },
+      {
+        "item": "Wheat Bread",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Eggs",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Ginger",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Sailor Soup",
+    "guid": "2afbbdf1-3462-4689-ab86-926185a310c1",
+    "custom": false,
+    "output": "Sailor Soup",
+    "amount": 1,
+    "type": "Soup",
+    "unlockCost": 1,
+    "known": true,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Fennel Soup with Bacon"
+    ],
+    "inputs": [
+      {
+        "item": "Mussels",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Cooker",
+        "substitutes": []
+      },
+      {
+        "item": "Tomatoes",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Onions",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Garlic",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Sake Maki",
+    "guid": "bc1d4637-bf4b-45ab-864d-61cb40102149",
+    "custom": false,
+    "output": "Sake Maki",
+    "amount": 1,
+    "type": "Seafood",
+    "unlockCost": 1,
+    "known": true,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Katsu Ika Odori Don"
+    ],
+    "inputs": [
+      {
+        "item": "Rice",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Cooker",
+        "substitutes": []
+      },
+      {
+        "item": "Seaweed",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Raw",
+        "substitutes": []
+      },
+      {
+        "item": "Salmon",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Raw",
+        "substitutes": []
+      },
+      {
+        "item": "Avocados",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Raw",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Sake Nigiri",
+    "guid": "7f96fdd5-9517-4e15-8711-1c814b693466",
+    "custom": false,
+    "output": "Sake Nigiri",
+    "amount": 1,
+    "type": "Fish",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [],
+    "inputs": [
+      {
+        "item": "Rice",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Cooker",
+        "substitutes": []
+      },
+      {
+        "item": "Salmon",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "Raw",
+        "substitutes": [
+          "Fish"
+        ]
+      }
+    ]
+  },
+  {
+    "asset": "Salted Taimen",
+    "guid": "baad9f70-3046-4fd5-b60e-1d177cf8d286",
+    "custom": false,
+    "output": "Salted Taimen",
+    "amount": 1,
+    "type": "Fish",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Roasted Crucian in Sour Cream Sauce"
+    ],
+    "inputs": [
+      {
+        "item": "Taimen",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Pan",
+        "substitutes": [
+          "Fish"
+        ]
+      },
+      {
+        "item": "Rice",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Sashimi Plate",
+    "guid": "2ca5fcdc-d894-4262-900e-07d661768d31",
+    "custom": false,
+    "output": "Sashimi Plate",
+    "amount": 1,
+    "type": "Fish",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Smoked Salmon Cupcake",
+      "Sautéed Grayling with Pasta Carbonara"
+    ],
+    "inputs": [
+      {
+        "item": "Salmon",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "Raw",
+        "substitutes": [
+          "Fish"
+        ]
+      },
+      {
+        "item": "Scallops",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "Raw",
+        "substitutes": [
+          "Seafood",
+          "Fish"
+        ]
+      },
+      {
+        "item": "Squid",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Raw",
+        "substitutes": [
+          "Seafood"
+        ]
+      }
+    ]
+  },
+  {
+    "asset": "Sautéed Grayling with Pasta Carbonara",
+    "guid": "272ebbc0-498f-4050-b2b1-512fae1ee84a",
+    "custom": false,
+    "output": "Sautéed Grayling with Pasta Carbonara",
+    "amount": 1,
+    "type": "Fish",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Baked Ide"
+    ],
+    "inputs": [
+      {
+        "item": "Grayling",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Pan",
+        "substitutes": [
+          "Fish"
+        ]
+      },
+      {
+        "item": "Eggs",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Butter",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Bacon",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "Cooker",
+        "substitutes": []
+      },
+      {
+        "item": "Parmesan",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "None",
+        "substitutes": [
+          "Cheese"
+        ]
+      }
+    ]
+  },
+  {
+    "asset": "Scarlet Shot",
+    "guid": "ee6b7b9b-823c-4540-9269-77d015bfca36",
+    "custom": false,
+    "output": "Scarlet Shot",
+    "amount": 1,
+    "type": "Drink",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "ClamZest"
+    ],
+    "inputs": [
+      {
+        "item": "Tonic Water",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Vodka",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Cranberries",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Blender",
+        "substitutes": []
+      },
+      {
+        "item": "Cherries",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Blender",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Sea Urchin Guacamole Tacos",
+    "guid": "5b444c9b-30a0-48ee-ae96-766347cf7e04",
+    "custom": false,
+    "output": "Sea Urchin Guacamole Tacos",
+    "amount": 1,
+    "type": "Seafood",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Steamed Sticky Rice with Crab"
+    ],
+    "inputs": [
+      {
+        "item": "Corn Bread",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Oven",
+        "substitutes": []
+      },
+      {
+        "item": "Sea Urchins",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Pan",
+        "substitutes": []
+      },
+      {
+        "item": "Avocados",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Chili",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Serenity",
+    "guid": "2f56d93e-ddf2-46ec-a8b9-75fe6dfc1856",
+    "custom": false,
+    "output": "Serenity",
+    "amount": 1,
+    "type": "Drink",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": true,
+    "prerequisites": [
+      "PB&J"
+    ],
+    "inputs": [
+      {
+        "item": "Oranges",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Honey",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Nettle",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "Blender",
+        "substitutes": []
+      },
+      {
+        "item": "Oatstraw",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "Blender",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Shcherba",
+    "guid": "8875b7de-7653-4431-b27a-a3e9933fef17",
+    "custom": false,
+    "output": "Shcherba",
+    "amount": 1,
+    "type": "Fish",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": true,
+    "prerequisites": [
+      "Sashimi Plate"
+    ],
+    "inputs": [
+      {
+        "item": "Ruffe",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Oven",
+        "substitutes": [
+          "Fish"
+        ]
+      },
+      {
+        "item": "Perch",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": [
+          "Fish"
+        ]
+      },
+      {
+        "item": "Onions",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Parsley",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "None",
+        "substitutes": [
+          "Herb"
+        ]
+      }
+    ]
+  },
+  {
+    "asset": "Shroom Soup",
+    "guid": "8e78e380-57b2-4021-8a85-fffac319d1fd",
+    "custom": false,
+    "output": "Shroom Soup",
+    "amount": 1,
+    "type": "Soup",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": true,
+    "prerequisites": [
+      "Goulash"
+    ],
+    "inputs": [
+      {
+        "item": "Magic Mushrooms",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Cooker",
+        "substitutes": []
+      },
+      {
+        "item": "Flour",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Onions",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Garlic",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Thyme",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Sizzling Beef Rice",
+    "guid": "ff29f4cc-ac7a-43e2-8e1e-4c69ef089867",
+    "custom": false,
+    "output": "Sizzling Beef Rice",
+    "amount": 1,
+    "type": "Meat",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Stinky Tofu",
+      "Pemmican"
+    ],
+    "inputs": [
+      {
+        "item": "Rice",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Cooker",
+        "substitutes": []
+      },
+      {
+        "item": "Beef",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Corn",
+        "amount": 1,
+        "slot": "Sides",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Eggs",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Smoked Salmon Cupcake",
+    "guid": "3ef6eeb5-e8ec-4b08-afb1-cef7daec7c28",
+    "custom": false,
+    "output": "Smoked Salmon Cupcake",
+    "amount": 1,
+    "type": "Fish",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Baked Ide"
+    ],
+    "inputs": [
+      {
+        "item": "Flour",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Oven, Blender",
+        "substitutes": []
+      },
+      {
+        "item": "Eggs",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Cooker",
+        "substitutes": []
+      },
+      {
+        "item": "Salmon",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": [
+          "Fish"
+        ]
+      },
+      {
+        "item": "Potatoes",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Blue Cheese",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "None",
+        "substitutes": [
+          "Cheese"
+        ]
+      }
+    ]
+  },
+  {
+    "asset": "Snake Soup",
+    "guid": "ad49ba90-acdf-4b8b-bcc0-2545e6c0d8ca",
+    "custom": false,
+    "output": "Snake Soup",
+    "amount": 1,
+    "type": "Soup",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": true,
+    "prerequisites": [
+      "Borsch",
+      "Okroshka"
+    ],
+    "inputs": [
+      {
+        "item": "Snake",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Cooker",
+        "substitutes": []
+      },
+      {
+        "item": "Chicken",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Cooker",
+        "substitutes": []
+      },
+      {
+        "item": "Straw Mushrooms",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Ginger",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Wolfberries",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Solyanka Soup",
+    "guid": "456d41b9-5354-485c-9b27-eb457a6a4379",
+    "custom": false,
+    "output": "Solyanka Soup",
+    "amount": 1,
+    "type": "Soup",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Beondegi Soup",
+      "Rassolnik Soup"
+    ],
+    "inputs": [
+      {
+        "item": "Beef",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Cooker",
+        "substitutes": []
+      },
+      {
+        "item": "King Mushroom",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": [
+          "Mushroom"
+        ]
+      },
+      {
+        "item": "Cucumbers",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Cabbage",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Sour Cream",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "SoyBoost",
+    "guid": "efdcb3b8-04a1-4998-82b8-3228be0c4187",
+    "custom": false,
+    "output": "SoyBoost",
+    "amount": 1,
+    "type": "Drink",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": true,
+    "prerequisites": [
+      "Synectar"
+    ],
+    "inputs": [
+      {
+        "item": "Soy Beans",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Micronutrient Premix",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Protein Powder",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Sunflower Oil",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Vanilla",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Spiced Shroom Coffee",
+    "guid": "08f98577-1394-4c35-823d-f5c5e6329cd9",
+    "custom": false,
+    "output": "Spiced Shroom Coffee",
+    "amount": 1,
+    "type": "Drink",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": true,
+    "prerequisites": [
+      "Mei Ling"
+    ],
+    "inputs": [
+      {
+        "item": "Milk",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Coffee Beans",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Straw Mushrooms",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Blender",
+        "substitutes": []
+      },
+      {
+        "item": "Cinnamon",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Ginger",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "Blender",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Spicy Lemon Chicken Feet Salad",
+    "guid": "ed31e2d6-6abd-4e10-a090-9d45b3d3e98f",
+    "custom": false,
+    "output": "Spicy Lemon Chicken Feet Salad",
+    "amount": 1,
+    "type": "Salad",
+    "unlockCost": 1,
+    "known": true,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Potato Mushroom Salad",
+      "Bird's Nest"
+    ],
+    "inputs": [
+      {
+        "item": "Chicken",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Cooker",
+        "substitutes": []
+      },
+      {
+        "item": "Lemons",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Onions",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Chili",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Ginger",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Spider Roll",
+    "guid": "f69c18ab-49c9-4bbe-9197-ccc5fbed4dfb",
+    "custom": false,
+    "output": "Spider Roll",
+    "amount": 1,
+    "type": "Seafood",
+    "unlockCost": 1,
+    "known": true,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Sake Maki",
+      "Ika Nigiri"
+    ],
+    "inputs": [
+      {
+        "item": "Rice",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Cooker",
+        "substitutes": []
+      },
+      {
+        "item": "Seaweed",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Raw",
+        "substitutes": []
+      },
+      {
+        "item": "Crab",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Raw",
+        "substitutes": []
+      },
+      {
+        "item": "Cucumbers",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Raw",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Spinach Apple Salad",
+    "guid": "b3e5a9d4-d878-4994-a5d9-163fdeb23474",
+    "custom": false,
+    "output": "Spinach Apple Salad",
+    "amount": 1,
+    "type": "Salad",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Spicy Lemon Chicken Feet Salad"
+    ],
+    "inputs": [
+      {
+        "item": "Spinach",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Raw",
+        "substitutes": []
+      },
+      {
+        "item": "Apples",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Raw",
+        "substitutes": []
+      },
+      {
+        "item": "Cucumbers",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Sweet Peppers",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Squid Ink Pasta with Shrimp and Scallop",
+    "guid": "a74b7f80-348b-4c0e-96c3-73eaf1548bd1",
+    "custom": false,
+    "output": "Squid Ink Pasta with Shrimp and Scallop",
+    "amount": 1,
+    "type": "Seafood",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Steamed Sticky Rice with Crab"
+    ],
+    "inputs": [
+      {
+        "item": "Udon Noodles",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Cooker",
+        "substitutes": []
+      },
+      {
+        "item": "Squid",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Pan",
+        "substitutes": []
+      },
+      {
+        "item": "Shrimp",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Scallops",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Garlic",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Squid Stuffed with Rice",
+    "guid": "146df350-2ed8-4153-83fc-dc4e2509e95c",
+    "custom": false,
+    "output": "Squid Stuffed with Rice",
+    "amount": 1,
+    "type": "Seafood",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Sea Urchin Guacamole Tacos",
+      "Squid Ink Pasta with Shrimp and Scallop"
+    ],
+    "inputs": [
+      {
+        "item": "Squid",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Grill",
+        "substitutes": []
+      },
+      {
+        "item": "Rice",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Cooker",
+        "substitutes": []
+      },
+      {
+        "item": "Soy Sauce",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Steak",
+    "guid": "9bd74f05-4788-4fc0-bfb0-b4d98ed5b9ae",
+    "custom": false,
+    "output": "Steak",
+    "amount": 1,
+    "type": "Meat",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      null
+    ],
+    "inputs": [
+      {
+        "item": "Beef",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Grill",
+        "substitutes": []
+      },
+      {
+        "item": "Black Mushroom",
+        "amount": 1,
+        "slot": "Sides",
+        "processing": "Cooker",
+        "substitutes": []
+      },
+      {
+        "item": "Asparagus",
+        "amount": 1,
+        "slot": "Sides",
+        "processing": "Grill",
+        "substitutes": []
+      },
+      {
+        "item": "Potatoes",
+        "amount": 1,
+        "slot": "Sides",
+        "processing": "Cooker",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Steamed Sticky Rice with Crab",
+    "guid": "a1755cca-00ab-42e7-9a75-947e73932d01",
+    "custom": false,
+    "output": "Steamed Sticky Rice with Crab",
+    "amount": 1,
+    "type": "Seafood",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Onigiri"
+    ],
+    "inputs": [
+      {
+        "item": "Rice",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Cooker",
+        "substitutes": []
+      },
+      {
+        "item": "Pork",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Cooker",
+        "substitutes": [
+          "Meat"
+        ]
+      },
+      {
+        "item": "Lotus Leaves",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": [
+          "Vegetable"
+        ]
+      },
+      {
+        "item": "Cooking Wine",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": [
+          "Alcohol"
+        ]
+      },
+      {
+        "item": "Crab",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "Cooker",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Steamed Tench",
+    "guid": "248cb044-cebf-4fbb-916e-4367f981c932",
+    "custom": false,
+    "output": "Steamed Tench",
+    "amount": 1,
+    "type": "Fish",
+    "unlockCost": 1,
+    "known": true,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Brook Trout with Asparagus"
+    ],
+    "inputs": [
+      {
+        "item": "Tench",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Cooker",
+        "substitutes": [
+          "Fish"
+        ]
+      },
+      {
+        "item": "Potatoes",
+        "amount": 1,
+        "slot": "Sides",
+        "processing": "None",
+        "substitutes": [
+          "Vegetable"
+        ]
+      },
+      {
+        "item": "Leeks",
+        "amount": 1,
+        "slot": "Sides",
+        "processing": "None",
+        "substitutes": [
+          "Vegetable"
+        ]
+      },
+      {
+        "item": "Carrots",
+        "amount": 1,
+        "slot": "Sides",
+        "processing": "None",
+        "substitutes": [
+          "Vegetable"
+        ]
+      },
+      {
+        "item": "Lemons",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "None",
+        "substitutes": [
+          "Fruit"
+        ]
+      }
+    ]
+  },
+  {
+    "asset": "Stinky Tofu",
+    "guid": "04847a34-dd5e-4825-b6d9-1139d69eacb6",
+    "custom": false,
+    "output": "Stinky Tofu",
+    "amount": 1,
+    "type": "Meat",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Roasted Tofu Lollipops with Pesto"
+    ],
+    "inputs": [
+      {
+        "item": "Tofu",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Pan",
+        "substitutes": []
+      },
+      {
+        "item": "Soy Sauce",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Chili",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Garlic",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Coriander",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Strawberry Stinger",
+    "guid": "c30725af-341d-4591-959d-67db35a82161",
+    "custom": false,
+    "output": "Strawberry Stinger",
+    "amount": 1,
+    "type": "Drink",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": true,
+    "prerequisites": [
+      "Kvass"
+    ],
+    "inputs": [
+      {
+        "item": "Gin",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Strawberries",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Chili",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Ginger",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "Blender",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Subland",
+    "guid": "c99060b3-1831-4dcc-9f9d-346fa71ee8ef",
+    "custom": false,
+    "output": "Subland",
+    "amount": 1,
+    "type": "Sandwich",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Ramen Burger",
+      "Golden Rings"
+    ],
+    "inputs": [
+      {
+        "item": "Wheat Bread",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Beef",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Oven",
+        "substitutes": []
+      },
+      {
+        "item": "Peppers",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "Pan",
+        "substitutes": []
+      },
+      {
+        "item": "Olive Oil",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Garlic",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "Pan",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Summer Salad",
+    "guid": "6a8cd0b9-574f-431a-ad22-e567280ecccc",
+    "custom": false,
+    "output": "Summer Salad",
+    "amount": 1,
+    "type": "Salad",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Olivier Salad"
+    ],
+    "inputs": [
+      {
+        "item": "Tomatoes",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Raw",
+        "substitutes": []
+      },
+      {
+        "item": "Chicken",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Grill",
+        "substitutes": [
+          "Meat"
+        ]
+      },
+      {
+        "item": "Cheese",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Raw",
+        "substitutes": []
+      },
+      {
+        "item": "Cucumbers",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Sunrise",
+    "guid": "cd68b281-948a-446c-8940-3e4a0668654b",
+    "custom": false,
+    "output": "Sunrise",
+    "amount": 1,
+    "type": "Meat",
+    "unlockCost": 1,
+    "known": true,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [],
+    "inputs": [
+      {
+        "item": "Rice",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Cooker",
+        "substitutes": []
+      },
+      {
+        "item": "Beef",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Lamb",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Carrots",
+        "amount": 1,
+        "slot": "Sides",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Garlic",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Sweet Waffle",
+    "guid": "f4f69c04-1cf6-4fa2-b4db-2198ab9618cb",
+    "custom": false,
+    "output": "Sweet Waffle",
+    "amount": 1,
+    "type": "Dessert",
+    "unlockCost": 1,
+    "known": true,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [],
+    "inputs": [
+      {
+        "item": "Waffle",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Oven",
+        "substitutes": []
+      },
+      {
+        "item": "Yoghurt",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Kiwi",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "None",
+        "substitutes": [
+          "Fruit"
+        ]
+      },
+      {
+        "item": "Strawberries",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "None",
+        "substitutes": [
+          "Fruit"
+        ]
+      },
+      {
+        "item": "Blueberries",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "None",
+        "substitutes": [
+          "Fruit"
+        ]
+      }
+    ]
+  },
+  {
+    "asset": "Synectar",
+    "guid": "2dcbad48-906a-4d46-9d22-c71120270f33",
+    "custom": false,
+    "output": "Synectar",
+    "amount": 1,
+    "type": "Drink",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Pumpkin Juice"
+    ],
+    "inputs": [
+      {
+        "item": "Synthetic Alcohol",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Liquid Nitrogen",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Chlorophyll",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Strawberries",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Blender",
+        "substitutes": []
+      },
+      {
+        "item": "Mango",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Blender",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Taiyaki",
+    "guid": "0875d19c-16ca-4be1-b8b7-f43bb773d8f4",
+    "custom": false,
+    "output": "Taiyaki",
+    "amount": 1,
+    "type": "Snack",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": true,
+    "prerequisites": [
+      "Kushiyaki"
+    ],
+    "inputs": [
+      {
+        "item": "Flour",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Cooker",
+        "substitutes": []
+      },
+      {
+        "item": "Eggs",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Milk",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Red Beans",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Sugar",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Tapioca Milk and Strawberries",
+    "guid": "b932553f-12e8-4d62-8a9c-04427a8edf8c",
+    "custom": false,
+    "output": "Tapioca Milk and Strawberries",
+    "amount": 1,
+    "type": "Dessert",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Dango"
+    ],
+    "inputs": [
+      {
+        "item": "Milk",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Lemon Soda",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": [
+          "Fruit"
+        ]
+      },
+      {
+        "item": "Strawberries",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Watermelon",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "None",
+        "substitutes": [
+          "Fruit"
+        ]
+      }
+    ]
+  },
+  {
+    "asset": "Tarantula Burger",
+    "guid": "b79c6390-02c1-44f6-a0da-340951196700",
+    "custom": false,
+    "output": "Tarantula Burger",
+    "amount": 1,
+    "type": "Sandwich",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Ice Cream Burger"
+    ],
+    "inputs": [
+      {
+        "item": "Burger Bun",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Oven",
+        "substitutes": []
+      },
+      {
+        "item": "Beef",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Grill",
+        "substitutes": []
+      },
+      {
+        "item": "Parmesan",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Lettuce",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Tarantula",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "Oven",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Taste of Lobster",
+    "guid": "7484ea1f-4185-4c1e-b2dc-a5568efed8a4",
+    "custom": false,
+    "output": "Taste of Lobster",
+    "amount": 1,
+    "type": "Seafood",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [],
+    "inputs": [
+      {
+        "item": "Burbot",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Cooker",
+        "substitutes": []
+      },
+      {
+        "item": "Olive Oil",
+        "amount": 1,
+        "slot": "Sauce",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Lemons",
+        "amount": 1,
+        "slot": "Sauce",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Tendon",
+    "guid": "d5a9787a-4a0e-4e21-a157-ce22153547f8",
+    "custom": false,
+    "output": "Tendon",
+    "amount": 1,
+    "type": "Seafood",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [],
+    "inputs": [
+      {
+        "item": "Rice",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Cooker",
+        "substitutes": []
+      },
+      {
+        "item": "Shrimp",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "DeepFryer",
+        "substitutes": [
+          "Seafood"
+        ]
+      },
+      {
+        "item": "Lotus Roots",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "DeepFryer",
+        "substitutes": [
+          "Vegetable"
+        ]
+      }
+    ]
+  },
+  {
+    "asset": "Tereré",
+    "guid": "6150e476-b818-4d99-8ba3-4ef8e59a0060",
+    "custom": false,
+    "output": "Tereré",
+    "amount": 1,
+    "type": "Drink",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Nivalis Sunset"
+    ],
+    "inputs": [
+      {
+        "item": "Yerba Mate",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Oranges",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Lemons",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Mint",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "Blender",
+        "substitutes": []
+      },
+      {
+        "item": "Lime",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Teriyaki Rainbow Trout",
+    "guid": "e7f59e1f-a9a6-4b28-8efe-49d2451653d4",
+    "custom": false,
+    "output": "Teriyaki Rainbow Trout",
+    "amount": 1,
+    "type": "Fish",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Sake Nigiri"
+    ],
+    "inputs": [
+      {
+        "item": "Rainbow Trout",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Grill",
+        "substitutes": [
+          "Fish"
+        ]
+      },
+      {
+        "item": "Soy Sauce",
+        "amount": 1,
+        "slot": "Sauce",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Sugar",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Tonkotsu Ramen",
+    "guid": "1d2fb72f-ca0a-4d79-b1e6-d69c023ab4b1",
+    "custom": false,
+    "output": "Tonkotsu Ramen",
+    "amount": 1,
+    "type": "Soup",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Solyanka Soup"
+    ],
+    "inputs": [
+      {
+        "item": "Ramen Noodles",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Cooker",
+        "substitutes": []
+      },
+      {
+        "item": "Pork Belly",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Cooker",
+        "substitutes": [
+          "Meat"
+        ]
+      },
+      {
+        "item": "Eggs",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "Raw",
+        "substitutes": []
+      },
+      {
+        "item": "Bok Choy",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "Raw",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Trout with Garlic Lemon Butter Herb Sauce",
+    "guid": "c1052aa8-61b4-4689-bac9-a0f1918d7d05",
+    "custom": false,
+    "output": "Trout with Garlic Lemon Butter Herb Sauce",
+    "amount": 1,
+    "type": "Fish",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Sashimi Plate"
+    ],
+    "inputs": [
+      {
+        "item": "Lake Trout",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Grill",
+        "substitutes": [
+          "Fish"
+        ]
+      },
+      {
+        "item": "Garlic",
+        "amount": 1,
+        "slot": "Sauce",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Lemons",
+        "amount": 1,
+        "slot": "Sauce",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Butter",
+        "amount": 1,
+        "slot": "Sauce",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Basil",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "None",
+        "substitutes": [
+          "Herb"
+        ]
+      }
+    ]
+  },
+  {
+    "asset": "Ultra 64",
+    "guid": "9a904404-f2b0-4aaa-acd9-ea0ca2f70856",
+    "custom": false,
+    "output": "Ultra 64",
+    "amount": 1,
+    "type": "Drink",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": true,
+    "prerequisites": [
+      "Nitro Espresso Tonic"
+    ],
+    "inputs": [
+      {
+        "item": "Vodka",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Brandy",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Hova Fuel",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Liquid Nitrogen",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Lime",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "VapoBooze",
+    "guid": "5104d96f-3ddd-42d3-9aed-fc2fd9be1ed5",
+    "custom": false,
+    "output": "VapoBooze",
+    "amount": 1,
+    "type": "Drink",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": true,
+    "prerequisites": [],
+    "inputs": [
+      {
+        "item": "Vodka",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Gin",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Eggs",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Lime",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Blackberries",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "Blender",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Veal Orloff",
+    "guid": "7ea58cac-486a-4735-a1e8-6a272dc21162",
+    "custom": false,
+    "output": "Veal Orloff",
+    "amount": 1,
+    "type": "Meat",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Eyeball Pasta"
+    ],
+    "inputs": [
+      {
+        "item": "Veal",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Cooker",
+        "substitutes": []
+      },
+      {
+        "item": "Black Mushroom",
+        "amount": 1,
+        "slot": "Sides",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Onions",
+        "amount": 1,
+        "slot": "Sides",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Parmesan",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "VegCoffee",
+    "guid": "c49ead91-13f9-401f-8816-ad1e4c5268c8",
+    "custom": false,
+    "output": "VegCoffee",
+    "amount": 1,
+    "type": "Drink",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Ikasumi"
+    ],
+    "inputs": [
+      {
+        "item": "Coffee Beans",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Milk",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Broccoli",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Sugar",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "None",
+        "substitutes": [
+          "Spice",
+          "Herb"
+        ]
+      }
+    ]
+  },
+  {
+    "asset": "Vege Burger",
+    "guid": "5a2f3004-1738-4923-a1d9-68cef9d9d8e3",
+    "custom": false,
+    "output": "Vege Burger",
+    "amount": 1,
+    "type": "Sandwich",
+    "unlockCost": 1,
+    "known": true,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Crispy Chicken Burger"
+    ],
+    "inputs": [
+      {
+        "item": "Burger Bun",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Tofu",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Grill",
+        "substitutes": [
+          "Vegetarian",
+          "Cheese",
+          "Meat"
+        ]
+      },
+      {
+        "item": "Lettuce",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": [
+          "Vegetable"
+        ]
+      },
+      {
+        "item": "Black Mushroom",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "None",
+        "substitutes": [
+          "Mushroom"
+        ]
+      },
+      {
+        "item": "Basil",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "None",
+        "substitutes": [
+          "Spice",
+          "Herb"
+        ]
+      }
+    ]
+  },
+  {
+    "asset": "Veggie Roll",
+    "guid": "3f7410bf-61ef-4fd4-b32e-81b0927d5b3b",
+    "custom": false,
+    "output": "Veggie Roll",
+    "amount": 1,
+    "type": "Seafood",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Pineapple Fried Rice"
+    ],
+    "inputs": [
+      {
+        "item": "Rice",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Cooker",
+        "substitutes": []
+      },
+      {
+        "item": "Seaweed",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Raw",
+        "substitutes": []
+      },
+      {
+        "item": "Cucumbers",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Raw",
+        "substitutes": []
+      },
+      {
+        "item": "Avocados",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Raw",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Vinegret Salad",
+    "guid": "2238ccd5-ad74-4b33-a9bd-f8aef1d367d6",
+    "custom": false,
+    "output": "Vinegret Salad",
+    "amount": 1,
+    "type": "Salad",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Fish Salad"
+    ],
+    "inputs": [
+      {
+        "item": "Beetroots",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Cooker",
+        "substitutes": []
+      },
+      {
+        "item": "Potatoes",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Cucumbers",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Onions",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      }
+    ]
+  },
+  {
+    "asset": "Watermelon Pizza",
+    "guid": "825f596a-f85f-4f27-ae64-b2d071d45da7",
+    "custom": false,
+    "output": "Watermelon Pizza",
+    "amount": 1,
+    "type": "Pizza",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Boba Pizza"
+    ],
+    "inputs": [
+      {
+        "item": "Watermelon",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Yoghurt",
+        "amount": 1,
+        "slot": "Sauce",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Strawberries",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Kiwi",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "None",
+        "substitutes": [
+          "Fruit"
+        ]
+      },
+      {
+        "item": "Blueberries",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "None",
+        "substitutes": [
+          "Fruit"
+        ]
+      }
+    ]
+  },
+  {
+    "asset": "Zope with Cherry Salsa",
+    "guid": "83942b54-792e-4656-8e77-1fe8da0a346f",
+    "custom": false,
+    "output": "Zope with Cherry Salsa",
+    "amount": 1,
+    "type": "Fish",
+    "unlockCost": 1,
+    "known": false,
+    "disabled": false,
+    "playerOnly": false,
+    "prerequisites": [
+      "Shcherba",
+      "Trout with Garlic Lemon Butter Herb Sauce"
+    ],
+    "inputs": [
+      {
+        "item": "Zope",
+        "amount": 1,
+        "slot": "Main",
+        "processing": "Grill",
+        "substitutes": [
+          "Fish"
+        ]
+      },
+      {
+        "item": "Lemons",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "None",
+        "substitutes": [
+          "Fruit"
+        ]
+      },
+      {
+        "item": "Onions",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Cherries",
+        "amount": 1,
+        "slot": "Topping",
+        "processing": "None",
+        "substitutes": []
+      },
+      {
+        "item": "Peppers",
+        "amount": 1,
+        "slot": "Seasoning",
+        "processing": "None",
+        "substitutes": [
+          "Spice"
+        ]
+      }
+    ]
+  }
+]

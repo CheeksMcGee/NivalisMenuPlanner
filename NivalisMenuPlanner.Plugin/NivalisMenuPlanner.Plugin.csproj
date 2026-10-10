@@ -1,0 +1,60 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<AssemblyName>NivalisMenuPlanner.Plugin</AssemblyName>
+		<Nullable>enable</Nullable>
+		<LangVersion>latest</LangVersion>
+	</PropertyGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\NivalisMenuPlanner.Core\NivalisMenuPlanner.Core.csproj" />
+	</ItemGroup>
+	<ItemGroup>
+		<Reference Include="BepInEx.Core">
+			<HintPath>..\libs\BepInEx\core\BepInEx.Core.dll</HintPath>
+			<Private>false</Private>
+		</Reference>
+		<Reference Include="BepInEx.Unity.IL2CPP">
+			<HintPath>..\libs\BepInEx\core\BepInEx.Unity.IL2CPP.dll</HintPath>
+			<Private>false</Private>
+		</Reference>
+		<Reference Include="Il2CppInterop.Runtime">
+			<HintPath>..\libs\BepInEx\core\Il2CppInterop.Runtime.dll</HintPath>
+			<Private>false</Private>
+		</Reference>
+		<Reference Include="Il2Cppmscorlib">
+			<HintPath>..\libs\BepInEx\interop\Il2Cppmscorlib.dll</HintPath>
+			<Private>false</Private>
+		</Reference>
+		<Reference Include="UnityEngine.CoreModule">
+			<HintPath>..\libs\BepInEx\interop\UnityEngine.CoreModule.dll</HintPath>
+			<Private>false</Private>
+		</Reference>
+		<Reference Include="UnityEngine.UI">
+			<HintPath>..\libs\BepInEx\interop\UnityEngine.UI.dll</HintPath>
+			<Private>false</Private>
+		</Reference>
+		<Reference Include="UnityEngine.InputLegacyModule">
+			<HintPath>..\libs\BepInEx\interop\UnityEngine.InputLegacyModule.dll</HintPath>
+			<Private>false</Private>
+		</Reference>
+		<Reference Include="Unity.TextMeshPro">
+			<HintPath>..\libs\BepInEx\interop\Unity.TextMeshPro.dll</HintPath>
+			<Private>false</Private>
+		</Reference>
+		<Reference Include="Unity.InputSystem">
+			<HintPath>..\libs\BepInEx\interop\Unity.InputSystem.dll</HintPath>
+			<Private>false</Private>
+		</Reference>
+		<Reference Include="Assembly-CSharp">
+			<HintPath>..\libs\BepInEx\interop\Assembly-CSharp.dll</HintPath>
+			<Private>false</Private>
+		</Reference>
+		<Reference Include="NivalisModKit">
+			<HintPath>..\libs\BepInEx\plugins\NivalisModKit.dll</HintPath>
+			<Private>false</Private>
+		</Reference>
+	</ItemGroup>
+	<ItemGroup>
+		<Content Include="..\NivalisMenuPlanner.Core\Data\dishdata.csv" Link="dishdata.csv" CopyToOutputDirectory="PreserveNewest" />
+	</ItemGroup>
+</Project>
