@@ -76,5 +76,8 @@ payroll math is verified in-game against live wages.
 - Nivalis ModKit by BGASM — this mod is built entirely on it, and wouldn't exist without it
 - BepInEx — the loader that makes any of this possible
 - ION LANDS — for a game about running restaurants that somehow still needed a restaurant mod
+- GLM (Z.ai) — the AI pair programmer. Wrote most of the C#; the human
+  supplied 27 years of systems engineering, every design decision, and all
+  the quality control. Not (yet) evil.
 
 MIT licensed. Nivalis Nights is ION LANDS' game; this is a fan mod with no affiliation.
