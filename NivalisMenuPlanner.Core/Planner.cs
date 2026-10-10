@@ -24,15 +24,46 @@ public static class Planner
             warnings.Add($"{knownCatalog.Count - known.Count} known dish(es) skipped — inputs not stocked, sold, or craftable.");
         var mix = EffectiveMix(v);
 
-        // CAPACITY-ADJUSTED SCORING (Option B, ruled by operator): a dish cannot earn
-        // more than the pantry can plate. Purchasable-but-unbought inputs do NOT lift
-        // the cap - they grow the shopping list instead. Deliveries don't count until
-        // they land in possession. This keeps advisory menus honest ("works with what
-        // you hold plus this list") and makes overbooking impossible by construction.
+        // ESCROW LEDGER (Step 4a): ingredient units claimed by dishes already placed.
+        // Each placed dish commits ceil(its ACTUAL orders x amount) per input; the next
+        // dish scores against AvailableStock (stock - committed). Reserve-before-spend.
+        var committed = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+
+        int AvailableOf(string item) =>
+            AvailableStock(v, item, committed);
+
+        // CAPACITY-ADJUSTED SCORING (Option B): a dish cannot earn more than the
+        // available stock can plate - held stock minus what earlier dishes claimed.
+        int ServingsFrom(string item, int amount) =>
+            amount <= 0 ? int.MaxValue : AvailableOf(item) / amount;
+
+        int ServingsPossibleFromLedger(DishInfo d, DishCatalog catRef, int depth = 0)
+        {
+            int servings = int.MaxValue;
+            foreach (var (item, amount) in d.Inputs)
+            {
+                int byThisInput = ServingsFrom(item, amount);
+
+                if (byThisInput == 0 && depth < MaxCraftDepth)
+                {
+                    DishInfo? sub = catRef.ById(item);
+                    if (sub != null && v.KnownDishIds.Contains(sub.Id))
+                    {
+                        int subServings = ServingsPossibleFromLedger(sub, catRef, depth + 1);
+                        if (subServings == 0) return 0;
+                        byThisInput = subServings / amount;
+                    }
+                }
+                servings = Math.Min(servings, byThisInput);
+                if (servings == 0) return 0;
+            }
+            return servings == int.MaxValue ? 0 : servings;
+        }
+
         double OrdersFor(DishInfo d)
         {
             double raw = st.DemandScale * Mix(mix, d);
-            int servable = ServingsPossible(d, v, cat);
+            int servable = ServingsPossibleFromLedger(d, cat);
             return Math.Min(raw, servable);
         }
 
@@ -46,7 +77,6 @@ public static class Planner
             return orders * (price - cost) * gate * (1.0 - churn);
         }
 
-        // role preference: how many still-uncovered preferred roles would d newly cover?
         int NewlyCovered(DishInfo d, List<DishInfo> menu)
         {
             int n = 0;
@@ -56,8 +86,6 @@ public static class Planner
             return n;
         }
 
-        // "all else being equal": a role-covering dish gets a small lift — enough to win
-        // close calls, never enough to rescue a profit-bar failure.
         double EffectiveScore(DishInfo d, List<DishInfo> menu) =>
             BaseScore(d) * (1.0 + r.RoleBonus * NewlyCovered(d, menu));
 
@@ -65,7 +93,6 @@ public static class Planner
         var menu = new List<DishInfo>();
         var perType = new Dictionary<DishType, int>();
 
-        // fill one dish at a time so role coverage (and its bonus) stays current
         int cap = r.MaxPerType;
         while (menu.Count < maxSlots)
         {
@@ -82,10 +109,11 @@ public static class Planner
             {
                 menu.Add(best);
                 perType[best.Type] = perType.GetValueOrDefault(best.Type) + 1;
+                CommitInputs(best, OrdersFor(best), committed, v, cat, 0);
                 continue;
             }
-            cap++;                                    // variety relaxes before slots go empty
-            if (cap > known.Count) break;             // nothing left that clears the bar
+            cap++;
+            if (cap > known.Count) break;
         }
 
         if (known.Count == 0)
@@ -95,18 +123,23 @@ public static class Planner
         else if (menu.Count < maxSlots)
             warnings.Add($"Menu holds {menu.Count} of {maxSlots} slots — nothing else clears the profit bar. Unlock more recipes to fill it.");
 
-        // improvement passes: swap in any unselected dish that beats the weakest member
-        // (menu-level scoring keeps role bonuses honest through swaps)
+        // improvement passes: swaps re-commit the ledger in simulation
         double MenuScore(List<DishInfo> m)
         {
-            bool bev = false, ent = false, des = false;
+            var simLedger = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
             double total = 0;
+            bool bev = false, ent = false, des = false;
             foreach (var d in m)
             {
-                double s = BaseScore(d);
+                var orders = Math.Min(st.DemandScale * Mix(mix, d),
+                    SimulatedServings(d, simLedger));
+                double s = orders * (d.PriceCapHundredths - EffCost(d, v, r, cat))
+                    * ExclusivityGate(d, v, cat);
+                if (!st.Yesterday.Contains(d.Id)) s *= (1.0 - r.ChurnPenalty);
                 if (r.PreferBeverage && d.Type == DishType.Drink && !bev) { s *= 1.0 + r.RoleBonus; bev = true; }
                 if (r.PreferEntree && r.EntreeTypes.Contains(d.Type) && !ent) { s *= 1.0 + r.RoleBonus; ent = true; }
                 if (r.PreferDessert && d.Type == DishType.Dessert && !des) { s *= 1.0 + r.RoleBonus; des = true; }
+                CommitInputs(d, orders, simLedger, v, cat, 0);
                 total += s;
             }
             return total;
@@ -138,6 +171,22 @@ public static class Planner
             }
         }
 
+        // FINAL LEDGER + FINAL ORDERS: rebuild both in menu order. finalOrders carries
+        // each dish's LEDGER-CAPPED order count into BuildResult - the plan's honest
+        // promise. The T17d lesson: recomputing orders from raw stock in the reporting
+        // layer ignores the escrow and overstates what the menu can serve.
+        var finalOrders = new Dictionary<string, double>(StringComparer.OrdinalIgnoreCase);
+        if (menu.Count > 0)
+        {
+            committed.Clear();
+            foreach (var d in menu)
+            {
+                var o = OrdersFor(d);
+                finalOrders[d.Id] = o;
+                CommitInputs(d, o, committed, v, cat, 0);
+            }
+        }
+
         if (perType.Values.Any(n => n > r.MaxPerType))
             warnings.Add($"Variety cap relaxed to {perType.Values.Max()} per type — few recipe types unlocked; a balanced menu needs more.");
 
@@ -149,18 +198,16 @@ public static class Planner
             warnings.Add("No dessert made the cut — none beat the alternatives (or cleared the profit bar).");
 
         menu = menu.OrderByDescending(BaseScore).ToList();
-        return BuildResult(menu, v, r, st, mix, warnings, cat);
+        return BuildResult(menu, v, r, st, mix, warnings, cat, committed, finalOrders);
     }
 
     // grade -> fraction of shelf price the manager pays (verified: 110% g1 -> 80% g10; player = 100%)
     public static decimal PriceMult(int grade) =>
         grade <= 0 ? 1.00m : grade >= 10 ? 0.80m : 1.10m - 0.30m * (grade - 1) / 9m;
 
-    // CAPACITY GUARD (Option B): most servings the PANTRY can plate of one dish right
-    // now - the binding input's held stock. Vendor availability never lifts this cap;
-    // shortfalls belong on the shopping list. Craft-chain expansion: an input with no
-    // held stock but a known recipe (Beer) is limited by what THAT recipe's own inputs
-    // can plate (Wheat). Partial-stock top-up deferred: T16b, v0.2 backlog.
+    // CAPACITY GUARD (raw-stock form; kept public for the harness and GameAdapter).
+    // Plan() uses its ledger-aware sibling; this remains the honest
+    // "what does the PANTRY alone plate" answer.
     public static int ServingsPossible(DishInfo d, VenueState v, DishCatalog cat, int depth = 0)
     {
         int servings = int.MaxValue;
@@ -185,10 +232,7 @@ public static class Planner
         return servings == int.MaxValue ? 0 : servings;
     }
 
-    // ESCROW VIEW: stock with committed amounts subtracted — what later dishes
-    // can still draw on. The planning use of the ingredient escrow: reserve what
-    // earlier menu dishes' expected orders have already claimed.
-    // Not yet called by Plan() — Step 4 wires the ledger (T17).
+    // ESCROW VIEW: stock with committed amounts subtracted (public, Step 4's lens)
     public static int AvailableStock(VenueState v, string item, Dictionary<string, int>? committed)
     {
         v.Stock.TryGetValue(item, out var stock);
@@ -196,8 +240,61 @@ public static class Planner
         return Math.Max(0, stock - held);
     }
 
+    // ESCROW COMMIT (private workhorse): a placed dish claims its ACTUAL order count
+    // x per-input amount. Craft-chain inputs commit at their base ingredients.
+    static void CommitInputs(DishInfo d, double orders, Dictionary<string, int> committed,
+        VenueState v, DishCatalog cat, int depth)
+    {
+        int units = (int)Math.Ceiling(orders);
+        foreach (var (item, amount) in d.Inputs)
+        {
+            DishInfo? sub = depth < MaxCraftDepth && !v.BuyPrice.ContainsKey(item) ? cat.ById(item) : null;
+            if (sub != null)
+            {
+                CommitInputs(sub, orders, committed, v, cat, depth + 1);
+            }
+            else
+            {
+                committed[item] = committed.GetValueOrDefault(item) + units * amount;
+            }
+        }
+    }
+
+    // RAW-DEMAND ACCRUAL: the shopping list's source of truth. For every menu dish,
+    // accrue ceil(RAW orders) x amount per input, chain-expanded to base ingredients.
+    // THEOREM (T11, three predictions in the making): under Option B + the escrow,
+    // capped claims are provably <= stock, so a list built from CAPPED orders is always
+    // empty. The honest list is the RAW demand gap: buy = totalRawNeed - stock, so
+    // tomorrow's plan serves full demand instead of capping. The gap warning and this
+    // list are the same promise.
+    static void Accrue(DishInfo d, int units, Dictionary<string, int> needs,
+        VenueState v, DishCatalog cat, int depth)
+    {
+        foreach (var (item, amount) in d.Inputs)
+        {
+            DishInfo? sub = depth < MaxCraftDepth && !v.BuyPrice.ContainsKey(item) ? cat.ById(item) : null;
+            if (sub != null && v.KnownDishIds.Contains(sub.Id))
+                Accrue(sub, units, needs, v, cat, depth + 1);
+            else
+                needs[item] = needs.GetValueOrDefault(item) + units * amount;
+        }
+    }
+
+    // Simulated servings for swap evaluation: capacity as if simLedger were the real one
+    static int SimulatedServings(DishInfo d, Dictionary<string, int> simLedger, int depth = 0)
+    {
+        int servings = int.MaxValue;
+        foreach (var (item, amount) in d.Inputs)
+        {
+            simLedger.TryGetValue(item, out var avail);
+            int byThisInput = amount <= 0 ? int.MaxValue : avail / amount;
+            servings = Math.Min(servings, byThisInput);
+            if (servings == 0) return 0;
+        }
+        return servings == int.MaxValue ? 0 : servings;
+    }
+
     // An input can come from: pantry stock, a vendor, or a known recipe that crafts it
-    // (Beer Soup needs Beer, which no vendor sells — it must be brewed from Wheat).
     static bool Sourceable(DishInfo d, VenueState v, DishCatalog cat, int depth = 0)
     {
         foreach (var (item, amount) in d.Inputs)
@@ -227,8 +324,6 @@ public static class Planner
         return (int)cost;
     }
 
-    // Effective price of ONE unit of an ingredient, hundredths: shelf x grade when buyable,
-    // else the craft cost of a recipe producing it (recursive, depth-limited), else 0.
     static decimal InputUnitPrice(string item, VenueState v, DishCatalog? cat, int depth)
     {
         if (v.BuyPrice.TryGetValue(item, out var shelf) && shelf > 0)
@@ -247,7 +342,6 @@ public static class Planner
         return 0m;
     }
 
-    // market cost of a dish in lims, no stock discount — its "expense class", used by the gate
     public static decimal RawCostLims(DishInfo d, VenueState v, DishCatalog? cat = null)
     {
         decimal cost = 0m;
@@ -256,7 +350,6 @@ public static class Planner
         return cost / 100m;
     }
 
-    // Local Exclusivity: soft-demote dishes over the venue's input budget (never ban — keep feasible)
     static double ExclusivityGate(DishInfo d, VenueState v, DishCatalog cat)
     {
         decimal cap = v.LocalExclusivity switch { <= 2 => 6m, 3 => 9m, 4 => 12m, _ => 15m };
@@ -302,44 +395,42 @@ public static class Planner
         && menu.GroupBy(d => d.Type).All(g => g.Count() <= cap);
 
     static MenuSuggestion BuildResult(List<DishInfo> menu, VenueState v, MenuRules r, MenuState st,
-        IReadOnlyList<(string Group, float Weight)> mix, List<string> warnings, DishCatalog cat)
+        IReadOnlyList<(string Group, float Weight)> mix, List<string> warnings, DishCatalog cat,
+        Dictionary<string, int> committed, Dictionary<string, double> finalOrders)
     {
         var lines = new List<DishLine>();
-        var shopping = new Dictionary<string, int>();
+        var rawNeeds = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
         decimal profit = 0m;
         foreach (var d in menu)
         {
             var cost = EffCost(d, v, r, cat);
             double rawOrders = st.DemandScale * Mix(mix, d);
-            int servable = ServingsPossible(d, v, cat);
-            var orders = Math.Min(rawOrders, servable);
+            // the plan's honest promise: ledger-capped orders from the rebuild
+            var orders = finalOrders.GetValueOrDefault(d.Id, Math.Min(rawOrders, ServingsPossible(d, v, cat)));
 
-            // Planning-voice gap warning (voice ruling: fix-tomorrow here; the
-            // walked-out diagnostic belongs to the v0.2 service report).
-            if (rawOrders > servable)
-                warnings.Add($"{d.Name}: pantry serves {servable} of expected {(int)Math.Ceiling(rawOrders)} — the gap is on your shopping list.");
+            if (rawOrders > orders + 0.01)
+                warnings.Add($"{d.Name}: pantry serves {(int)Math.Ceiling(orders)} of expected {(int)Math.Ceiling(rawOrders)} — the gap is on your shopping list.");
 
             profit += (decimal)orders * (d.PriceCapHundredths - cost) / 100m;
             lines.Add(new DishLine(d, d.PriceCapHundredths, cost, orders));
-            foreach (var (item, amount) in d.Inputs)
-            {
-                // RESCUE ENTRY (Option B): the dish survived demotion, so buy the
-                // shortfall. Held stock nets out first; what the pantry can't cover
-                // lands on the list. For stocked inputs this is the usual restock
-                // netting (need <= 0).
-                v.Stock.TryGetValue(item, out var stock);
-                int need = (int)Math.Ceiling(orders * amount) - stock;
-                if (need > 0) AddNeed(shopping, item, need, v, cat, 0);
-            }
+            Accrue(d, (int)Math.Ceiling(rawOrders), rawNeeds, v, cat, 0);
         }
-        var list = shopping.OrderBy(kv => kv.Key)   // alphabetical until Step 4's urgency ordering
+
+        // SHOPPING LIST = the raw-demand gap, aggregated across the menu:
+        // buy enough that tomorrow's plan serves full demand instead of capping.
+        var shopping = new Dictionary<string, int>();
+        foreach (var kv in rawNeeds)
+        {
+            v.Stock.TryGetValue(kv.Key, out var stock);
+            int gap = kv.Value - stock;
+            if (gap > 0) AddNeed(shopping, kv.Key, gap, v, cat, 0);
+        }
+        var list = shopping.OrderBy(kv => kv.Key)   // alphabetical until sub-step 4b (urgency)
             .Select(kv => new ShoppingItem(kv.Key, kv.Value, v.BuyPrice.GetValueOrDefault(kv.Key)))
             .ToList();
         return new MenuSuggestion(lines, profit, list, warnings);
     }
 
-    // Shopping lists name things you can actually buy: a crafted-only need (Beer) expands
-    // into its recipe's inputs (Wheat), netting sub-ingredient stock along the way.
     static void AddNeed(Dictionary<string, int> shopping, string item, int need, VenueState v, DishCatalog cat, int depth)
     {
         if (need <= 0) return;
