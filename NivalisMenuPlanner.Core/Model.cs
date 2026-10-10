@@ -15,19 +15,21 @@ public sealed record StaffMember(string Name, decimal HourlyRate, int MinutesRem
 
 public sealed record VenueState(
     string Id, string Name, string District, int MaxSlots,
-    int LocalExclusivity,
-    int ManagerGrade,
+    int LocalExclusivity,      // 1–5 (scale still to VERIFY via DevBridge dump — assumed 1–5)
+    int ManagerGrade,          // 0 = no manager, else 1–10
     IReadOnlyDictionary<string, int> Stock,
-    IReadOnlyDictionary<string, int> BuyPrice,
+    IReadOnlyDictionary<string, int> BuyPrice,   // shelf price in hundredths of a lim
     IReadOnlyList<(string Group, float Weight)> CustomerMix,
-    IReadOnlyList<string> KnownDishIds);
+    IReadOnlyList<string> KnownDishIds,
+    int? StorageCapacity = null);   // total units the venue can hold (normal + refrigerated), null = unlimited
 
 public sealed record MenuRules(
     int MaxSlots,
     bool PreferBeverage, bool PreferEntree, bool PreferDessert,
     IReadOnlyList<DishType> EntreeTypes, int MaxPerType,
     float ChurnPenalty, float StockDiscount,
-    float RoleBonus);
+    float RoleBonus,
+    int MinErrandValueHundredths = 500);   // entries protecting less profit than this drop from the list (5 lims)
 
 public sealed record MenuState(IReadOnlyList<string> Yesterday, float DemandScale);
 
@@ -36,7 +38,9 @@ public sealed record DishLine(DishInfo Dish, int PriceHundredths, int CostHundre
     public decimal Margin => (PriceHundredths - CostHundredths) / 100m;
 }
 
-public sealed record ShoppingItem(string Item, int Needed, int UnitPriceHundredths);
+public sealed record ShoppingItem(
+    string Item, int Needed, int UnitPriceHundredths,
+    int ProtectedHundredths = 0);   // profit-at-risk this entry covers; urgency = protected / cost
 
 public sealed record MenuSuggestion(
     IReadOnlyList<DishLine> Dishes, decimal EstProfitPerDay,

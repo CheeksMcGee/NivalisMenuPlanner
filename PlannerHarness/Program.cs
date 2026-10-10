@@ -365,4 +365,43 @@ Check("T17d ledger never over-commits (planned tomato orders <= stock)",
     noOvercommit,
     $"planned tomato orders {plannedTomatoOrders} vs stock 8; menu: {string.Join(", ", s17d.Dishes.Select(d => d.Dish.Name))}; " +
     $"orders: {string.Join(", ", s17d.Dishes.Select(d => $"{d.Dish.Name} {d.ExpectedOrders:0.0}"))}");
+
+// T17b — PER-LIM URGENCY (ruling 1): scarce Tomatoes (4) vs ~10 raw demand -> a rescue
+//         entry carrying protected profit. Borsch's contribution dominates the protected
+//         amount (higher margin), and the entry survives the floor. Check: the tomato
+//         rescue exists, carries protection >= the floor, and the list orders by
+//         protected-per-lim (single-entry here; ordering vs penny-restocks is exercised
+//         by the floor removing the pennies in T17c).
+var t17bStock = new Dictionary<string, int>(t17aStock) { ["Tomatoes"] = 4 };
+var v17b = new VenueState("T17b-Urgency", "T17b-Urgency", "Test District", 10, 3, 0,
+    t17bStock, t17aPrices, t6Mix, t17aKnown);
+var s17bR = Planner.Plan(cat, v17b, rules, new MenuState(Array.Empty<string>(), 8f));
+var t17bList = s17bR.Shopping.Where(s => s.Item == "Tomatoes").ToList();
+bool t17bOk = t17bList.Count == 1
+           && t17bList[0].Needed >= 1
+           && t17bList[0].ProtectedHundredths >= rules.MinErrandValueHundredths;
+Check("T17b urgency: rescue entries carry protected profit",
+    t17bOk,
+    $"shopping: {string.Join(", ", s17bR.Shopping.Select(s => $"{s.Item} x{s.Needed} (protects {s.ProtectedHundredths / 100m:0.00} lims)"))}");
+
+// T17c — ERRAND FLOOR (ruling: 5 lims = 500 hundredths): a 1-2 unit gap protecting only
+//         a couple lims drops off. Summer Salad alone: raw demand ~5 (worker-mix), stock
+//         6 tomatoes -> salad fully served, list empty; then a tight venue: stock 4 ->
+//         gap ~1 unit protecting ~salad margin on 1 order (~200 hundredths) -> dropped.
+var t17cKnown = new[] { "Summer Salad" };
+var t17cStock = new Dictionary<string, int>
+{
+    ["Tomatoes"] = 4,
+    ["Chicken"] = 40,
+    ["Cucumbers"] = 40,
+    ["Cheese"] = 40
+};
+var v17c = new VenueState("T17c-Floor", "T17c-Floor", "Test District", 10, 3, 0,
+    t17cStock, t17aPrices, t6Mix, t17cKnown);
+var s17c = Planner.Plan(cat, v17c, rules, new MenuState(Array.Empty<string>(), 8f));
+bool noPennyErrands = s17c.Shopping.All(s => s.ProtectedHundredths >= rules.MinErrandValueHundredths);
+Check("T17c errand floor: entries protecting < 5 lims drop off the list",
+    noPennyErrands,
+    $"shopping: {string.Join(", ", s17c.Shopping.Select(s => $"{s.Item} x{s.Needed} (protects {s.ProtectedHundredths / 100m:0.00})"))}");
+Console.WriteLine($"DEBUG T17c: needed=1? {s17c.Shopping.Count} entries; ProtectedHundredths raw = {string.Join(",", s17c.Shopping.Select(s => s.ProtectedHundredths))}");
 return failed;
