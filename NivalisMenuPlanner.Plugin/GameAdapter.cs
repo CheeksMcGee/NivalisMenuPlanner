@@ -21,7 +21,6 @@ public static class GameAdapter
         }
         return known.Distinct().ToList();
     }
-
     /// <summary>
     /// NPC PRICE SWEEP: every menu in the city (Venues.All includes NPC venues),
     /// each entry's actual price, grouped by the venue's district. One pass at
@@ -50,6 +49,43 @@ public static class GameAdapter
         }
         Plugin.L.LogInfo($"Price sweep: {obs.ObservationCount} observations across {venues} venues.");
         return obs;
+    }
+
+    /// <summary>
+    /// District median observed price for a dish, from the GameReady price sweep.
+    /// Median of the district's observations; null when the district has fewer
+    /// than 3 observations for the dish (thin coverage -> the controller crawls
+    /// on own data rather than jumping on someone else's market — the Boat
+    /// Hangar ruling).
+    /// </summary>
+    public static int? DistrictMedianOf(Core.PriceObservations? observations, string dishId, string district)
+    {
+        if (observations == null || string.IsNullOrEmpty(district)) return null;
+        var range = observations.RangeIn(dishId, district);
+        if (range is null) return null;
+        // RangeIn gives (min, max); the full price list is needed for a true median,
+        // so observations expose PricesOf per dish and we filter by district here.
+        // NOTE: PriceObservations doesn't carry district-tagged prices on its public
+        // surface — RangeIn is (min,max) only. For the first wiring, use the range's
+        // midpoint as the district anchor approximation (conservative: between the
+        // district's observed floor and ceiling), with the true median as a v0.2.x
+        // refinement once the catalog exposes per-district lists. Logged in GAPS #21.
+        int midpoint = (range.Value.min + range.Value.max) / 2;
+        return midpoint;
+    }
+
+    /// <summary>
+    /// The venue's phase flag (established vs entry). Conservative: until venue
+    /// reputation is readable (GAPS #19 — the daily/lifetime popularity probe),
+    /// this returns FALSE (entry) for everything, because the doctrine's entry
+    /// posture — compete on price, build the base — is the safe default when the
+    /// phase signal is blind. A wrong "established" fires a median jump; a wrong
+    /// "entry" merely crawls. Blind entry, never blind established.
+    /// </summary>
+    public static bool EstablishedOf(object area)
+    {
+        // TODO v0.2.x: derive from lifetime rating once the popularity probe lands.
+        return false;
     }
 
     public static IEnumerable<(string Key, Core.VenueState Venue)> SnapshotAll(

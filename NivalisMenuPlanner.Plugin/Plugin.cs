@@ -23,9 +23,8 @@ public class Plugin : BasePlugin
     static DishCatalog? _catalog;
     static PriceObservations? _observations;
     static readonly List<Rotation> _rotation = new();
-    static readonly Dictionary<string, int> _cooked = new();   // venueKey -> nothing; per-dish below
     static readonly Dictionary<string, Dictionary<string, int>> _cookedByVenue =
-        new(StringComparer.OrdinalIgnoreCase);   // venueKey -> dishId -> cooked today
+        new(StringComparer.OrdinalIgnoreCase);
 
     internal static ConfigEntry<Key> Hotkey = null!;
     internal static ConfigEntry<int> MaxSlots = null!, MaxPerType = null!;
@@ -74,6 +73,7 @@ public class Plugin : BasePlugin
         DevCommands.Register(Guid, "plan", "venue=N: current menu suggestions as JSON (N = name fragment; omit for all)", PlanCommand);
         DevCommands.Register(Guid, "sales", "venue=N&day=N: stored SaleRecords as JSON", SalesCommand);
         DevCommands.Register(Guid, "prices", "dish=N: observed city prices and measured caps as JSON", PricesCommand);
+        DevCommands.Register(Guid, "suggest", "venue=N: current pricing suggestions as JSON", SuggestCommand);
 
         L.LogInfo($"Menu Planner 0.1.0 loaded — hotkey {Hotkey.Value} (scheduler-polled), kit {ModKit.Version}.");
     }
@@ -122,10 +122,6 @@ public class Plugin : BasePlugin
         catch { /* best-effort counting */ }
     }
 
-    // SALE HARVEST (Session 1 leftover, Step A): at DayEnded, persist one SaleRecord
-    // per menu dish per venue - actual menu price, sold from receipts, cooked from the
-    // counter, walked-out derived, popularity snapshot. The elasticity training set;
-    // the v0.2 pricing controller's eyes. Fires before the next DayStarted replan.
     static void OnDayEnded(DayEndedArgs a)
     {
         try
@@ -157,7 +153,7 @@ public class Plugin : BasePlugin
                 {
                     int sold = soldByDish.GetValueOrDefault(dish);
                     int cooked = cookedForVenue?.GetValueOrDefault(dish) ?? 0;
-                    if (sold == 0 && cooked == 0) continue;   // dish never moved today; skip noise
+                    if (sold == 0 && cooked == 0) continue;
                     var walked = Math.Max(0, cooked - sold);
                     float? pop = null;   // popularity deferred: PopularityOf's group shape needs runtime verification (GAPS #15)
                     var rec = new SaleRecord(day, price, sold, cooked, walked, pop);
@@ -165,8 +161,16 @@ public class Plugin : BasePlugin
                     records++;
                 }
             }
-            _cookedByVenue.Clear();   // counters are per-day; reset for tomorrow
-            L.LogInfo($"Day {day} harvested: {records} sale records across {venues} venue(s).");
+            _cookedByVenue.Clear();
+            // Retention pruning (Q1): the store keeps only the tuner's window.
+            foreach (var k in Data.Keys.Where(k => k.StartsWith("sales.", StringComparison.OrdinalIgnoreCase)).ToList())
+            {
+                var parts = k.Split('.');
+                if (parts.Length == 5 && int.TryParse(parts[4], out var recDay)
+                    && !DemandTuner.ShouldRetain(recDay, day))
+                    Data.Remove(k);
+            }
+            L.LogInfo($"Day {day} harvested: {records} sale records across {venues} venue(s); store pruned to the 3-day window.");
         }
         catch (Exception e) { L.LogWarning($"Sale harvest failed: {e.Message}"); }
     }
@@ -188,6 +192,7 @@ public class Plugin : BasePlugin
           .OrderBy(x => x.day).ThenBy(x => x.venue).ThenBy(x => x.dish)
           .ToList();
     }
+
     static object PricesCommand(CommandArgs args)
     {
         if (_observations == null) return new { error = "price sweep not run yet (no GameReady this session)" };
@@ -204,6 +209,34 @@ public class Plugin : BasePlugin
                 ? $"{_observations.PricesOf(d).Min() / 100m:0.00}-{_observations.PricesOf(d).Max() / 100m:0.00}"
                 : $"{_observations.PricesOf(d).Min() / 100m:0.00}"
         }).OrderBy(x => x.dish).ToList();
+    }
+
+    static object SuggestCommand(CommandArgs args)
+    {
+        var picks = Current();
+        if (args.Has("venue"))
+        {
+            var frag = args.Get("venue", "");
+            picks = picks.Where(r => r.Key.Contains(frag, StringComparison.OrdinalIgnoreCase)
+                                  || r.Title.Contains(frag, StringComparison.OrdinalIgnoreCase)).ToArray();
+        }
+        return new
+        {
+            day = GameTime.Day,
+            venues = picks.Select(r => new
+            {
+                venue = r.Title,
+                established = r.Established,
+                suggestions = r.Suggestions.Select(s => new
+                {
+                    dish = s.DishId,
+                    diagnosis = s.Diagnosis,
+                    rationale = s.Rationale,
+                    current = s.CurrentPriceHundredths / 100m,
+                    suggested = s.SuggestedPriceHundredths / 100m
+                })
+            })
+        };
     }
 
     static void StartHotkeyPoll()
@@ -278,7 +311,25 @@ public class Plugin : BasePlugin
         {
             var yesterday = Data.Get<List<string>>($"menus.{key}", new List<string>());
             var suggestion = Planner.Plan(_catalog!, venue, Rules(), new MenuState(yesterday, DemandScale.Value));
-            _rotation.Add(new Rotation(key, venue.Name, suggestion));
+            var established = GameAdapter.EstablishedOf(null!);   // phase flag; conservative entry until GAPS #19
+
+            // ---- PRICING PASS (5c): the doctrine runs on each menu dish ----
+            var priceSuggestions = new List<PriceSuggestion>();
+            foreach (var line in suggestion.Dishes)
+            {
+                var dish = line.Dish;
+                var history = LoadHistory(key, dish.Id);
+                var currentPrice = CurrentMenuPrice(key, dish.Id) ?? dish.PriceCapHundredths;
+                var median = GameAdapter.DistrictMedianOf(_observations, dish.Id, venue.District);
+                var sug = PricingController.Suggest(
+                    dish, currentPrice, history,
+                    line.CostHundredths,
+                    Planner.ServingsPossible(dish, venue, _catalog!),
+                    median, established);
+                if (sug != null) priceSuggestions.Add(sug);
+            }
+
+            _rotation.Add(new Rotation(key, venue.Name, suggestion, priceSuggestions, established));
 
             decimal? prior = Data.Has($"profit.{key}") ? Data.Get<decimal?>($"profit.{key}", null) : null;
             if (prior is > 0 && suggestion.EstProfitPerDay > prior * (1 + (decimal)NotifyGain.Value / 100m))
@@ -289,6 +340,41 @@ public class Plugin : BasePlugin
             Data.Set($"profit.{key}", suggestion.EstProfitPerDay);
         }
         L.LogInfo($"Planned {_rotation.Count} venue(s) for day {GameTime.Day}, hour {GameTime.Hour}.");
+    }
+
+    // The dish's SaleRecord history from the tuner's window (the same records the
+    // harvest stores; retention pruning at DayEnded keeps the store and window in sync).
+    static List<SaleRecord> LoadHistory(string venueKey, string dishId)
+    {
+        var records = new List<SaleRecord>();
+        foreach (var k in Data.Keys.Where(k => k.StartsWith($"sales.{venueKey}.{dishId}.", StringComparison.OrdinalIgnoreCase)))
+        {
+            var rec = Data.Get<SaleRecord>(k, null!);
+            if (rec != null) records.Add(rec);
+        }
+        return records;
+    }
+
+    // The venue's CURRENT menu price for the dish (what the game is actually charging,
+    // from MenuOf) — the pricing pass prices the real menu, not the planner's cap.
+    static int? CurrentMenuPrice(string venueKey, string dishId)
+    {
+        try
+        {
+            foreach (var area in Venues.PlayerOwned)
+            {
+                if (!string.Equals(Safe(() => Venues.NameOf(area)), venueKey, StringComparison.OrdinalIgnoreCase))
+                    continue;
+                foreach (var entry in Venues.MenuOf(area))
+                {
+                    var name = Items.NameOf(entry.Dish);
+                    if (string.Equals(name, dishId, StringComparison.OrdinalIgnoreCase))
+                        return entry.Price;
+                }
+            }
+        }
+        catch { }
+        return null;
     }
 
     internal static Rotation[] Current() => _rotation.ToArray();
@@ -338,5 +424,6 @@ public class Plugin : BasePlugin
 
     static string? Safe(Func<string?> f) { try { return f(); } catch { return null; } }
 
-    public sealed record Rotation(string Key, string Title, MenuSuggestion Suggestion);
+    public sealed record Rotation(string Key, string Title, MenuSuggestion Suggestion,
+        IReadOnlyList<PriceSuggestion> Suggestions, bool Established);
 }
