@@ -403,4 +403,51 @@ bool noPennyErrands = s17c.Shopping.All(s => s.ProtectedHundredths >= rules.MinE
 Check("T17c errand floor: entries protecting < 5 lims drop off the list",
     noPennyErrands,
     $"shopping: {string.Join(", ", s17c.Shopping.Select(s => $"{s.Item} x{s.Needed} (protects {s.ProtectedHundredths / 100m:0.00})"))}");
+// T18 — DemandTuner: learns per-dish levels from demand-clean records (Q1/Q2).
+// Fixture semantics: CLEAN = SoldOut false (sold < cooked: kitchen plated
+// headroom, demand wasn't supply-capped). Sold == Cooked means SOLD OUT
+// per SaleRecord.SoldOut — capacity was binding. The first draft of these
+// fixtures marked sold==cooked as "clean" and was wrong about its own type.
+var t18Records = new List<SaleRecord> {
+    new(70, 2500, 9,  11, 0, null),    // clean: 9 of 11 plated sold
+    new(71, 2500, 17, 19, 0, null),   // clean: 17 of 19
+    new(72, 2500, 21, 23, 0, null),   // clean: 21 of 23
+};
+double t18Learned = DemandTuner.ExpectedOrders("Fish Salad", t18Records, fallbackScale: 8.0);
+Check("T18a tuner averages clean records",
+    Math.Abs(t18Learned - 15.667) < 0.01,                     // (9+17+21)/3
+    $"learned {t18Learned:0.00} from 9/17/21");
+
+// T18b — all sold-out: max observed as floor, not the censored mean.
+var t18B = new List<SaleRecord> {
+    new(70, 800, 30, 30, 0, null),
+    new(71, 800, 33, 33, 0, null),     // SoldOut true
+    new(72, 800, 31, 31, 0, null),    // SoldOut true
+};
+double t18Floor = DemandTuner.ExpectedOrders("Beer", t18B, fallbackScale: 8.0);
+Check("T18b sold-out days return max as floor (capacity censoring)",
+    Math.Abs(t18Floor - 33.0) < 0.01,
+    $"all-sold-out window returns {t18Floor:0.0} (max observed), not the mean {(30.0 + 33.0 + 31.0) / 3:0.0}");
+
+// T18c — mixed window: clean days average; sold-out day excluded.
+var t18C = new List<SaleRecord> {
+    new(70, 2600, 22, 24, 0, null),    // clean
+    new(71, 2600, 29, 31, 0, null),    // clean
+    new(72, 2600, 28, 28, 0, null),    // SoldOut true
+};
+double t18Mixed = DemandTuner.ExpectedOrders("Oyster Shooter", t18C, fallbackScale: 8.0);
+Check("T18c mixed window averages clean days only",
+    Math.Abs(t18Mixed - 25.5) < 0.01,                          // (22+29)/2
+    $"mixed window returns {t18Mixed:0.00} ((22+29)/2; sold-out day excluded)");
+
+// T18d — cold start and pruning
+double t18Cold = DemandTuner.ExpectedOrders("Anything", new List<SaleRecord>(), fallbackScale: 8.0);
+Check("T18d cold start falls back to baseline",
+    Math.Abs(t18Cold - 8.0) < 0.01,
+    $"empty history -> {t18Cold:0.0} (config DemandScale)");
+bool t18OldKept = DemandTuner.ShouldRetain(70, 72);   // 2 days back -> keep
+bool t18OldDropped = !DemandTuner.ShouldRetain(69, 72); // 3 days back -> prune
+Check("T18d retention window prunes old records",
+    t18OldKept && t18OldDropped,
+    $"day 70 retained vs today 72: {t18OldKept}; day 69 pruned: {t18OldDropped}");
 return failed;
