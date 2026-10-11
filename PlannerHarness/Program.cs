@@ -450,4 +450,103 @@ bool t18OldDropped = !DemandTuner.ShouldRetain(69, 72); // 3 days back -> prune
 Check("T18d retention window prunes old records",
     t18OldKept && t18OldDropped,
     $"day 70 retained vs today 72: {t18OldKept}; day 69 pruned: {t18OldDropped}");
+// T19 — PricingController: the doctrine's decision table.
+// Fixture convention: days (d-2, d-1, d) so the 3-day window sees all three;
+// "clean" means sold < cooked (not SoldOut), matching SaleRecord semantics.
+
+// T19a — capacity-bound: no price move (row 1). Sold 30 vs platable 25 -> supply-bound.
+var t19aRecords = new List<SaleRecord> {
+    new(70, 800, 25, 27, 0, null),
+    new(71, 800, 30, 31, 0, null),   // sold 30, cooked 31: clean (30 < 31, not SoldOut)
+    new(72, 800, 30, 32, 0, null),   // clean
+};
+var t19aDish = cat.ById("Beer")!;    // cap 800 (city-measured in production; CSV estimate here is 350 - the catalog holds CSV caps in the harness)
+// NOTE: the harness catalog carries CSV-estimated caps; the controller uses
+// dish.PriceCapHundredths as the CEILING, which is what it is in production
+// (measured caps override at GameReady). For T19a the ceiling is irrelevant
+// (capacity-bound -> null before any price math).
+var t19aSug = PricingController.Suggest(t19aDish, currentPrice: 800, records: t19aRecords,
+    costHundredths: 250, platableToday: 25, districtMedian: 800, established: true);
+Check("T19a capacity-bound: no price move",
+    t19aSug == null,
+    t19aSug == null ? "supply was binding (sold 30 vs platable 25) -> supply grows, price holds" : $"unexpected {t19aSug.Diagnosis}");
+
+// T19b — throughput-bound: walk-outs present -> service domain, no price move (row 2).
+var t19bRecords = new List<SaleRecord> {
+    new(70, 2500, 20, 21, 1, null),   // walked 1
+    new(71, 2500, 22, 25, 3, null),   // walked 3
+    new(72, 2500, 21, 23, 2, null),   // walked 2
+};
+var t19bDish = cat.ById("Fish Salad")!;
+var t19bSug = PricingController.Suggest(t19bDish, currentPrice: 2500, records: t19bRecords,
+    costHundredths: 700, platableToday: 50, districtMedian: 3100, established: true);
+Check("T19b throughput-bound (walk-outs): no price move",
+    t19bSug == null,
+    t19bSug == null ? "plates died at the dishwasher -> staffing domain, price holds" : $"unexpected {t19bSug.Diagnosis}");
+
+// T19c — established catch-up: 2500 vs median 3100 -> suggest the anchor exactly.
+// Arithmetic: 2500 < 3100; gap 600 = 19.4% of anchor -> NOT at market -> jump to 3100.
+var t19cRecords = new List<SaleRecord> {
+    new(70, 2500, 17, 19, 0, null),
+    new(71, 2500, 21, 23, 0, null),
+    new(72, 2500, 20, 22, 0, null),   // no slump: 20 >= 19*0.8
+};
+var t19cSug = PricingController.Suggest(t19bDish, currentPrice: 2500, records: t19cRecords,
+    costHundredths: 700, platableToday: 50, districtMedian: 3100, established: true);
+Check("T19c established: catch up to district median",
+    t19cSug != null && t19cSug.SuggestedPriceHundredths == 3100 && t19cSug.Diagnosis.Contains("catch up"),
+    t19cSug == null ? "no suggestion (unexpected)" : $"{t19cSug.Diagnosis}: {t19cSug.CurrentPriceHundredths} -> {t19cSug.SuggestedPriceHundredths}");
+
+// T19d — entry venue: same data, but NOT established -> anchor at 95% of median (2945).
+var t19dSug = PricingController.Suggest(t19bDish, currentPrice: 2500, records: t19cRecords,
+    costHundredths: 700, platableToday: 50, districtMedian: 3100, established: false);
+Check("T19d entry: open at district floor (95% of median)",
+    t19dSug != null && t19dSug.SuggestedPriceHundredths == 2945 && t19dSug.Diagnosis.Contains("entry"),
+    t19dSug == null ? "no suggestion (unexpected)" : $"{t19dSug.Diagnosis}: 2500 -> {t19dSug.SuggestedPriceHundredths}");
+
+// T19e — thin district coverage (null median): crawl only. 2500 -> 2500+125 = 2625.
+// Arithmetic: step = 2500 * 500 / 10000 = 125. Cap: Fish Salad's CSV cap 3705... wait,
+// CSV estimate; the catalog has 3705? No - CSV cap for Fish Salad from the generator
+// (Salad factor 1.9 x input cost ~3.3 lims) -> ~620. The harness catalog holds CSV
+// caps, so 2625 may exceed the cap. Use a dish with a high cap: Beer at 350 also fails.
+// RESOLUTION: the controller's ceiling is the catalog cap; for a CLEAN crawl test use
+// currentPrice well below cap. Use Onion Rings: CSV cap ~650... also tight.
+// The honest fixture: pass a dish whose catalog cap exceeds the step. Pizza Speciale
+// (CSV ~3059) works: current 2000 -> 2100.
+var t19eDish = cat.ById("Pizza Speciale")!;
+var t19eSug = PricingController.Suggest(t19eDish, currentPrice: 2000, records: t19cRecords,
+    costHundredths: 700, platableToday: 50, districtMedian: null, established: true);
+Check("T19e thin coverage: crawl only (+5% on own data)",
+    t19eSug != null && t19eSug.SuggestedPriceHundredths == 2100 && t19eSug.Diagnosis.Contains("no district benchmark"),
+    t19eSug == null ? "no suggestion (unexpected)" : $"{t19eSug.Diagnosis}: 2000 -> {t19eSug.SuggestedPriceHundredths}");
+
+// T19f — sticky-down: 2-day slump trims toward floor. Fixture: days 70/71 strong,
+// days 72/73 slumped 20%+. Window is (71, 72, 73): last=73 slumped vs prior avg
+// ((71+72)/2), prior=72 slumped vs 71. Price 3000, cost 2500 -> floor 2700.
+// Cut: 3000 - 3000*500/10000 = 2850. Above floor -> 2850.
+var t19fRecords = new List<SaleRecord> {
+    new(71, 3000, 20, 22, 0, null),
+    new(72, 3000, 14, 16, 0, null),   // 14 <= 20*0.8 = 16 -> slump day 1
+    new(73, 3000, 10, 12, 0, null),   // 10 <= (20+14)/2*0.8 = 13.6 -> slump day 2
+};
+var t19fDish = cat.ById("Pizza Speciale")!;
+var t19fSug = PricingController.Suggest(t19fDish, currentPrice: 3000, records: t19fRecords,
+    costHundredths: 2500, platableToday: 50, districtMedian: null, established: true);
+Check("T19f sticky-down: 2-day slump trims toward floor",
+    t19fSug != null && t19fSug.SuggestedPriceHundredths == 2850 && t19fSug.Diagnosis.Contains("slump"),
+    t19fSug == null ? "no suggestion (unexpected)" : $"{t19fSug.Diagnosis}: 3000 -> {t19fSug.SuggestedPriceHundredths}");
+
+// T19g — single slow day is NOT a slump (stickiness): day 73 slow, day 72 strong.
+var t19gRecords = new List<SaleRecord> {
+    new(71, 3000, 20, 22, 0, null),
+    new(72, 3000, 21, 23, 0, null),   // strong
+    new(73, 3000, 10, 12, 0, null),   // one slow day: 10 <= (20+21)/2*0.8 = 16.4 -> today slumps...
+};
+// ...but prior day did NOT slump (21 >= 20*0.8) -> no 2-day trigger -> demand-bound path.
+// No median -> crawl: 3000 -> 3150.
+var t19gSug = PricingController.Suggest(t19fDish, currentPrice: 3000, records: t19gRecords,
+    costHundredths: 2500, platableToday: 50, districtMedian: null, established: true);
+Check("T19g single slow day: no cut; crawl continues",
+    t19gSug != null && t19gSug.SuggestedPriceHundredths == 3150 && !t19gSug.Diagnosis.Contains("slump"),
+    t19gSug == null ? "no suggestion (unexpected)" : $"{t19gSug.Diagnosis}: 3000 -> {t19gSug.SuggestedPriceHundredths}");
 return failed;
