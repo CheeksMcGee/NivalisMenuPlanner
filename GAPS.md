@@ -30,3 +30,23 @@ Format: what we tried / what's missing / why the workaround falls short
     exactly the v0.3 'managers buy to the plan' hooks. No upstream ask needed for purchasing.
 14. CSV keys are ASSET names (Items.NameOf's format), display names only for UI — enforced by
     the generator since the curly-apostrophe/Plural-name mismatch would silently break lookups.
+15. receipt.Count semantics — RESOLVED by rig verification, day 71: records
+    reconcile EXACTLY with end-of-day gross at both venues (Ramen Noir
+    146,100 hundredths = screen 1461 lims; Boat Hangar 159,900 = 1599).
+    receipt.Count = units sold; SaleRecord.Sold x Price = the game's gross.
+    Verification mechanism: venue-total reconciliation (screen shows no
+    per-dish itemization; total-level works and is sufficient).
+16. Sold > Cooked days — operator hypothesis (receipts may tally at order
+    time, not plate time) fits day-66/68 data better than replacement-cook
+    undercount; adjudication test = subscribe SaleMade (payment-at-departure
+    per kit docs) with day/hour stamp, compare per-dish totals vs ReceiptsOf.
+    Until then: WalkedOut valid only when Sold <= Cooked; Sold > Cooked days
+    had at least (Sold - Cooked) unseen walk-outs.
+17. Dishwasher observation — abandoned plates are destroyed (ingredients +
+    prep labor lost), not stored; walk-outs cost more than lost revenue.
+    Cooked counter may miss replacement cooks (tally semantics per #16).
+18. Screen "out" (expenses) side — noted as future escrow/shopping-list
+    verification, same total-reconciliation trick, other side of the ledger.
+19. PopularityOf group-shape — still deferred; the SaleMade test session can
+    also probe /venues bridge page for the group structure to wire the
+    SaleRecord popularity field.
