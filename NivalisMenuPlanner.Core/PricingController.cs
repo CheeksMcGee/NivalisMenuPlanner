@@ -10,9 +10,8 @@ public sealed record PriceSuggestion(
 
 public static class PricingController
 {
-    // ---- Doctrine defaults (the session's "config-open" ruling: these become
-    // config entries in 5d-2; Core takes them as parameters so the plugin can
-    // feed whatever the operator dials in. Defaults are the goat-calibrated values.) ----
+    // ---- Doctrine defaults (config-fed in 5d-2; Core takes them as parameters
+    // so the plugin can dial whatever the operator configures) ----
     public const int DefaultCrawlStepBps = 500;
     public const int DefaultStickyDownTriggerDays = 2;
     public const int DefaultSlumpThresholdPct = 20;
@@ -24,17 +23,16 @@ public static class PricingController
 
     /// <summary>
     /// One dish's suggestion, given everything the doctrine knows. Pure.
-    /// Q2 ladder unchanged; new since 5b per session findings:
-    ///  - MIN-VOLUME GATE (both levers): a dish whose demand-clean trailing average
-    ///    is below MinVolumeGate is too thin to trend - no slump cuts (Roaches x2,
-    ///    Sweet Waffle), no headroom crawls (Roaches' 30.45 raise on 1/day demand).
-    ///    The profit bar, not the price, owns dying dishes.
-    ///  - WHOLE-LIM QUANTIZATION (direction-preserve): the player's edit UI snaps
-    ///    prices to whole lims (29.40 -> 29 on apply; operator finding). Suggestions
-    ///    quantize at generation so the applier never rounds against the doctrine's
-    ///    direction: crawl-up rounds to the NEXT WHOLE LIM at-or-above; cuts round
-    ///    to the WHOLE LIM at-or-below. RoundToWholeLims = false preserves hundredths
-    ///    for the manager-era auto-apply (pending the fractional-consumption test).
+    /// Q2 ladder: capacity -> throughput -> demand-bound (price is the last
+    /// lever, never the first). 5d additions per session findings:
+    ///  - MIN-VOLUME GATE (both levers): dishes averaging under MinVolumeGate
+    ///    clean-demand get no price moves at all - dying dishes are the
+    ///    profit bar's jurisdiction (Roaches/Waffle findings).
+    ///  - WHOLE-LIM QUANTIZATION, direction-preserve, round-then-cap: round
+    ///    to the step first, clamp to the ceiling last, so quantization can
+    ///    never pierce the cap (T21d's catch). Crawls ceil (never stall at
+    ///    >= 1 lim); cuts floor (never shallow the cut). RoundToWholeLims =
+    ///    false preserves hundredths for the manager-era path.
     /// </summary>
     public static PriceSuggestion? Suggest(
         DishInfo dish, int currentPrice, IReadOnlyList<SaleRecord> records,
@@ -61,24 +59,20 @@ public static class PricingController
         if (lastDayRec.Sold >= platableToday && platableToday > 0)
             return null;
 
-        // Row 2: throughput-bound (walk-outs; capacity already excluded by row 1)
+        // Row 2: throughput-bound (walk-outs; capacity already excluded)
         int walkedOut = window.Sum(r => r.WalkedOut);
         if (walkedOut > 0)
             return null;
 
-        // ---- MIN-VOLUME GATE: demand-clean trailing average (the DemandTuner's
-        // logic: sold-out days censored, clean days averaged; all-sold-out -> max).
-        // Below the gate: hold - both levers blocked (findings: Roaches, Sweet Waffle).
+        // ---- MIN-VOLUME GATE ----
         double cleanAvg = CleanDemandAverage(window);
         if (cleanAvg < minVolumeGate)
             return null;
 
         int floor = costHundredths + floorMarginHundredths;
-        double avgSold = window.Average(r => r.Sold);
 
         // ---- Down-lever: sticky-down crawl ----
         var ordered = window.OrderByDescending(r => r.Day).ToList();
-        var lastDay = ordered[0];
         var priorDay = ordered.Count > 1 ? ordered[1] : null;
         bool slumping = SlumpToday(window, slumpThresholdPct)
                         && priorDay != null
@@ -88,7 +82,8 @@ public static class PricingController
             int rawCut = currentPrice - currentPrice * crawlStepBps / 10000;
             int cut = Math.Max(floor, rawCut);
             cut = roundToWholeLims ? FloorToLims(cut) : cut;
-            if (cut >= currentPrice) return null;   // quantization or floor erased the cut: hold
+            if (cut >= currentPrice) return null;   // quantization/floor erased the cut: hold
+            if (cut < floor) cut = floor;         // never round below the floor
             return new PriceSuggestion(dish.Id, currentPrice, cut,
                 "demand-bound: slump",
                 $"{(int)cleanAvg:0.#}-day trailing demand below trend for {stickyDownTriggerDays} days; trimming toward the floor, not below it");
@@ -104,9 +99,10 @@ public static class PricingController
             bool atMarket = gapToAnchor * 100 <= anchor * anchorAtMarketPct;
             if (atMarket)
             {
+                // round first, cap last (T21d lesson: cap-then-round can pierce the ceiling)
                 int step = currentPrice + currentPrice * crawlStepBps / 10000;
+                if (roundToWholeLims) step = CeilingToLims(step);
                 int capped = Math.Min(step, dish.PriceCapHundredths);
-                if (roundToWholeLims) capped = CeilingToLims(capped);
                 if (capped <= currentPrice) return null;
                 return new PriceSuggestion(dish.Id, currentPrice, capped,
                     established ? "demand-bound: crawl up (established)" : "demand-bound: crawl up (entry)",
@@ -120,31 +116,29 @@ public static class PricingController
                         ? $"district median {median / 100m:0.00}; you charge {currentPrice / 100m:0.00} - proven market rate, then crawl"
                         : $"entry venue: open at {anchor / 100m:0.00} (95% of median) to build the base, bump in kind later");
 
-            return null;   // above anchor: the crawl's job, one step at a time
+            return null;   // above anchor: crawl's job, one step at a time
         }
 
         // No district benchmark: crawl on own data only
+        // round first, cap last (T21d: min(400, 350) = 350, not ceil-then-400)
         int step2 = currentPrice + currentPrice * crawlStepBps / 10000;
+        if (roundToWholeLims) step2 = CeilingToLims(step2);
         int capped2 = Math.Min(step2, dish.PriceCapHundredths);
-        if (roundToWholeLims) capped2 = CeilingToLims(capped2);
         if (capped2 <= currentPrice) return null;
         return new PriceSuggestion(dish.Id, currentPrice, capped2,
             "demand-bound: crawl up (no district benchmark)",
             $"you are the market here; verified +5% step on own data, toward ceiling");
     }
 
-    // Demand-clean trailing average (DemandTuner semantics, inline):
-    // sold-out days censored (their Sold is a floor, not a level); clean days averaged;
-    // all-sold-out -> max observed (still a floor - demand at least that).
     static double CleanDemandAverage(List<SaleRecord> window)
     {
         var clean = window.Where(r => !r.SoldOut).ToList();
         if (clean.Count > 0) return clean.Average(r => r.Sold);
-        return window.Max(r => r.Sold);
+        return window.Max(r => r.Sold);   // all sold-out: max observed (a floor)
     }
 
-    // Direction-preserve quantization (operator ruling: player UI snaps to whole
-    // lims; suggestions must never round against the doctrine's direction).
+    // Direction-preserve quantization. Round-then-cap: the ceiling clamps
+    // AFTER rounding so quantization can never push a suggestion past the cap.
     static int CeilingToLims(int hundredths) => ((hundredths + 99) / 100) * 100;
     static int FloorToLims(int hundredths) => (hundredths / 100) * 100;
     static int RoundToLims(int hundredths) => ((hundredths + 50) / 100) * 100;
