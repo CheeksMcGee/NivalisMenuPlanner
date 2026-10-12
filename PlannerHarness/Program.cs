@@ -549,4 +549,91 @@ var t19gSug = PricingController.Suggest(t19fDish, currentPrice: 3000, records: t
 Check("T19g single slow day: no cut; crawl continues",
     t19gSug != null && t19gSug.SuggestedPriceHundredths == 3150 && !t19gSug.Diagnosis.Contains("slump"),
     t19gSug == null ? "no suggestion (unexpected)" : $"{t19gSug.Diagnosis}: 3000 -> {t19gSug.SuggestedPriceHundredths}");
+// T20 — MIN-VOLUME GATE (findings: Roaches x2 slump cuts, Roaches' 30.45 raise).
+// Fixture semantics: clean = sold < cooked (kitchen plated headroom, demand honest).
+
+// T20a — DOWN-GATE: textbook 2-day slump on a dish averaging 1.33/day -> NO cut.
+var t20aRecords = new List<SaleRecord> {
+    new(71, 3100, 2, 4, 0, null),    // clean: 2 of 4
+    new(72, 3100, 1, 3, 0, null),    // clean: 1 - slump day 1 (1 <= 2*0.8=1.6)
+    new(73, 3100, 1, 3, 0, null),    // clean: 1 - slump day 2 (1 <= 1.5*0.8=1.2)
+};
+var t20aDish = cat.ById("Poached Roaches")!;
+var t20aSug = PricingController.Suggest(t20aDish, currentPrice: 2900, records: t20aRecords,
+    costHundredths: 1500, platableToday: 50, districtMedian: null, established: true);
+Check("T20a down-gate: sub-3/day dish gets no slump cut",
+    t20aSug == null,
+    t20aSug == null ? "clean avg 1.33 < gate 3 -> hold" : $"unexpected {t20aSug.Diagnosis}");
+
+// T20b — UP-GATE: thin dish, no slump shape -> NO crawl either.
+var t20bRecords = new List<SaleRecord> {
+    new(71, 2900, 1, 3, 0, null),
+    new(72, 2900, 2, 4, 0, null),
+    new(73, 2900, 1, 3, 0, null),
+};
+var t20bSug = PricingController.Suggest(t20aDish, currentPrice: 2900, records: t20bRecords,
+    costHundredths: 1500, platableToday: 50, districtMedian: null, established: true);
+Check("T20b up-gate: sub-3/day dish gets no headroom crawl",
+    t20bSug == null,
+    t20bSug == null ? "clean avg 1.33 < gate 3 -> hold" : $"unexpected {t20bSug.Diagnosis}");
+
+// T20c — ABOVE-GATE control: healthy volume, same slump PATTERN -> cut still fires,
+// and quantizes DOWN (2600-130=2470 -> FloorToLims -> 2400).
+var t20cRecords = new List<SaleRecord> {
+    new(71, 2600, 15, 17, 0, null),
+    new(72, 2600, 10, 12, 0, null),
+    new(73, 2600, 9, 11, 0, null),
+};
+var t20cDish = cat.ById("Sweet Waffle")!;
+var t20cSug = PricingController.Suggest(t20cDish, currentPrice: 2600, records: t20cRecords,
+    costHundredths: 800, platableToday: 50, districtMedian: null, established: true);
+Check("T20c above-gate: healthy-volume slump cuts, quantized down",
+    t20cSug != null && t20cSug.SuggestedPriceHundredths == 2400 && t20cSug.Diagnosis.Contains("slump"),
+    t20cSug == null ? "no suggestion (unexpected)" : $"{t20cSug.Diagnosis}: 2600 -> {t20cSug.SuggestedPriceHundredths}");
+
+// T21 — WHOLE-LIM QUANTIZATION (operator finding: player UI snaps to .00).
+// Cap safety discipline: cap the crawl explicitly by passing currentPrice low enough
+// that +5% always clears it; the CAP lives in the fixture's chosen dish+price, verified
+// in the derivation, not estimated from generator math.
+
+// T21a — crawl-up rounds UP to the next whole lim: 2945 + 5% = 3092.25 -> 3092 raw
+// -> CeilingToLims -> 3100. Sweet Waffle CSV cap (Dessert 1.8 x inputs ~800) = ~1440...
+// TOO LOW. Use a high-cap dish: Pizza Speciale (CSV 3400). current 2000 + 5% = 2100 raw
+// -> CeilingToLims(2100) = 2100 (already whole) -> 2100. To prove ROUNDING-UP (not
+// pass-through), we need a raw step that lands mid-lim: current 2050? Prices are
+// hundredths-ints, so use 2050 = 20.50 lims: 2050+102.5... crawlStepBps=500 ->
+// 2050 + 102 = 2152 -> CeilingToLims -> 2200.
+var t21aRecords = new List<SaleRecord> {
+    new(71, 2050, 6, 8, 0, null),
+    new(72, 2050, 5, 7, 0, null),
+    new(73, 2050, 5, 7, 0, null),    // clean avg 5.33 >= 3; no slump (5 > 4.4)
+};
+var t21aDish = cat.ById("Pizza Speciale")!;   // CSV cap 3400 -> min(2152, 3400) = 2152
+var t21aSug = PricingController.Suggest(t21aDish, currentPrice: 2050, records: t21aRecords,
+    costHundredths: 1000, platableToday: 50, districtMedian: null, established: true);
+Check("T21a crawl-up quantizes UP: 20.50 -> 22.00 (raw 21.52 ceilings to 22.00)",
+    t21aSug != null && t21aSug.SuggestedPriceHundredths == 2200,
+    t21aSug == null ? "no suggestion (unexpected)" : $"got {t21aSug.SuggestedPriceHundredths}");
+
+// T21c — same fixture, quantization OFF: raw 2152 preserved.
+var t21cSug = PricingController.Suggest(t21aDish, currentPrice: 2050, records: t21aRecords,
+    costHundredths: 1000, platableToday: 50, districtMedian: null, established: true,
+    roundToWholeLims: false);
+Check("T21c quantization off: raw hundredths preserved (2152)",
+    t21cSug != null && t21cSug.SuggestedPriceHundredths == 2152,
+    t21cSug == null ? "no suggestion (unexpected)" : $"got {t21cSug.SuggestedPriceHundredths}");
+
+// T21d — cheap-dish crawl, anti-stall: Beer cap 350 (CSV-verified). current 300,
+// raw step 315 -> CeilingToLims -> 400, cap clips to 350: 300 -> 350 = one lim, at the ceiling.
+var t21dRecords = new List<SaleRecord> {
+    new(71, 300, 10, 12, 0, null),
+    new(72, 300, 11, 13, 0, null),
+    new(73, 300, 12, 14, 0, null),
+};
+var t21dDish = cat.ById("Beer")!;   // cap 350, verified from dishdata.csv
+var t21dSug = PricingController.Suggest(t21dDish, currentPrice: 300, records: t21dRecords,
+    costHundredths: 200, platableToday: 50, districtMedian: null, established: true);
+Check("T21d cheap-dish crawl: 3.00 -> 3.50 (raw 315 ceilings to 400, cap clips to 350)",
+    t21dSug != null && t21dSug.SuggestedPriceHundredths == 350,
+    t21dSug == null ? "no suggestion (unexpected)" : $"got {t21dSug.SuggestedPriceHundredths}");
 return failed;

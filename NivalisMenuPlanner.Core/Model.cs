@@ -23,13 +23,16 @@ public sealed record VenueState(
     IReadOnlyList<string> KnownDishIds,
     int? StorageCapacity = null);   // total units the venue can hold (normal + refrigerated), null = unlimited
 
+/// <summary>Operator rulings, config-exposed per the session ruling: every decision
+/// threshold is a dial; only data-plumbing (store schema, retention) stays fixed.</summary>
 public sealed record MenuRules(
     int MaxSlots,
     bool PreferBeverage, bool PreferEntree, bool PreferDessert,
     IReadOnlyList<DishType> EntreeTypes, int MaxPerType,
     float ChurnPenalty, float StockDiscount,
     float RoleBonus,
-    int MinErrandValueHundredths = 500);   // entries protecting less profit than this drop from the list (5 lims)
+    int MinErrandValueHundredths = 500,
+    int MinVolumeGate = 3);   // dishes averaging below this/day get NO price moves, either lever (5d: the Roaches/Waffle findings)
 
 public sealed record MenuState(IReadOnlyList<string> Yesterday, float DemandScale);
 

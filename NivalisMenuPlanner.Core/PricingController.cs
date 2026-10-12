@@ -4,124 +4,115 @@ using System.Linq;
 
 namespace NivalisMenuPlanner.Core;
 
-/// <summary>
-/// The pricing doctrine, transcribed from the operator's four rulings:
-/// (Q2) capacity-first diagnosis — price moves are reserved for demand problems,
-///      never applied to inventory or throughput problems;
-/// (Q3, restauranteur's version) phase-aware district anchoring — entry venues
-///      (low lifetime reputation) compete on price at the district floor;
-///      established venues catch up to the district median, then crawl. Thin
-///      district coverage means NO anchor — crawl on own data, never jump on
-///      someone else's market;
-/// (down-lever) sticky-down: -5% only on 2 consecutive slumping days with stable
-///      daily popularity; floor = cost + minimum margin;
-/// (steady state) probe-up crawl: +5%/day steps toward the ceiling, each verified
-///      against next-day sales; revert on demand shock. Within ~10% of the anchor
-///      is "at market" — the crawl is the standing rule for everyone.
-/// All advisory: suggestions, never writes. The manager-progression principle.
-/// </summary>
 public sealed record PriceSuggestion(
     string DishId, int CurrentPriceHundredths, int SuggestedPriceHundredths,
     string Diagnosis, string Rationale);
 
 public static class PricingController
 {
-    // Doctrine constants (config-exposed in 5c; fixed here for the Core's purity)
-    public const int CrawlStepBps = 500;             // +5% in basis-hundredths
-    public const int StickyDownTriggerDays = 2;      // consecutive slump days
-    public const int SlumpThresholdPct = 20;         // sales >=20% below trailing avg
-    public const int FloorMarginHundredths = 200;    // cost + 2 lims
-    public const int AnchorAtMarketPct = 10;         // within 10% of anchor = at market
-    public const int DistrictFloorBps = 9500;        // entry anchor: 95% of district median
+    // ---- Doctrine defaults (the session's "config-open" ruling: these become
+    // config entries in 5d-2; Core takes them as parameters so the plugin can
+    // feed whatever the operator dials in. Defaults are the goat-calibrated values.) ----
+    public const int DefaultCrawlStepBps = 500;
+    public const int DefaultStickyDownTriggerDays = 2;
+    public const int DefaultSlumpThresholdPct = 20;
+    public const int DefaultFloorMarginHundredths = 200;
+    public const int DefaultAnchorAtMarketPct = 10;
+    public const int DefaultDistrictFloorBps = 9500;
+    public const int DefaultMinVolumeGate = 3;
+    public const bool DefaultRoundToWholeLims = true;
 
     /// <summary>
-    /// One dish's suggestion, given everything the doctrine knows. Pure: same
-    /// inputs, same suggestion, no state — the caller (5c) threads day history.
-    /// Returns null when no move is warranted (the common case; holding is a
-    /// decision, not a failure).
+    /// One dish's suggestion, given everything the doctrine knows. Pure.
+    /// Q2 ladder unchanged; new since 5b per session findings:
+    ///  - MIN-VOLUME GATE (both levers): a dish whose demand-clean trailing average
+    ///    is below MinVolumeGate is too thin to trend - no slump cuts (Roaches x2,
+    ///    Sweet Waffle), no headroom crawls (Roaches' 30.45 raise on 1/day demand).
+    ///    The profit bar, not the price, owns dying dishes.
+    ///  - WHOLE-LIM QUANTIZATION (direction-preserve): the player's edit UI snaps
+    ///    prices to whole lims (29.40 -> 29 on apply; operator finding). Suggestions
+    ///    quantize at generation so the applier never rounds against the doctrine's
+    ///    direction: crawl-up rounds to the NEXT WHOLE LIM at-or-above; cuts round
+    ///    to the WHOLE LIM at-or-below. RoundToWholeLims = false preserves hundredths
+    ///    for the manager-era auto-apply (pending the fractional-consumption test).
     /// </summary>
-    /// <param name="dish">The dish (cap = the city/district measured or CSV cap).</param>
-    /// <param name="currentPrice">What the venue charges now, hundredths.</param>
-    /// <param name="records">The dish's SaleRecord history at this venue (the
-    ///        DemandTuner's window source; last 3 days used here).</param>
-    /// <param name="costHundredths">Effective per-plate cost (planner's EffCost).</param>
-    /// <param name="platableToday">Servings the pantry could plate (capacity guard).</param>
-    /// <param name="districtMedian">District median observed price, or null when
-    ///        coverage is thin (the Boat Hangar case — you ARE the market).</param>
-    /// <param name="established">True when the venue's lifetime reputation reads
-    ///        "established" (phase gate; 5c derives it from popularity/rating).</param>
     public static PriceSuggestion? Suggest(
         DishInfo dish, int currentPrice, IReadOnlyList<SaleRecord> records,
-        int costHundredths, int platableToday, int? districtMedian, bool established)
+        int costHundredths, int platableToday, int? districtMedian, bool established,
+        int minVolumeGate = DefaultMinVolumeGate,
+        int crawlStepBps = DefaultCrawlStepBps,
+        int stickyDownTriggerDays = DefaultStickyDownTriggerDays,
+        int slumpThresholdPct = DefaultSlumpThresholdPct,
+        int floorMarginHundredths = DefaultFloorMarginHundredths,
+        int anchorAtMarketPct = DefaultAnchorAtMarketPct,
+        int districtFloorBps = DefaultDistrictFloorBps,
+        bool roundToWholeLims = DefaultRoundToWholeLims)
     {
-        // ---- Q2: the diagnosis ladder. Price never touches rows 1 and 2. ----
         if (records.Count == 0)
-            return null;                                    // cold start: hold, let the menu decide
+            return null;
 
         int today = records.Max(r => r.Day);
         var window = records.Where(r => r.Day > today - DemandTuner.WindowDays).ToList();
         if (window.Count == 0)
             return null;
 
-        int sold = window.Sum(r => r.Sold);
-        int cooked = window.Sum(r => r.Cooked);
-        int platable = platableToday;
-        int floor = costHundredths + FloorMarginHundredths;
-
-        // Row 1: capacity-bound — YESTERDAY's demand was supply-capped (last day's
-        // sold at/over what the pantry could plate). Window-sum vs single-day
-        // platable was an apples/oranges overtrigger (my fixture trace caught it:
-        // 3 days of healthy sales read as "capacity-bound" against one day's platable).
+        // Row 1: capacity-bound (last day's sold at/over platable)
         var lastDayRec = window.OrderByDescending(r => r.Day).First();
-        if (lastDayRec.Sold >= platable && platable > 0)
+        if (lastDayRec.Sold >= platableToday && platableToday > 0)
             return null;
 
-        // Row 2: throughput-bound — plates died at the dishwasher (the walk-out domain).
-        // Row 1 already ruled out capacity (we only reach here when last-day sold < platable),
-        // so the platable check here was redundant AND carried the sum-vs-day bug (window-sum
-        // sold vs single-day platable — the same shape I fixed in row 1 but missed here:
-        // T19b's window-sum 63 vs platable 50 made row 2 unreachable). Any abandoned plates,
-        // once capacity is excluded, are service-domain: price holds, staffing advice fires.
+        // Row 2: throughput-bound (walk-outs; capacity already excluded by row 1)
         int walkedOut = window.Sum(r => r.WalkedOut);
         if (walkedOut > 0)
-            return null;   // service problem; staffing advice fires in v0.2.x, price holds
+            return null;
 
-        // Row 3: demand-bound. Price is now the only lever left.
+        // ---- MIN-VOLUME GATE: demand-clean trailing average (the DemandTuner's
+        // logic: sold-out days censored, clean days averaged; all-sold-out -> max).
+        // Below the gate: hold - both levers blocked (findings: Roaches, Sweet Waffle).
+        double cleanAvg = CleanDemandAverage(window);
+        if (cleanAvg < minVolumeGate)
+            return null;
+
+        int floor = costHundredths + floorMarginHundredths;
         double avgSold = window.Average(r => r.Sold);
 
-        // ---- Down-lever: sticky-down crawl (2-day slump, stable popularity) ----
-        var lastDay = window.OrderByDescending(r => r.Day).First();
-        var priorDay = window.OrderByDescending(r => r.Day).Skip(1).FirstOrDefault();
-        bool slumping = SlumpToday(window) && priorDay != null && SlumpsBelow(window, priorDay.Sold);
-        // NOTE: popularity veto is 5c's wiring (daily-pop drop blocks raises); Core takes
-        // established-only inputs. Sticky-down's own gate is the 2-day trigger:
+        // ---- Down-lever: sticky-down crawl ----
+        var ordered = window.OrderByDescending(r => r.Day).ToList();
+        var lastDay = ordered[0];
+        var priorDay = ordered.Count > 1 ? ordered[1] : null;
+        bool slumping = SlumpToday(window, slumpThresholdPct)
+                        && priorDay != null
+                        && SlumpsBelow(window, priorDay.Sold, slumpThresholdPct);
         if (slumping && currentPrice > floor)
         {
-            int cut = Math.Max(floor, currentPrice - currentPrice * CrawlStepBps / 10000);
+            int rawCut = currentPrice - currentPrice * crawlStepBps / 10000;
+            int cut = Math.Max(floor, rawCut);
+            cut = roundToWholeLims ? FloorToLims(cut) : cut;
+            if (cut >= currentPrice) return null;   // quantization or floor erased the cut: hold
             return new PriceSuggestion(dish.Id, currentPrice, cut,
                 "demand-bound: slump",
-                $"2-day sales slump ({(int)avgSold}/day vs earlier); popularity stable - trimming toward the floor, not below it");
+                $"{(int)cleanAvg:0.#}-day trailing demand below trend for {stickyDownTriggerDays} days; trimming toward the floor, not below it");
         }
 
-        // ---- Up-lever: phase-aware anchoring (Q3, restauranteur's doctrine) ----
+        // ---- Up-lever: phase-aware district anchoring ----
         if (districtMedian is int median)
         {
-            int anchor = established ? median : median * DistrictFloorBps / 10000;
+            int anchor = established ? median : median * districtFloorBps / 10000;
+            anchor = roundToWholeLims ? RoundToLims(anchor) : anchor;
 
-            // At market (within 10% of anchor): crawl only, toward the ceiling
             int gapToAnchor = Math.Abs(anchor - currentPrice);
-            bool atMarket = gapToAnchor * 100 <= anchor * AnchorAtMarketPct;
+            bool atMarket = gapToAnchor * 100 <= anchor * anchorAtMarketPct;
             if (atMarket)
             {
-                int step = currentPrice + currentPrice * CrawlStepBps / 10000;
+                int step = currentPrice + currentPrice * crawlStepBps / 10000;
                 int capped = Math.Min(step, dish.PriceCapHundredths);
-                if (capped <= currentPrice) return null;   // already at ceiling
+                if (roundToWholeLims) capped = CeilingToLims(capped);
+                if (capped <= currentPrice) return null;
                 return new PriceSuggestion(dish.Id, currentPrice, capped,
                     established ? "demand-bound: crawl up (established)" : "demand-bound: crawl up (entry)",
                     $"at market ({currentPrice / 100m:0.00} vs anchor {anchor / 100m:0.00}); verified +5% step toward ceiling");
             }
 
-            // Below market: catch up (established) or open low (entry)
             if (currentPrice < anchor)
                 return new PriceSuggestion(dish.Id, currentPrice, anchor,
                     established ? "demand-bound: catch up to district median" : "entry: open at district floor",
@@ -129,36 +120,49 @@ public static class PricingController
                         ? $"district median {median / 100m:0.00}; you charge {currentPrice / 100m:0.00} - proven market rate, then crawl"
                         : $"entry venue: open at {anchor / 100m:0.00} (95% of median) to build the base, bump in kind later");
 
-            // Above anchor (price > median): hold — above-market pricing is the crawl's
-            // job one verified step at a time, and you're already above the anchor
-            return null;
+            return null;   // above anchor: the crawl's job, one step at a time
         }
 
-        // ---- No district benchmark (thin coverage — the Boat Hangar case): crawl only ----
-        int step2 = currentPrice + currentPrice * CrawlStepBps / 10000;
+        // No district benchmark: crawl on own data only
+        int step2 = currentPrice + currentPrice * crawlStepBps / 10000;
         int capped2 = Math.Min(step2, dish.PriceCapHundredths);
+        if (roundToWholeLims) capped2 = CeilingToLims(capped2);
         if (capped2 <= currentPrice) return null;
         return new PriceSuggestion(dish.Id, currentPrice, capped2,
             "demand-bound: crawl up (no district benchmark)",
             $"you are the market here; verified +5% step on own data, toward ceiling");
     }
 
-    static bool SlumpToday(List<SaleRecord> window)
+    // Demand-clean trailing average (DemandTuner semantics, inline):
+    // sold-out days censored (their Sold is a floor, not a level); clean days averaged;
+    // all-sold-out -> max observed (still a floor - demand at least that).
+    static double CleanDemandAverage(List<SaleRecord> window)
     {
-        // today's sold >= SlumpThresholdPct below the window's earlier average
+        var clean = window.Where(r => !r.SoldOut).ToList();
+        if (clean.Count > 0) return clean.Average(r => r.Sold);
+        return window.Max(r => r.Sold);
+    }
+
+    // Direction-preserve quantization (operator ruling: player UI snaps to whole
+    // lims; suggestions must never round against the doctrine's direction).
+    static int CeilingToLims(int hundredths) => ((hundredths + 99) / 100) * 100;
+    static int FloorToLims(int hundredths) => (hundredths / 100) * 100;
+    static int RoundToLims(int hundredths) => ((hundredths + 50) / 100) * 100;
+
+    static bool SlumpToday(List<SaleRecord> window, int thresholdPct)
+    {
         var lastDay = window.OrderByDescending(r => r.Day).First();
         var earlier = window.Where(r => r.Day < lastDay.Day).ToList();
         if (earlier.Count == 0) return false;
         double earlierAvg = earlier.Average(r => r.Sold);
-        return lastDay.Sold <= earlierAvg * (100 - SlumpThresholdPct) / 100.0;
+        return lastDay.Sold <= earlierAvg * (100 - thresholdPct) / 100.0;
     }
 
-    static bool SlumpsBelow(List<SaleRecord> window, int priorSold)
+    static bool SlumpsBelow(List<SaleRecord> window, int priorSold, int thresholdPct)
     {
-        // the prior day was ALSO at least SlumpThresholdPct below its own earlier average
         var ordered = window.OrderBy(r => r.Day).ToList();
         var day1 = ordered.Count >= 3 ? ordered[^3] : ordered.FirstOrDefault();
         if (day1 == null) return false;
-        return priorSold <= day1.Sold * (100 - SlumpThresholdPct) / 100.0;
+        return priorSold <= day1.Sold * (100 - thresholdPct) / 100.0;
     }
 }
