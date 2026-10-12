@@ -33,6 +33,11 @@ public class Plugin : BasePlugin
                                       RoleBonus = null!, NotifyGain = null!, RaiseBuffer = null!;
     internal static ConfigEntry<int> DefaultLocalExclusivity = null!;
 
+    // ---- 5d-2: doctrine dials (config-open ruling) ----
+    internal static ConfigEntry<int> CrawlStepBps = null!, StickyDownDays = null!, SlumpThresholdPct = null!,
+        FloorMarginHundredths = null!, MinVolumeGate = null!;
+    internal static ConfigEntry<bool> RoundToWholeLims = null!;
+
     static int _pollGen;
     static int _inputMode;
     static UnityEngine.KeyCode _legacyKey = UnityEngine.KeyCode.None;
@@ -57,6 +62,14 @@ public class Plugin : BasePlugin
         RaiseBuffer = Config.Bind("Payroll", "RaiseBuffer", 0.10f, new ConfigDescription("Escrow margin over polled wages for mid-shift raise requests.", new AcceptableValueRange<float>(0f, 0.5f)));
         DefaultLocalExclusivity = Config.Bind("Planning", "LocalExclusivity", 3, new ConfigDescription("Local Exclusivity Preference (1-5) until the kit exposes it; 1-2 favors cheap dishes, 4-5 exclusive ones.", new AcceptableValueRange<int>(1, 5), new ModSetting { IsAdvanced = true }));
 
+        // ---- Pricing doctrine dials (config-open ruling; defaults = session-calibrated) ----
+        CrawlStepBps = Config.Bind("Pricing", "CrawlStepBps", 500, new ConfigDescription("Crawl step in basis points (500 = +5%/day).", new AcceptableValueRange<int>(100, 2000), new ModSetting { IsAdvanced = true }));
+        StickyDownDays = Config.Bind("Pricing", "StickyDownDays", 2, new ConfigDescription("Consecutive slumping days before a price cut fires.", new AcceptableValueRange<int>(1, 5), new ModSetting { IsAdvanced = true }));
+        SlumpThresholdPct = Config.Bind("Pricing", "SlumpThresholdPct", 20, new ConfigDescription("A day counts as slumping when sales are at least this % below its trailing context.", new AcceptableValueRange<int>(5, 50), new ModSetting { IsAdvanced = true }));
+        FloorMarginHundredths = Config.Bind("Pricing", "FloorMarginHundredths", 200, new ConfigDescription("Price never cuts below cost + this (hundredths).", new AcceptableValueRange<int>(0, 1000), new ModSetting { IsAdvanced = true }));
+        MinVolumeGate = Config.Bind("Pricing", "MinVolumeGate", 3, new ConfigDescription("Dishes averaging fewer clean sales/day than this get NO price moves (the Roaches/Waffle findings).", new AcceptableValueRange<int>(0, 20), new ModSetting { IsAdvanced = true }));
+        RoundToWholeLims = Config.Bind("Pricing", "RoundToWholeLims", true, "Snap suggestions to whole lims (the edit UI only accepts whole lims).");
+
         ModMenu.ListSettings(Guid);
         ModMenu.AddPage(Guid, "Menu Planner", w => PlannerWindow.BuildPage(w, Current()));
 
@@ -67,13 +80,12 @@ public class Plugin : BasePlugin
             L.LogWarning("DayStarted unavailable — day-start replanning disabled this session.");
         GameEvents.DishCooked += OnDishCooked;
         GameEvents.DayEnded += OnDayEnded;
-        if (!GameEvents.IsAvailable(nameof(GameEvents.DayEnded)))
-            L.LogWarning("DayEnded unavailable — sale harvesting disabled this session.");
 
         DevCommands.Register(Guid, "plan", "venue=N: current menu suggestions as JSON (N = name fragment; omit for all)", PlanCommand);
         DevCommands.Register(Guid, "sales", "venue=N&day=N: stored SaleRecords as JSON", SalesCommand);
         DevCommands.Register(Guid, "prices", "dish=N: observed city prices and measured caps as JSON", PricesCommand);
         DevCommands.Register(Guid, "suggest", "venue=N: current pricing suggestions as JSON", SuggestCommand);
+        DevCommands.Register(Guid, "venueinfo", "venue=N: venue facts (reviews, ratings, storage) as JSON", VenueInfoCommand);
 
         L.LogInfo($"Menu Planner 0.1.0 loaded — hotkey {Hotkey.Value} (scheduler-polled), kit {ModKit.Version}.");
     }
@@ -155,14 +167,13 @@ public class Plugin : BasePlugin
                     int cooked = cookedForVenue?.GetValueOrDefault(dish) ?? 0;
                     if (sold == 0 && cooked == 0) continue;
                     var walked = Math.Max(0, cooked - sold);
-                    float? pop = null;   // popularity deferred: PopularityOf's group shape needs runtime verification (GAPS #15)
+                    float? pop = null;   // popularity wiring: rides the venueinfo probe (GAPS #19)
                     var rec = new SaleRecord(day, price, sold, cooked, walked, pop);
                     Data.Set($"sales.{key}.{dish}.{day}", rec);
                     records++;
                 }
             }
             _cookedByVenue.Clear();
-            // Retention pruning (Q1): the store keeps only the tuner's window.
             foreach (var k in Data.Keys.Where(k => k.StartsWith("sales.", StringComparison.OrdinalIgnoreCase)).ToList())
             {
                 var parts = k.Split('.');
@@ -226,7 +237,6 @@ public class Plugin : BasePlugin
             venues = picks.Select(r => new
             {
                 venue = r.Title,
-                established = r.Established,
                 suggestions = r.Suggestions.Select(s => new
                 {
                     dish = s.DishId,
@@ -237,6 +247,37 @@ public class Plugin : BasePlugin
                 })
             })
         };
+    }
+
+    static object VenueInfoCommand(CommandArgs args)
+    {
+        var result = new List<object>();
+        foreach (var area in Venues.PlayerOwned)
+        {
+            string key = Safe(() => Venues.NameOf(area)) ?? "?";
+            if (args.Has("venue") && !key.Contains(args.Get("venue", ""), StringComparison.OrdinalIgnoreCase))
+                continue;
+            string display = Safe(() => Venues.DisplayNameOf(area)) ?? key;
+            int count = 0, recentCount = 0, positive = 0;
+            double total = 0, recentTotal = 0;
+            double? lifetimeAvg = null, recentAvg = null; double positivePct = 0;
+            try
+            {
+                var reviews = Venues.ReviewsOf(area);
+                int today = GameTime.Day;
+                foreach (var r in reviews)
+                {
+                    count++; total += r.Score;
+                    if (r.Score >= 4.0) positive++;
+                    if (r.Day > today - 7) { recentTotal += r.Score; recentCount++; }
+                }
+                if (count > 0) { lifetimeAvg = Math.Round(total / count, 2); positivePct = Math.Round(100.0 * positive / count, 0); }
+                if (recentCount > 0) recentAvg = Math.Round(recentTotal / recentCount, 2);
+            }
+            catch (Exception e) { L.LogDebug($"ReviewsOf failed: {e.Message}"); }
+            result.Add(new { venue = key, display, reviewCount = count, lifetimeAvg, recentAvg, positivePct });
+        }
+        return result;
     }
 
     static void StartHotkeyPoll()
@@ -311,9 +352,8 @@ public class Plugin : BasePlugin
         {
             var yesterday = Data.Get<List<string>>($"menus.{key}", new List<string>());
             var suggestion = Planner.Plan(_catalog!, venue, Rules(), new MenuState(yesterday, DemandScale.Value));
-            var established = GameAdapter.EstablishedOf(null!);   // phase flag; conservative entry until GAPS #19
 
-            // ---- PRICING PASS (5c): the doctrine runs on each menu dish ----
+            // ---- pricing pass: config dials feed the doctrine; [pricing] logs its inputs ----
             var priceSuggestions = new List<PriceSuggestion>();
             foreach (var line in suggestion.Dishes)
             {
@@ -321,15 +361,23 @@ public class Plugin : BasePlugin
                 var history = LoadHistory(key, dish.Id);
                 var currentPrice = CurrentMenuPrice(key, dish.Id) ?? dish.PriceCapHundredths;
                 var median = GameAdapter.DistrictMedianOf(_observations, dish.Id, venue.District);
+                L.LogInfo($"[pricing] {key}/{dish.Id}: price={currentPrice} records=[{string.Join(",", history.Select(r => $"d{r.Day}:s{r.Sold}"))}] platable={Planner.ServingsPossible(dish, venue, _catalog!)} median={median} gate={MinVolumeGate.Value}");
                 var sug = PricingController.Suggest(
                     dish, currentPrice, history,
                     line.CostHundredths,
                     Planner.ServingsPossible(dish, venue, _catalog!),
-                    median, established);
+                    median,
+                    established: false,   // Step 2 wires the phase gate (area plumbing); blind-entry-by-design until then
+                    minVolumeGate: MinVolumeGate.Value,
+                    crawlStepBps: CrawlStepBps.Value,
+                    stickyDownTriggerDays: StickyDownDays.Value,
+                    slumpThresholdPct: SlumpThresholdPct.Value,
+                    floorMarginHundredths: FloorMarginHundredths.Value,
+                    roundToWholeLims: RoundToWholeLims.Value);
                 if (sug != null) priceSuggestions.Add(sug);
             }
 
-            _rotation.Add(new Rotation(key, venue.Name, suggestion, priceSuggestions, established));
+            _rotation.Add(new Rotation(key, venue.Name, suggestion, priceSuggestions));
 
             decimal? prior = Data.Has($"profit.{key}") ? Data.Get<decimal?>($"profit.{key}", null) : null;
             if (prior is > 0 && suggestion.EstProfitPerDay > prior * (1 + (decimal)NotifyGain.Value / 100m))
@@ -342,8 +390,6 @@ public class Plugin : BasePlugin
         L.LogInfo($"Planned {_rotation.Count} venue(s) for day {GameTime.Day}, hour {GameTime.Hour}.");
     }
 
-    // The dish's SaleRecord history from the tuner's window (the same records the
-    // harvest stores; retention pruning at DayEnded keeps the store and window in sync).
     static List<SaleRecord> LoadHistory(string venueKey, string dishId)
     {
         var records = new List<SaleRecord>();
@@ -355,8 +401,6 @@ public class Plugin : BasePlugin
         return records;
     }
 
-    // The venue's CURRENT menu price for the dish (what the game is actually charging,
-    // from MenuOf) — the pricing pass prices the real menu, not the planner's cap.
     static int? CurrentMenuPrice(string venueKey, string dishId)
     {
         try
@@ -425,5 +469,5 @@ public class Plugin : BasePlugin
     static string? Safe(Func<string?> f) { try { return f(); } catch { return null; } }
 
     public sealed record Rotation(string Key, string Title, MenuSuggestion Suggestion,
-        IReadOnlyList<PriceSuggestion> Suggestions, bool Established);
+        IReadOnlyList<PriceSuggestion> Suggestions);
 }

@@ -65,13 +65,12 @@ public static class PlannerWindow
         foreach (var warn in r.Suggestion.Warnings)
             w.AddText("! " + warn);
 
-        // ---- PRICES section (5c): the doctrine's suggestions, advisory ----
+        // ---- Prices section (5c): the doctrine's suggestions, advisory ----
         if (r.Suggestions.Count > 0)
         {
             w.AddHeader("Prices (suggestions — nothing changes without you)");
-            w.AddText(r.Established
-                ? "Established venue. Catch-up-to-market first, then verified crawls."
-                : "Entry posture (reputation still growing): compete on price, bump in kind later.");
+            // Entry/established framing ships with the Step 2 phase gate;
+            // the suggestions below are valid under either posture.
             foreach (var s in r.Suggestions)
                 w.AddText($"{s.DishId}: {s.CurrentPriceHundredths / 100m:0.00} -> {s.SuggestedPriceHundredths / 100m:0.00} — {s.Rationale}");
         }
