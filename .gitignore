@@ -364,3 +364,5 @@ FodyWeavers.xsd
 
 # Local-only modding dependencies (obtain per README; never commit)
 libs/
+# Private collaboration brief - never publish
+BOOTSTRAP.md
