@@ -366,3 +366,6 @@ FodyWeavers.xsd
 libs/
 # Private collaboration brief - never publish
 BOOTSTRAP.md
+
+# Local-only pre-publish archive - never track (Ruling 2026-10-12)
+.git-private-backup/
