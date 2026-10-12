@@ -2,13 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using Core = NivalisMenuPlanner.Core;
+using Area = Nivalis.GhostSystem.CustomerLoop.VenueAreaGhost;
 using NivalisModKit;
 
 namespace NivalisMenuPlanner;
 
-/// <summary>Bridges live kit queries into planner snapshots. Main thread only (events/scheduler).</summary>
+/// <summary>Bridges live kit queries into planner snapshots. Main thread only.</summary>
 public static class GameAdapter
 {
+    public sealed record PhaseFacts(bool Established, float? RecentRating, int ReviewCount);
+
     public static List<string> KnownIds(Core.DishCatalog cat)
     {
         var known = new List<string>();
@@ -21,11 +24,7 @@ public static class GameAdapter
         }
         return known.Distinct().ToList();
     }
-    /// <summary>
-    /// NPC PRICE SWEEP: every menu in the city (Venues.All includes NPC venues),
-    /// each entry's actual price, grouped by the venue's district. One pass at
-    /// GameReady; menus are slow-changing, so no per-day refresh needed.
-    /// </summary>
+
     public static Core.PriceObservations HarvestPrices()
     {
         var obs = new Core.PriceObservations();
@@ -51,45 +50,46 @@ public static class GameAdapter
         return obs;
     }
 
-    /// <summary>
-    /// District median observed price for a dish, from the GameReady price sweep.
-    /// Median of the district's observations; null when the district has fewer
-    /// than 3 observations for the dish (thin coverage -> the controller crawls
-    /// on own data rather than jumping on someone else's market — the Boat
-    /// Hangar ruling).
-    /// </summary>
     public static int? DistrictMedianOf(Core.PriceObservations? observations, string dishId, string district)
     {
         if (observations == null || string.IsNullOrEmpty(district)) return null;
         var range = observations.RangeIn(dishId, district);
         if (range is null) return null;
-        // RangeIn gives (min, max); the full price list is needed for a true median,
-        // so observations expose PricesOf per dish and we filter by district here.
-        // NOTE: PriceObservations doesn't carry district-tagged prices on its public
-        // surface — RangeIn is (min,max) only. For the first wiring, use the range's
-        // midpoint as the district anchor approximation (conservative: between the
-        // district's observed floor and ceiling), with the true median as a v0.2.x
-        // refinement once the catalog exposes per-district lists. Logged in GAPS #21.
         int midpoint = (range.Value.min + range.Value.max) / 2;
         return midpoint;
     }
 
-    /// <summary>
-    /// The venue's phase flag (established vs entry). Conservative: until venue
-    /// reputation is readable (GAPS #19 — the daily/lifetime popularity probe),
-    /// this returns FALSE (entry) for everything, because the doctrine's entry
-    /// posture — compete on price, build the base — is the safe default when the
-    /// phase signal is blind. A wrong "established" fires a median jump; a wrong
-    /// "entry" merely crawls. Blind entry, never blind established.
-    /// </summary>
-    public static bool EstablishedOf(object area)
+    public static PhaseFacts ComputePhase(
+        Area area, float recentThreshold, int minReviews, float vetoDelta, float? priorRecent)
     {
-        // TODO v0.2.x: derive from lifetime rating once the popularity probe lands.
-        return false;
+        int count = 0, recentCount = 0;
+        double total = 0, recentTotal = 0;
+        float? recent = null;
+        try
+        {
+            var reviews = Venues.ReviewsOf(area);
+            int today = GameTime.Day;
+            foreach (var r in reviews)
+            {
+                count++;
+                total += r.Score;
+                if (r.Day > today - 7) { recentTotal += r.Score; recentCount++; }
+            }
+            if (recentCount > 0) recent = (float)(recentTotal / recentCount);
+        }
+        catch (Exception e) { Plugin.L.LogDebug($"ReviewsOf failed for phase: {e.Message}"); }
+
+        bool veto = priorRecent.HasValue && recent.HasValue && priorRecent.Value - recent.Value >= vetoDelta;
+        bool established = recent.HasValue
+            && recent.Value >= recentThreshold
+            && count >= minReviews
+            && !veto;
+        return new PhaseFacts(established, recent, count);
     }
 
-    public static IEnumerable<(string Key, Core.VenueState Venue)> SnapshotAll(
-        Core.DishCatalog cat, int lep, int maxSlots)
+    public static IEnumerable<(string Key, Core.VenueState Venue, PhaseFacts Facts)> SnapshotAll(
+        Core.DishCatalog cat, int lep, int maxSlots,
+        float recentThreshold = 4.5f, int minReviews = 500, float vetoDelta = 0.3f, float? priorRecent = null)
     {
         var known = KnownIds(cat);
         var priceCache = new Dictionary<string, int>();
@@ -132,8 +132,9 @@ public static class GameAdapter
                 if (best > 0) prices[ing] = best;
             }
 
+            var facts = ComputePhase(area, recentThreshold, minReviews, vetoDelta, priorRecent);
             yield return (key, new Core.VenueState(key, display, district, maxSlots, lep, 0,
-                stock, prices, cat.MixFor(district), known));
+                stock, prices, cat.MixFor(district), known), facts);
         }
     }
 
@@ -150,7 +151,7 @@ public static class GameAdapter
                         (int)Math.Round(s.HoursLeftToday * 60.0)));
                 }
             }
-            catch (Exception e) { Plugin.L.LogDebug($"StaffOf failed for a venue: {e.Message}"); }
+            catch (Exception e) { Plugin.L.LogDebug($"StaffOf failed: {e.Message}"); }
         }
         return all;
     }
