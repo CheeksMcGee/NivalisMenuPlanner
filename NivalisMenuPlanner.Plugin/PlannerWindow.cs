@@ -59,25 +59,31 @@ public static class PlannerWindow
         w.AddText($"{r.Title} — est. {r.Suggestion.EstProfitPerDay:0.00} lims/day");
         w.AddChoice("Venue", _last.Select(x => x.Title).ToArray(), _venueIdx, i => { _venueIdx = i; Build(w); });
 
+        // ---- Venue facts block: state, don't grade (the maitre d' ruling) ----
+        // Facts the operator reads to conclude established/entry themselves;
+        // established flag shown as the automation state it is, not a verdict.
+        w.AddHeader("Venue");
+        w.AddText(r.Established
+            ? "Catch-up-to-market anchoring active (established: reputation at/above your thresholds)."
+            : "Entry posture: compete on price, bump in kind later (crawls only, no median jumps).");
+
         w.AddHeader("Menu (suggested — apply in your venue screen)");
         foreach (var line in r.Suggestion.Dishes)
             w.AddText($"{line.Dish.Name} — margin {line.Margin:0.00} lims, ~{line.ExpectedOrders:0.0} orders");
         foreach (var warn in r.Suggestion.Warnings)
             w.AddText("! " + warn);
 
-        // ---- Prices section (5c): the doctrine's suggestions, advisory ----
+        // ---- Prices section ----
         if (r.Suggestions.Count > 0)
         {
             w.AddHeader("Prices (suggestions — nothing changes without you)");
-            // Entry/established framing ships with the Step 2 phase gate;
-            // the suggestions below are valid under either posture.
             foreach (var s in r.Suggestions)
                 w.AddText($"{s.DishId}: {s.CurrentPriceHundredths / 100m:0.00} -> {s.SuggestedPriceHundredths / 100m:0.00} — {s.Rationale}");
         }
 
         w.AddHeader("Shopping (covers expected orders; venue storage only)");
         foreach (var s in r.Suggestion.Shopping.Take(12))
-            w.AddText($"{s.Item} x{s.Needed}");
+            w.AddText($"{s.Item} x{s.Needed} (protects {s.ProtectedHundredths / 100m:0.00} lims)");
         if (r.Suggestion.Shopping.Count > 12)
             w.AddText($"... {r.Suggestion.Shopping.Count - 12} more");
 
