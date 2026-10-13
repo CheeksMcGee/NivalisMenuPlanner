@@ -385,7 +385,7 @@ public class Plugin : BasePlugin
                 var history = LoadHistory(key, dish.Id);
                 var currentPrice = CurrentMenuPrice(key, dish.Id) ?? dish.PriceCapHundredths;
                 var median = GameAdapter.DistrictMedianOf(_observations, dish.Id, venue.District);
-                L.LogInfo($"[pricing] {key}/{dish.Id}: price={currentPrice} records=[{string.Join(",", history.Select(r => $"d{r.Day}:s{r.Sold}"))}] platable={Planner.ServingsPossible(dish, venue, _catalog!)} median={median} gate={MinVolumeGate.Value}");
+                L.LogInfo($"[pricing] {key}/{dish.Id}: price={currentPrice} records=[{PricingController.DiagnosticWindow(history)}] platable={Planner.ServingsPossible(dish, venue, _catalog!)} median={median} gate={MinVolumeGate.Value}");
                 var sug = PricingController.Suggest(
                     dish, currentPrice, history,
                     line.CostHundredths,
