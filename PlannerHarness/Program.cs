@@ -578,4 +578,84 @@ Check("T21d cheap-dish crawl: 2.00 -> 3.00 (raw 210 ceilings to 300; cap 350 flo
     t21dSug != null && t21dSug.SuggestedPriceHundredths == 300,
     t21dSug == null ? "no suggestion (unexpected)" : $"got {t21dSug.SuggestedPriceHundredths}");
 Console.WriteLine($"\n{(failed == 0 ? "ALL TESTS PASS" : failed + " TEST(S) FAILED — paste output to me")}");
+
+// T22 — COLD-START SEED ORDER (5f-1): the empty-pantry venue plans its hypothetical
+//       menu (buyable inputs = unlimited for the plan) and the shopping list becomes
+//       the seed order, sized to one day's demand (lean-seed ruling). Craft rules and
+//       the profit bar are NOT relaxed. Partial stock does not trigger seed mode.
+
+// T22a — happy path: empty pantry, cheap buyable inputs, healthy caps -> menu planned,
+//         seed warning present, shopping list = full demand (every input a buy).
+//         Fixture: Borsch (Tomatoes 150, Potatoes 100, Beef 400 buyable) + Beer (Wheat 100).
+//         Borsch cap 3099, cost = 150+100+400 = 650 -> margin positive. DemandScale 8.
+//         Expected orders: mix-weighted ~4.8 (Workers 0.5x90 + Hipsters 0.3x65 + Elite 0.2x55
+//         -> Borsch worker-loved; T1 shows Borsch ordering ~4.8 in this mix) -> seed needs
+//         ceil(4.8)=5 x each input: Tomatoes x5, Potatoes x5, Beef x5. Beer: mix ~0.62 ->
+//         ~5 orders -> Wheat x5. All above the 5-lim errand floor (margins are hundreds).
+var t22aPrices = new Dictionary<string, int>
+{
+    ["Tomatoes"] = 150,
+    ["Potatoes"] = 100,
+    ["Beef"] = 400,
+    ["Wheat"] = 100,
+    ["Onions"] = 100,
+    ["Flour"] = 195
+};
+var t22aVenue = new VenueState("T22a-Seed", "T22a-Seed", "Test District", 10, 3, 0,
+    new Dictionary<string, int>(), t22aPrices, t6Mix,
+    new[] { "Borsch", "Beer" });
+var s22a = Planner.Plan(cat, t22aVenue, rules, new MenuState(Array.Empty<string>(), 8f));
+bool t22aMenu = s22a.Dishes.Count >= 1;
+bool t22aSeedWarn = s22a.Warnings.Any(w => w.Contains("Cold start"));
+bool t22aTomatoes = s22a.Shopping.Any(s => s.Item == "Tomatoes" && s.Needed >= 5);
+Check("T22a seed mode: empty pantry plans hypothetical menu + seed order",
+    t22aMenu && t22aSeedWarn && t22aTomatoes,
+    $"menu: {string.Join(", ", s22a.Dishes.Select(d => d.Dish.Name))}; shopping: {string.Join(", ", s22a.Shopping.Select(s => $"{s.Item} x{s.Needed}"))}");
+
+// T22b — craft rules hold: Beer Soup needs Beer (unbuyable), Beer needs Wheat (buyable).
+//         Seed mode: Wheat unlimited -> Beer craftable -> Beer Soup craftable -> both planned.
+//         Contrast T11-NoRecipe: when the Beer RECIPE is unknown, Beer Soup is blocked
+//         even in seed mode (unbuyable + uncraftable + unstocked).
+var t22bVenue = new VenueState("T22b-Seed", "T22b-Seed", "Test District", 10, 3, 0,
+    new Dictionary<string, int>(), t11Prices, t6Mix,
+    new[] { "Beer Soup", "Beer", "Borsch" });
+var s22b = Planner.Plan(cat, t22bVenue, rules, new MenuState(Array.Empty<string>(), 8f));
+bool t22bSoup = s22b.Dishes.Any(d => d.Dish.Id == "Beer Soup");
+var s22bBlocked = new VenueState("T22b-NoRecipe", "T22b-NoRecipe", "Test District", 10, 3, 0,
+    new Dictionary<string, int>(), t11Prices, t6Mix,
+    new[] { "Beer Soup", "Borsch" });
+var s22bB = Planner.Plan(cat, s22bBlocked, rules, new MenuState(Array.Empty<string>(), 8f));
+bool t22bSoupBlocked = !s22bB.Dishes.Any(d => d.Dish.Id == "Beer Soup");
+Check("T22b seed mode keeps craft rules: chain works, unknown recipe blocks",
+    t22bSoup && t22bSoupBlocked,
+    $"with Beer recipe: {string.Join(", ", s22b.Dishes.Select(d => d.Dish.Name))}; without: {string.Join(", ", s22bB.Dishes.Select(d => d.Dish.Name))}");
+
+// T22c — partial stock does NOT trigger seed mode: ALL of Borsch's inputs stocked
+//         (Borsch platable at 10) -> normal Option B -> no seed warning; Beer's
+//         Wheat is unstocked -> Beer capacity-capped at 0 orders by real stock.
+var t22cStock = new Dictionary<string, int> { ["Tomatoes"] = 10, ["Potatoes"] = 10, ["Beef"] = 10 };
+var t22cVenue = new VenueState("T22c-Partial", "T22c-Partial", "Test District", 10, 3, 0,
+    t22cStock, t22aPrices, t6Mix,
+    new[] { "Borsch", "Beer" });
+var s22c = Planner.Plan(cat, t22cVenue, rules, new MenuState(Array.Empty<string>(), 8f));
+bool t22cNoSeed = !s22c.Warnings.Any(w => w.Contains("Cold start"));
+bool t22cBeerCapped = s22c.Dishes.Where(d => d.Dish.Id == "Beer").All(d => d.ExpectedOrders <= 0);
+Check("T22c partial stock: no seed mode; unstocked-input dish capped at 0",
+    t22cNoSeed && t22cBeerCapped,
+    $"warnings: {string.Join(" | ", s22c.Warnings)}; orders: {string.Join(", ", s22c.Dishes.Select(d => $"{d.Dish.Name} {d.ExpectedOrders:0.0}"))}");
+
+// T22d — the profit bar is not relaxed in seed mode: ruin prices (8000 per input) with
+//         an empty pantry -> seed mode fires, hypothetical menu computed, profit bar
+//         excludes everything -> 0 dishes, no seed order (nothing to buy). T8's
+//         interaction, asserted explicitly.
+var t22dVenue = new VenueState("T22d-Ruin", "T22d-Ruin", "Test District", 10, 2, 0,
+    new Dictionary<string, int>(), t8Prices,
+    new[] { ("Workers", 0.5f), ("Hipsters", 0.3f), ("Elite", 0.2f) },
+    new[] { "Borsch", "Onion Rings", "Beer" });
+var s22d = Planner.Plan(cat, t22dVenue, rules, new MenuState(Array.Empty<string>(), 8f));
+Check("T22d seed mode + ruin prices: profit bar excludes all, no seed order",
+    s22d.Dishes.Count == 0 && s22d.Shopping.Count == 0
+        && s22d.Warnings.Any(w => w.Contains("Cold start"))
+        && s22d.Warnings.Any(w => w.Contains("profit bar")),
+    $"{s22d.Dishes.Count} dishes, {s22d.Shopping.Count} shopping items; warnings: {string.Join(" | ", s22d.Warnings)}");
 return failed;
