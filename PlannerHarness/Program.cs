@@ -153,8 +153,17 @@ bool t7Roles = s7.Dishes.Any(d => d.Dish.Type == DishType.Drink)
              && s7.Dishes.Any(d => rules.EntreeTypes.Contains(d.Dish.Type));
 Check("T7 roles hold in small menus", t7Roles, "beverage + entrée present");
 
-// T8
-var v8 = Venue("T8-Ruin", 2, 0, new[] { "Borsch", "Onion Rings", "Beer" }, stockIt: false);
+// T8 — price point outranks everything: ruin prices exclude losers. The venue
+//      now has PARTIAL stock (Potatoes 50) so seed mode does NOT fire - T8 tests
+//      the profit bar, not the cold-start path (which is T22's jurisdiction).
+//      A partially-stocked venue with ruin prices still plans nothing profitable.
+var t8Prices = new Dictionary<string, int>
+{ ["Tomatoes"] = 8000, ["Potatoes"] = 8000, ["Beef"] = 8000, ["Onions"] = 8000, ["Flour"] = 8000, ["Wheat"] = 8000 };
+var v8 = new VenueState("T8-Ruin", "T8-Ruin", "Test District", 10, 2, 0,
+    new Dictionary<string, int> { ["Potatoes"] = 50 },   // partial stock: seed mode off
+    t8Prices,
+    new[] { ("Workers", 0.5f), ("Hipsters", 0.3f), ("Elite", 0.2f) },
+    new[] { "Borsch", "Onion Rings", "Beer" });
 var s8 = Planner.Plan(cat, v8, rules, new MenuState(Array.Empty<string>(), 8f));
 Check("T8 profit bar excludes losers (and preferences)", s8.Dishes.Count == 0,
     $"{s8.Dishes.Count} dishes planned; warnings: {string.Join(" | ", s8.Warnings)}");

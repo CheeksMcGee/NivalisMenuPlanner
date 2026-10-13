@@ -6,6 +6,8 @@ namespace NivalisMenuPlanner.Core;
 
 public static class Planner
 {
+    // How deep crafted-input chains may go when a recipe output is used as an ingredient
+    // (Beer <- Wheat is depth 1). Deeper chains are treated as unavailable.
     const int MaxCraftDepth = 3;
 
     public static MenuSuggestion Plan(DishCatalog cat, VenueState v, MenuRules r, MenuState st)
@@ -22,10 +24,24 @@ public static class Planner
             warnings.Add($"{knownCatalog.Count - known.Count} known dish(es) skipped — inputs not stocked, sold, or craftable.");
         var mix = EffectiveMix(v);
 
+        // ---- COLD-START DETECTION (5f-1): if the pantry can plate NOTHING (empty venue),
+        // the planner computes the menu it WOULD run if buyable inputs were supplied, and the
+        // shopping list becomes the seed order (one day's demand - the lean-seed ruling).
+        // Unbuyable+uncraftable inputs still block dishes (the craft rules hold); this is a
+        // one-shot mode - the next replan, with a stocked pantry, returns to normal Option B.
+        bool seedMode = known.Count > 0 && known.All(d => ServingsPossible(d, v, cat) == 0);
+        if (seedMode)
+            warnings.Add("Cold start: pantry is empty — planning the menu you could run if supplied; the shopping list IS your seed order (one day's demand). Stock it and tomorrow's plan goes live.");
+
         var committed = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
 
-        int AvailableOf(string item) => AvailableStock(v, item, committed);
+        int AvailableOf(string item) =>
+            AvailableStock(v, item, committed);
 
+        // CAPACITY-ADJUSTED SCORING (Option B): a dish cannot earn more than the
+        // available stock can plate - held stock minus what earlier dishes claimed.
+        // SEED MODE: buyable inputs count as unlimited (they're one vendor trip away);
+        // the menu is the hypothetical, the shopping list is the purchase order.
         int ServingsFrom(string item, int amount) =>
             amount <= 0 ? int.MaxValue : AvailableOf(item) / amount;
 
@@ -52,10 +68,41 @@ public static class Planner
             return servings == int.MaxValue ? 0 : servings;
         }
 
+        // In seed mode, the capacity cap uses BUYABLE supply, not held stock: a
+        // buyable input cannot constrain the hypothetical menu (it constrains the
+        // shopping list instead). Unbuyable+uncraftable inputs still zero the dish.
+        int SeedServingsPossible(DishInfo d, int depth = 0)
+        {
+            int servings = int.MaxValue;
+            foreach (var (item, amount) in d.Inputs)
+            {
+                bool buyable = v.BuyPrice.ContainsKey(item);
+                if (buyable) continue;   // supply is one trip away: unlimited for the plan
+
+                v.Stock.TryGetValue(item, out var stock);
+                int byThis = amount <= 0 ? int.MaxValue : stock / amount;
+                if (byThis > 0) { servings = Math.Min(servings, byThis); continue; }
+
+                DishInfo? sub = depth < MaxCraftDepth ? cat.ById(item) : null;
+                if (sub != null && v.KnownDishIds.Contains(sub.Id))
+                {
+                    int subServings = SeedServingsPossible(sub, depth + 1);
+                    if (subServings == 0) return 0;
+                    byThis = subServings / amount;
+                }
+                else return 0;   // unbuyable, uncraftable, unstocked: blocked even in seed mode
+
+                servings = Math.Min(servings, byThis);
+                if (servings == 0) return 0;
+            }
+            return servings == int.MaxValue ? int.MaxValue : servings;   // all-buyable: uncapped
+        }
+
         double OrdersFor(DishInfo d)
         {
             double raw = st.DemandScale * Mix(mix, d);
-            int servable = ServingsPossibleFromLedger(d, cat);
+            int servable = seedMode ? SeedServingsPossible(d) : ServingsPossibleFromLedger(d, cat);
+            if (servable == int.MaxValue) return raw;
             return Math.Min(raw, servable);
         }
 
@@ -101,7 +148,6 @@ public static class Planner
             {
                 menu.Add(best);
                 perType[best.Type] = perType.GetValueOrDefault(best.Type) + 1;
-                CommitInputs(best, OrdersFor(best), committed, v, cat, 0);
                 continue;
             }
             cap++;
@@ -122,8 +168,9 @@ public static class Planner
             bool bev = false, ent = false, des = false;
             foreach (var d in m)
             {
-                var orders = Math.Min(st.DemandScale * Mix(mix, d),
-                    SimulatedServings(d, simLedger));
+                var orders = seedMode
+                    ? OrdersFor(d)   // seed mode: uncapped for all-buyable dishes
+                    : Math.Min(st.DemandScale * Mix(mix, d), SimulatedServings(d, simLedger));
                 double s = orders * (d.PriceCapHundredths - EffCost(d, v, r, cat))
                     * ExclusivityGate(d, v, cat);
                 if (!st.Yesterday.Contains(d.Id)) s *= (1.0 - r.ChurnPenalty);
@@ -185,7 +232,7 @@ public static class Planner
             warnings.Add("No dessert made the cut — none beat the alternatives (or cleared the profit bar).");
 
         menu = menu.OrderByDescending(BaseScore).ToList();
-        return BuildResult(menu, v, r, st, mix, warnings, cat, committed, finalOrders);
+        return BuildResult(menu, v, r, st, mix, warnings, cat, committed, finalOrders, seedMode);
     }
 
     public static decimal PriceMult(int grade) =>
@@ -236,8 +283,6 @@ public static class Planner
         }
     }
 
-    // RAW-DEMAND ACCRUAL with protected profit: each entry carries the menu profit it
-    // covers, so urgency (protected / cost) can rank rescues per-lim (operator ruling 1).
     static void Accrue(DishInfo d, int units, int marginHundredths, Dictionary<string, int> needs,
         Dictionary<string, int> protectedByItem, VenueState v, DishCatalog cat, int depth)
     {
@@ -368,7 +413,7 @@ public static class Planner
 
     static MenuSuggestion BuildResult(List<DishInfo> menu, VenueState v, MenuRules r, MenuState st,
         IReadOnlyList<(string Group, float Weight)> mix, List<string> warnings, DishCatalog cat,
-        Dictionary<string, int> committed, Dictionary<string, double> finalOrders)
+        Dictionary<string, int> committed, Dictionary<string, double> finalOrders, bool seedMode)
     {
         var lines = new List<DishLine>();
         var rawNeeds = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
@@ -389,6 +434,9 @@ public static class Planner
             Accrue(d, (int)Math.Ceiling(rawOrders), margin, rawNeeds, protectedByItem, v, cat, 0);
         }
 
+        // SHOPPING LIST = raw-demand gap. In seed mode this IS the seed order:
+        // held stock is zero, so every need is a buy - the doctrine-computed
+        // opening order, sized to one day's expected demand (lean-seed ruling).
         var shopping = new Dictionary<string, int>();
         foreach (var kv in rawNeeds)
         {
@@ -396,13 +444,6 @@ public static class Planner
             int gap = kv.Value - stock;
             if (gap > 0) AddNeed(shopping, kv.Key, gap, v, cat, 0);
         }
-
-        // POLICY 1 — errand floor (ruling: ~5 lims): entries protecting less profit
-        // than the floor drop; "some waste isn't worth the labor to save."
-        // POLICY 2 — per-lim urgency (ruling 1): sort by protected profit / cost to
-        // cover, descending. High-margin rescues outrank penny restocks.
-        // POLICY 3 — storage guard (full-pantry scenario): trim list to free storage
-        // capacity (unit-count, ruling 2) and warn when the trim bites.
         var priced = shopping.Select(kv =>
         {
             var unit = v.BuyPrice.GetValueOrDefault(kv.Key);
@@ -414,7 +455,7 @@ public static class Planner
             .Where(s => s.ProtectedHundredths >= r.MinErrandValueHundredths)
             .OrderByDescending(s => s.UnitPriceHundredths > 0
                 ? (decimal)s.ProtectedHundredths / (s.Needed * s.UnitPriceHundredths)
-                : decimal.MaxValue)   // unpriced items can't rank per-lim; keep, sort last-ish
+                : decimal.MaxValue)
             .ToList();
 
         if (v.StorageCapacity is int capacity)
@@ -430,7 +471,7 @@ public static class Planner
                 {
                     int room = free - totalKept;
                     if (room > 0) { trimmed.Add(s with { Needed = room }); totalKept = free; }
-                    break;   // capacity exhausted; the rest of the list can't be received
+                    break;
                 }
             }
             int dropped = kept.Sum(s => s.Needed) - trimmed.Sum(s => s.Needed);
