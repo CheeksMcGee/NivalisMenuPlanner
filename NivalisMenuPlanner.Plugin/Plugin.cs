@@ -183,8 +183,13 @@ public class Plugin : BasePlugin
             _cookedByVenue.Clear();
             foreach (var k in Data.Keys.Where(k => k.StartsWith("sales.", StringComparison.OrdinalIgnoreCase)).ToList())
             {
-                var parts = k.Split('.');
-                if (parts.Length == 5 && int.TryParse(parts[4], out var recDay)
+                // The key is sales.{venue}.{dish}.{day} = 4 segments (venue/dish contain no dots).
+                // The old parts.Length==5 check never matched, so pruning never fired and the
+                // store grew unboundedly - caught by the [pricing] diagnostic, day-78 log.
+                // Parse the day as the segment after the last dot, whatever the count.
+                int dot = k.LastIndexOf('.');
+                if (dot < 0) continue;   // not a record key; skip
+                if (int.TryParse(k[(dot + 1)..], out var recDay)
                     && !DemandTuner.ShouldRetain(recDay, day))
                     Data.Remove(k);
             }
