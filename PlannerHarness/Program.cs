@@ -554,17 +554,19 @@ Check("T21c quantization off: raw 2152 preserved",
     t21cSug != null && t21cSug.SuggestedPriceHundredths == 2152,
     t21cSug == null ? "no suggestion (unexpected)" : $"got {t21cSug.SuggestedPriceHundredths}");
 
+// T21d — cheap-dish crawl, anti-stall: Beer cap 350 hundredths = 3.50 lims (fractional);
+// the cap floor makes the applicable ceiling 3.00. From 2.00, the crawl steps 2.00 -> 3.00
+// (raw 210 ceilings to 300, clamped to 350, floored to 300): one lim, at the ceiling, no stall.
 var t21dRecords = new List<SaleRecord> {
-    new(71, 300, 10, 12, 0, null),
-    new(72, 300, 11, 13, 0, null),
-    new(73, 300, 12, 14, 0, null),
+    new(71, 200, 10, 12, 0, null),
+    new(72, 200, 11, 13, 0, null),
+    new(73, 200, 12, 14, 0, null),
 };
 var t21dDish = cat.ById("Beer")!;
-var t21dSug = PricingController.Suggest(t21dDish, currentPrice: 300, records: t21dRecords,
-    costHundredths: 200, platableToday: 50, districtMedian: null, established: true);
-Check("T21d cheap-dish crawl: 3.00 -> 3.50 (raw 315 ceilings to 400, cap clips to 350)",
-    t21dSug != null && t21dSug.SuggestedPriceHundredths == 350,
+var t21dSug = PricingController.Suggest(t21dDish, currentPrice: 200, records: t21dRecords,
+    costHundredths: 100, platableToday: 50, districtMedian: null, established: true);
+Check("T21d cheap-dish crawl: 2.00 -> 3.00 (raw 210 ceilings to 300; cap 350 floors the ceiling to 300)",
+    t21dSug != null && t21dSug.SuggestedPriceHundredths == 300,
     t21dSug == null ? "no suggestion (unexpected)" : $"got {t21dSug.SuggestedPriceHundredths}");
-
 Console.WriteLine($"\n{(failed == 0 ? "ALL TESTS PASS" : failed + " TEST(S) FAILED — paste output to me")}");
 return failed;
