@@ -24,11 +24,7 @@ public static class Planner
             warnings.Add($"{knownCatalog.Count - known.Count} known dish(es) skipped — inputs not stocked, sold, or craftable.");
         var mix = EffectiveMix(v);
 
-        // ---- COLD-START DETECTION (5f-1): if the pantry can plate NOTHING (empty venue),
-        // the planner computes the menu it WOULD run if buyable inputs were supplied, and the
-        // shopping list becomes the seed order (one day's demand - the lean-seed ruling).
-        // Unbuyable+uncraftable inputs still block dishes (the craft rules hold); this is a
-        // one-shot mode - the next replan, with a stocked pantry, returns to normal Option B.
+        // ---- COLD-START DETECTION (5f-1) ----
         bool seedMode = known.Count > 0 && known.All(d => ServingsPossible(d, v, cat) == 0);
         if (seedMode)
             warnings.Add("Cold start: pantry is empty — planning the menu you could run if supplied; the shopping list IS your seed order (one day's demand). Stock it and tomorrow's plan goes live.");
@@ -38,10 +34,6 @@ public static class Planner
         int AvailableOf(string item) =>
             AvailableStock(v, item, committed);
 
-        // CAPACITY-ADJUSTED SCORING (Option B): a dish cannot earn more than the
-        // available stock can plate - held stock minus what earlier dishes claimed.
-        // SEED MODE: buyable inputs count as unlimited (they're one vendor trip away);
-        // the menu is the hypothetical, the shopping list is the purchase order.
         int ServingsFrom(string item, int amount) =>
             amount <= 0 ? int.MaxValue : AvailableOf(item) / amount;
 
@@ -68,16 +60,13 @@ public static class Planner
             return servings == int.MaxValue ? 0 : servings;
         }
 
-        // In seed mode, the capacity cap uses BUYABLE supply, not held stock: a
-        // buyable input cannot constrain the hypothetical menu (it constrains the
-        // shopping list instead). Unbuyable+uncraftable inputs still zero the dish.
         int SeedServingsPossible(DishInfo d, int depth = 0)
         {
             int servings = int.MaxValue;
             foreach (var (item, amount) in d.Inputs)
             {
                 bool buyable = v.BuyPrice.ContainsKey(item);
-                if (buyable) continue;   // supply is one trip away: unlimited for the plan
+                if (buyable) continue;
 
                 v.Stock.TryGetValue(item, out var stock);
                 int byThis = amount <= 0 ? int.MaxValue : stock / amount;
@@ -90,12 +79,12 @@ public static class Planner
                     if (subServings == 0) return 0;
                     byThis = subServings / amount;
                 }
-                else return 0;   // unbuyable, uncraftable, unstocked: blocked even in seed mode
+                else return 0;
 
                 servings = Math.Min(servings, byThis);
                 if (servings == 0) return 0;
             }
-            return servings == int.MaxValue ? int.MaxValue : servings;   // all-buyable: uncapped
+            return servings == int.MaxValue ? int.MaxValue : servings;
         }
 
         double OrdersFor(DishInfo d)
@@ -169,7 +158,7 @@ public static class Planner
             foreach (var d in m)
             {
                 var orders = seedMode
-                    ? OrdersFor(d)   // seed mode: uncapped for all-buyable dishes
+                    ? OrdersFor(d)
                     : Math.Min(st.DemandScale * Mix(mix, d), SimulatedServings(d, simLedger));
                 double s = orders * (d.PriceCapHundredths - EffCost(d, v, r, cat))
                     * ExclusivityGate(d, v, cat);
@@ -210,6 +199,7 @@ public static class Planner
         }
 
         var finalOrders = new Dictionary<string, double>(StringComparer.OrdinalIgnoreCase);
+        var seedCutDemand = new List<DishInfo>();          // 5f-3: cut dishes (T23b)
         if (menu.Count > 0)
         {
             committed.Clear();
@@ -219,6 +209,14 @@ public static class Planner
                 finalOrders[d.Id] = o;
                 CommitInputs(d, o, committed, v, cat, 0);
             }
+            // 5f-3: zero-order cut - ledger-exhausted dishes (later claims consumed
+            // their inputs after placement) are menu clutter at 0 expected orders.
+            // Cut them from the MENU, but their raw demand still accrues to the
+            // shopping list (seedCutDemand): they were cut for SUPPLY, not
+            // profitability - restocking their inputs is what brings them back.
+            var exhausted = menu.Where(d => finalOrders[d.Id] <= 0).ToList();
+            foreach (var d in exhausted) menu.Remove(d);
+            seedCutDemand = exhausted;
         }
 
         if (perType.Values.Any(n => n > r.MaxPerType))
@@ -232,7 +230,7 @@ public static class Planner
             warnings.Add("No dessert made the cut — none beat the alternatives (or cleared the profit bar).");
 
         menu = menu.OrderByDescending(BaseScore).ToList();
-        return BuildResult(menu, v, r, st, mix, warnings, cat, committed, finalOrders, seedMode);
+        return BuildResult(menu, v, r, st, mix, warnings, cat, committed, finalOrders, seedMode, seedCutDemand);
     }
 
     public static decimal PriceMult(int grade) =>
@@ -413,7 +411,8 @@ public static class Planner
 
     static MenuSuggestion BuildResult(List<DishInfo> menu, VenueState v, MenuRules r, MenuState st,
         IReadOnlyList<(string Group, float Weight)> mix, List<string> warnings, DishCatalog cat,
-        Dictionary<string, int> committed, Dictionary<string, double> finalOrders, bool seedMode)
+        Dictionary<string, int> committed, Dictionary<string, double> finalOrders,
+        bool seedMode, IReadOnlyList<DishInfo> seedCutDemand)
     {
         var lines = new List<DishLine>();
         var rawNeeds = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
@@ -434,9 +433,16 @@ public static class Planner
             Accrue(d, (int)Math.Ceiling(rawOrders), margin, rawNeeds, protectedByItem, v, cat, 0);
         }
 
-        // SHOPPING LIST = raw-demand gap. In seed mode this IS the seed order:
-        // held stock is zero, so every need is a buy - the doctrine-computed
-        // opening order, sized to one day's expected demand (lean-seed ruling).
+        // 5f-3 (T23b): cut dishes accrue RAW demand to the shopping list - they were
+        // cut for supply, not profitability; restocking their inputs brings them back.
+        // No menu line, no profit contribution, but their gap rides the same list.
+        foreach (var d in seedCutDemand)
+        {
+            double rawOrders = st.DemandScale * Mix(mix, d);
+            var margin = Math.Max(0, d.PriceCapHundredths - EffCost(d, v, r, cat));
+            Accrue(d, (int)Math.Ceiling(rawOrders), margin, rawNeeds, protectedByItem, v, cat, 0);
+        }
+
         var shopping = new Dictionary<string, int>();
         foreach (var kv in rawNeeds)
         {

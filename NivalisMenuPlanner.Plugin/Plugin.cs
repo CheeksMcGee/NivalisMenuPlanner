@@ -41,6 +41,10 @@ public class Plugin : BasePlugin
     // 5d-2 Step 2: phase gate
     internal static ConfigEntry<float> PhaseRecentRating = null!, RaiseVetoDelta = null!;
     internal static ConfigEntry<int> PhaseReviewCount = null!;
+
+    // 5f-3: entry-posture menu concentration
+    internal static ConfigEntry<int> EntryPostureMaxSlots = null!;
+
     static readonly Dictionary<string, float> _lastRecent = new(StringComparer.OrdinalIgnoreCase);
 
     static int _pollGen;
@@ -67,18 +71,16 @@ public class Plugin : BasePlugin
         RaiseBuffer = Config.Bind("Payroll", "RaiseBuffer", 0.10f, new ConfigDescription("Escrow margin over polled wages.", new AcceptableValueRange<float>(0f, 0.5f)));
         DefaultLocalExclusivity = Config.Bind("Planning", "LocalExclusivity", 3, new ConfigDescription("Local Exclusivity Preference (1-5).", new AcceptableValueRange<int>(1, 5), new ModSetting { IsAdvanced = true }));
 
-        // Doctrine dials
         CrawlStepBps = Config.Bind("Pricing", "CrawlStepBps", 500, new ConfigDescription("Crawl step in basis points (500 = +5%/day).", new AcceptableValueRange<int>(100, 2000), new ModSetting { IsAdvanced = true }));
         StickyDownDays = Config.Bind("Pricing", "StickyDownDays", 2, new ConfigDescription("Consecutive slumping days before a cut fires.", new AcceptableValueRange<int>(1, 5), new ModSetting { IsAdvanced = true }));
         SlumpThresholdPct = Config.Bind("Pricing", "SlumpThresholdPct", 20, new ConfigDescription("% below trailing context that counts as a slump day.", new AcceptableValueRange<int>(5, 50), new ModSetting { IsAdvanced = true }));
         FloorMarginHundredths = Config.Bind("Pricing", "FloorMarginHundredths", 200, new ConfigDescription("Price never cuts below cost + this (hundredths).", new AcceptableValueRange<int>(0, 1000), new ModSetting { IsAdvanced = true }));
         MinVolumeGate = Config.Bind("Pricing", "MinVolumeGate", 3, new ConfigDescription("Dishes averaging fewer clean sales/day get NO price moves.", new AcceptableValueRange<int>(0, 20), new ModSetting { IsAdvanced = true }));
         RoundToWholeLims = Config.Bind("Pricing", "RoundToWholeLims", true, "Snap suggestions to whole lims (the edit UI only accepts whole lims).");
-
-        // Phase gate
         PhaseRecentRating = Config.Bind("Pricing", "PhaseRecentRating", 4.5f, new ConfigDescription("Recent rating at/above which a venue counts as established; below = entry posture. Calibrated on two 4.9-star venues.", new AcceptableValueRange<float>(1f, 5f), new ModSetting { IsAdvanced = true }));
         PhaseReviewCount = Config.Bind("Pricing", "PhaseReviewCount", 500, new ConfigDescription("Minimum lifetime reviews for established status.", new AcceptableValueRange<int>(0, 10000), new ModSetting { IsAdvanced = true }));
         RaiseVetoDelta = Config.Bind("Pricing", "RaiseVetoDelta", 0.3f, new ConfigDescription("Day-over-day recent-rating drop that vetoes price RAISES for a day.", new AcceptableValueRange<float>(0f, 2f), new ModSetting { IsAdvanced = true }));
+        EntryPostureMaxSlots = Config.Bind("Pricing", "EntryPostureMaxSlots", 4, new ConfigDescription("Menu slot cap for entry-posture venues (cold start: focused menu, smaller seed order). Non-imperative - the venue may still hold fewer if fewer clear the bar.", new AcceptableValueRange<int>(1, 12), new ModSetting { IsAdvanced = true }));
 
         ModMenu.ListSettings(Guid);
         ModMenu.AddPage(Guid, "Menu Planner", w => PlannerWindow.BuildPage(w, Current()));
@@ -94,6 +96,7 @@ public class Plugin : BasePlugin
         DevCommands.Register(Guid, "prices", "dish=N: observed city prices as JSON", PricesCommand);
         DevCommands.Register(Guid, "suggest", "venue=N: pricing suggestions as JSON", SuggestCommand);
         DevCommands.Register(Guid, "venueinfo", "venue=N: venue facts (reviews, ratings) as JSON", VenueInfoCommand);
+        DevCommands.Register(Guid, "seedorder", "venue=N: the cold-start seed order for an unplanned pantry, as JSON", SeedOrderCommand);
 
         L.LogInfo($"Menu Planner 0.1.0 loaded — hotkey {Hotkey.Value} (scheduler-polled), kit {ModKit.Version}.");
     }
@@ -169,6 +172,7 @@ public class Plugin : BasePlugin
                         soldByDish[dishName] = soldByDish.GetValueOrDefault(dishName) + receipt.Count;
                 }
                 var cookedForVenue = _cookedByVenue.GetValueOrDefault(key);
+
                 foreach (var (dish, price) in menu)
                 {
                     int sold = soldByDish.GetValueOrDefault(dish);
@@ -183,12 +187,8 @@ public class Plugin : BasePlugin
             _cookedByVenue.Clear();
             foreach (var k in Data.Keys.Where(k => k.StartsWith("sales.", StringComparison.OrdinalIgnoreCase)).ToList())
             {
-                // The key is sales.{venue}.{dish}.{day} = 4 segments (venue/dish contain no dots).
-                // The old parts.Length==5 check never matched, so pruning never fired and the
-                // store grew unboundedly - caught by the [pricing] diagnostic, day-78 log.
-                // Parse the day as the segment after the last dot, whatever the count.
                 int dot = k.LastIndexOf('.');
-                if (dot < 0) continue;   // not a record key; skip
+                if (dot < 0) continue;
                 if (int.TryParse(k[(dot + 1)..], out var recDay)
                     && !DemandTuner.ShouldRetain(recDay, day))
                     Data.Remove(k);
@@ -293,6 +293,36 @@ public class Plugin : BasePlugin
         return result;
     }
 
+    static object SeedOrderCommand(CommandArgs args)
+    {
+        var picks = Current();
+        if (args.Has("venue"))
+        {
+            var frag = args.Get("venue", "");
+            picks = picks.Where(r => r.Key.Contains(frag, StringComparison.OrdinalIgnoreCase)
+                                  || r.Title.Contains(frag, StringComparison.OrdinalIgnoreCase)).ToArray();
+        }
+        return new
+        {
+            day = GameTime.Day,
+            venues = picks.Select(r => new
+            {
+                venue = r.Title,
+                seedOrder = r.Suggestion.Warnings.Any(w => w.Contains("Cold start")),
+                dishes = r.Suggestion.Dishes.Select(d => new { name = d.Dish.Name, orders = d.ExpectedOrders }),
+                shopping = r.Suggestion.Shopping.Select(s => new
+                {
+                    item = s.Item,
+                    needed = s.Needed,
+                    unitPrice = s.UnitPriceHundredths / 100m,
+                    protects = s.ProtectedHundredths / 100m,
+                    cost = s.Needed * s.UnitPriceHundredths / 100m
+                }),
+                totalCost = r.Suggestion.Shopping.Sum(s => s.Needed * s.UnitPriceHundredths) / 100m
+            })
+        };
+    }
+
     static void StartHotkeyPoll()
     {
         var gen = ++_pollGen;
@@ -366,9 +396,15 @@ public class Plugin : BasePlugin
                      PhaseRecentRating.Value, PhaseReviewCount.Value))
         {
             var yesterday = Data.Get<List<string>>($"menus.{key}", new List<string>());
-            var suggestion = Planner.Plan(_catalog!, venue, Rules(), new MenuState(yesterday, DemandScale.Value));
+            // 5f-3: entry-posture menu concentration (ruling: 4, non-imperative).
+            // Focused menu = smaller seed order (capital), less kitchen routing (service),
+            // denser per-dish learning (tuner), no spoilage on unrealizable demand.
+            var venueRules = facts.Established
+                ? Rules()
+                : Rules() with { MaxSlots = Math.Min(EntryPostureMaxSlots.Value, MaxSlots.Value) };
+            var suggestion = Planner.Plan(_catalog!, venue, venueRules, new MenuState(yesterday, DemandScale.Value));
 
-            // ---- Step 2: the veto, computed where key and facts are both in scope ----
+            // Step 2: the veto, computed where key and facts are both in scope
             float prior = _lastRecent.GetValueOrDefault(key, float.NaN);
             bool veto = !float.IsNaN(prior)
                         && facts.RecentRating.HasValue

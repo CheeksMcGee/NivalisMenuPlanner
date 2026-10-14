@@ -658,4 +658,36 @@ Check("T22d seed mode + ruin prices: profit bar excludes all, no seed order",
         && s22d.Warnings.Any(w => w.Contains("Cold start"))
         && s22d.Warnings.Any(w => w.Contains("profit bar")),
     $"{s22d.Dishes.Count} dishes, {s22d.Shopping.Count} shopping items; warnings: {string.Join(" | ", s22d.Warnings)}");
+// T23 — ZERO-ORDER CUT (5f-3): ledger-exhausted dishes leave the menu. Fixture:
+//        two dishes share Tomatoes; stock serves only the first's demand. The
+//        fill places both (second placed while stock remained); the rebuild's
+//        sequential claims exhaust the second to 0 -> cut. Shopping still covers it.
+var t23Stock = new Dictionary<string, int>
+{
+    ["Tomatoes"] = 5,
+    ["Potatoes"] = 40,
+    ["Beef"] = 40,
+    ["Cucumbers"] = 40,
+    ["Chicken"] = 40,
+    ["Cheese"] = 40,
+    ["Onions"] = 40
+};
+var t23Venue = new VenueState("T23-Exhaust", "T23-Exhaust", "Test District", 10, 3, 0,
+    t23Stock, t17aPrices, t6Mix,
+    new[] { "Borsch", "Summer Salad" });
+// Borsch: mix ~0.71 -> ~5.7 raw orders; Tomatoes 5 -> platable 5 -> orders 5.
+// Summer Salad: mix ~0.62 -> ~5.0 raw; claims remaining Tomatoes = 0 -> orders 0 -> CUT.
+var s23 = Planner.Plan(cat, t23Venue, rules, new MenuState(Array.Empty<string>(), 8f));
+bool t23Borsch = s23.Dishes.Any(d => d.Dish.Id == "Borsch");
+bool t23SaladCut = !s23.Dishes.Any(d => d.Dish.Id == "Summer Salad");
+Check("T23 zero-order cut: ledger-exhausted dish leaves the menu",
+    t23Borsch && t23SaladCut,
+    $"menu: {string.Join(", ", s23.Dishes.Select(d => $"{d.Dish.Name} {d.ExpectedOrders:0.0}"))}");
+
+// T23b — the cut dish's demand still lands on the shopping list (restock path):
+bool t23Restock = s23.Shopping.Any(s => s.Item == "Tomatoes" && s.Needed >= 1);
+Check("T23b cut dish's inputs still on the shopping list",
+    t23Restock,
+    $"shopping: {string.Join(", ", s23.Shopping.Select(s => $"{s.Item} x{s.Needed}"))}");
+Console.WriteLine($"[T23-debug] shoppingCount={s23.Shopping.Count} rawNeeds should be Tomatoes=6 vs stock 5; firstWarning={(s23.Warnings.FirstOrDefault() ?? "none")}");
 return failed;
