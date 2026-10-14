@@ -10,21 +10,24 @@ namespace NivalisMenuPlanner.Core;
 /// factor) retire the moment this catalog has data: the 99th-percentile observed
 /// price per dish becomes the planner's cap. District spreads are kept for the
 /// future district-demand calibration; the cap derivation uses citywide max.
+/// 5f-2: observations carry the venue key, and district medians EXCLUDE the
+/// caller's own venues - your price should never be your market benchmark
+/// (the Eyeball-at-31.00 finding: own-venue prices had become the district
+/// median for dishes only the player serves).
 /// </summary>
 public sealed class PriceObservations
 {
-    readonly Dictionary<string, List<(string district, int priceHundredths)>> _byDish =
+    readonly Dictionary<string, List<(string district, int priceHundredths, string venue)>> _byDish =
         new(StringComparer.OrdinalIgnoreCase);
 
     public int ObservationCount { get; private set; }
-    public int DistrictCount { get; private set; }
 
-    public void Add(string dishId, string district, int priceHundredths)
+    public void Add(string dishId, string district, int priceHundredths, string? venue = null)
     {
         if (string.IsNullOrEmpty(dishId) || priceHundredths <= 0) return;
         if (!_byDish.TryGetValue(dishId, out var list))
-            _byDish[dishId] = list = new List<(string, int)>();
-        list.Add((district, priceHundredths));
+            _byDish[dishId] = list = new List<(string, int, string)>();
+        list.Add((district, priceHundredths, venue ?? "?"));
         ObservationCount++;
     }
 
@@ -34,30 +37,37 @@ public sealed class PriceObservations
             ? list.Select(x => x.priceHundredths).ToList()
             : new List<int>();
 
-    /// <summary>Observed price range for a dish within one district, or null if unseen there.</summary>
-    public (int min, int max)? RangeIn(string dishId, string district)
+    /// <summary>
+    /// Observed price range for a dish within one district, EXCLUDING the caller's
+    /// own venues (self-anchor fix). Null when the district has no non-own
+    /// observations - the thin-coverage fallback (crawl only) engages.
+    /// </summary>
+    public (int min, int max)? RangeIn(string dishId, string district, IReadOnlyCollection<string>? ownVenues = null)
     {
         if (!_byDish.TryGetValue(dishId, out var list)) return null;
-        var inDistrict = list.Where(x => x.district.Equals(district, StringComparison.OrdinalIgnoreCase))
-                             .Select(x => x.priceHundredths).ToList();
+        var inDistrict = list
+            .Where(x => x.district.Equals(district, StringComparison.OrdinalIgnoreCase))
+            .Where(x => ownVenues == null || !ownVenues.Contains(x.venue))
+            .Select(x => x.priceHundredths).ToList();
         return inDistrict.Count == 0 ? null : (inDistrict.Min(), inDistrict.Max());
     }
 
+    /// <summary>Backward-compatible overload: unfiltered range (NPC + own).</summary>
+    public (int min, int max)? RangeIn(string dishId, string district) =>
+        RangeIn(dishId, district, null);
+
     /// <summary>
-    /// The measured cap for a dish: 99th-percentile citywide observed price.
-    /// Percentile rather than max because one bugged NPC menu shouldn't become
-    /// the ceiling (the same robustness logic as the escrow's honesty guards).
-    /// Null when the dish has no observations - the CSV estimate stands.
+    /// The measured cap for a dish: 99th-percentile citywide observed price,
+    /// ALL venues included (caps are ceilings, not benchmarks - your own price
+    /// legitimately contributes to what the market tolerates citywide).
     /// </summary>
     public int? CapOf(string dishId)
     {
         if (!_byDish.TryGetValue(dishId, out var list) || list.Count == 0) return null;
         var sorted = list.Select(x => x.priceHundredths).OrderBy(p => p).ToList();
-        // nearest-rank percentile: index = ceil(0.99 * n) - 1, clamped
         int idx = Math.Min(sorted.Count - 1, (int)Math.Ceiling(0.99 * sorted.Count) - 1);
         return sorted[idx];
     }
 
-    /// <summary>Dishes with at least one observation.</summary>
     public IReadOnlyList<string> ObservedDishes => _byDish.Keys.ToList();
 }
