@@ -688,5 +688,75 @@ bool t23Restock = s23.Shopping.Any(s => s.Item == "Tomatoes" && s.Needed >= 1);
 Check("T23b cut dish's inputs still on the shopping list",
     t23Restock,
     $"shopping: {string.Join(", ", s23.Shopping.Select(s => $"{s.Item} x{s.Needed}"))}");
+
+// T24 — PHASE GATE: the profit-streak engine (v0.2.6). First time-series logic
+//       in the harness: day sequences, not single states. All traces derived.
+//       Ruling defaults: level>=3, 10 consecutive days, profit>=20% of revenue,
+//       rating>=4.5. Reset-vs-freeze asymmetry per the operator's ruling.
+
+// T24a — the streak builds: 10 profitable, well-rated days -> established.
+//        Fixture: revenue 1000, cost 500 (50% margin, clears the 20% floor).
+var t24aStreak = PhaseGate.Streak.Start;
+for (int d = 0; d < 10; d++)
+    t24aStreak = t24aStreak.Next(new PhaseGate.DayResult(1000m, 500m), ratingDipped: false);
+bool t24aEst = PhaseGate.IsEstablished(3, t24aStreak, 4.9f);
+Check("T24a ten profitable days establish (level 3, rating 4.9)",
+    t24aEst,
+    $"streak count {t24aStreak.Count}, established {t24aEst}");
+
+// T24b — the margin floor: a 1%-profit day does NOT count (resets the streak).
+//        The "1% isn't a banger" ruling. Revenue 1000, cost 990 -> 1% -> reset.
+var t24bStreak = PhaseGate.Streak.Start;
+for (int d = 0; d < 5; d++)
+    t24bStreak = t24bStreak.Next(new PhaseGate.DayResult(1000m, 500m), ratingDipped: false);
+t24bStreak = t24bStreak.Next(new PhaseGate.DayResult(1000m, 990m), ratingDipped: false);   // 1% day
+bool t24bEst = PhaseGate.IsEstablished(3, t24bStreak, 4.9f);
+Check("T24b a 1%-profit day resets the streak (floor ruling)",
+    !t24bEst && t24bStreak.Count == 0,
+    $"after 5 good days + one 1% day: count {t24bStreak.Count} (reset to 0)");
+
+// T24c — reset-vs-freeze asymmetry: a rating dip FREEZES (count holds), and
+//        the next good day resumes. Profit failure resets; rating dips pause.
+var t24cStreak = PhaseGate.Streak.Start;
+for (int d = 0; d < 7; d++)
+    t24cStreak = t24cStreak.Next(new PhaseGate.DayResult(1000m, 500m), ratingDipped: false);
+t24cStreak = t24cStreak.Next(new PhaseGate.DayResult(1000m, 500m), ratingDipped: true);   // rating dip
+bool t24cFrozenHeld = t24cStreak.Count == 7 && t24cStreak.Frozen;
+t24cStreak = t24cStreak.Next(new PhaseGate.DayResult(1000m, 500m), ratingDipped: false);  // good day
+bool t24cResumed = t24cStreak.Count == 8 && !t24cStreak.Frozen;
+Check("T24c rating dip freezes (count holds); good day resumes at 8",
+    t24cFrozenHeld && t24cResumed,
+    $"dip day: count {7}, frozen; next good day: count {t24cStreak.Count}, frozen {t24cStreak.Frozen}");
+
+// T24d — the loss day resets even from freeze: a frozen streak that fails
+//        profit goes to zero (the model broke while paused).
+var t24dStreak = PhaseGate.Streak.Start;
+for (int d = 0; d < 7; d++)
+    t24dStreak = t24dStreak.Next(new PhaseGate.DayResult(1000m, 500m), ratingDipped: false);
+t24dStreak = t24dStreak.Next(new PhaseGate.DayResult(1000m, 500m), ratingDipped: true);   // freeze
+t24dStreak = t24dStreak.Next(new PhaseGate.DayResult(500m, 600m), ratingDipped: true);    // LOSS day while frozen
+Check("T24d a loss day resets even from freeze",
+    t24dStreak.Count == 0 && !t24dStreak.Frozen,
+    $"frozen at 7, loss day: count {t24dStreak.Count}");
+
+// T24e — the level keystone: nine days of perfect profit + 5.0 rating, but
+//        level 1 (no manager possible) -> NOT established. The legitimacy prong.
+var t24eStreak = PhaseGate.Streak.Start;
+for (int d = 0; d < 9; d++)
+    t24eStreak = t24eStreak.Next(new PhaseGate.DayResult(1000m, 500m), ratingDipped: false);
+bool t24eEst = PhaseGate.IsEstablished(1, t24eStreak, 5.0f);
+Check("T24e level 1 blocks establishment regardless of streak (keystone)",
+    !t24eEst,
+    $"level 1, count 9, rating 5.0 -> established {t24eEst}");
+
+// T24f — the rating prong: full streak, but recent rating 3.9 -> not established.
+var t24fStreak = PhaseGate.Streak.Start;
+for (int d = 0; d < 10; d++)
+    t24fStreak = t24fStreak.Next(new PhaseGate.DayResult(1000m, 500m), ratingDipped: false);
+bool t24fEst = PhaseGate.IsEstablished(3, t24fStreak, 3.9f);
+Check("T24f rating below threshold blocks (3.9 < 4.5)",
+    !t24fEst,
+    $"full streak, rating 3.9 -> established {t24fEst}");
+
 Console.WriteLine($"\n{(failed == 0 ? "ALL TESTS PASS" : failed + " TEST(S) FAILED — paste output to me")}");
 return failed;
