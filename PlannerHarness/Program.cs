@@ -577,7 +577,6 @@ var t21dSug = PricingController.Suggest(t21dDish, currentPrice: 200, records: t2
 Check("T21d cheap-dish crawl: 2.00 -> 3.00 (raw 210 ceilings to 300; cap 350 floors the ceiling to 300)",
     t21dSug != null && t21dSug.SuggestedPriceHundredths == 300,
     t21dSug == null ? "no suggestion (unexpected)" : $"got {t21dSug.SuggestedPriceHundredths}");
-Console.WriteLine($"\n{(failed == 0 ? "ALL TESTS PASS" : failed + " TEST(S) FAILED — paste output to me")}");
 
 // T22 — COLD-START SEED ORDER (5f-1): the empty-pantry venue plans its hypothetical
 //       menu (buyable inputs = unlimited for the plan) and the shopping list becomes
@@ -689,5 +688,5 @@ bool t23Restock = s23.Shopping.Any(s => s.Item == "Tomatoes" && s.Needed >= 1);
 Check("T23b cut dish's inputs still on the shopping list",
     t23Restock,
     $"shopping: {string.Join(", ", s23.Shopping.Select(s => $"{s.Item} x{s.Needed}"))}");
-Console.WriteLine($"[T23-debug] shoppingCount={s23.Shopping.Count} rawNeeds should be Tomatoes=6 vs stock 5; firstWarning={(s23.Warnings.FirstOrDefault() ?? "none")}");
+Console.WriteLine($"\n{(failed == 0 ? "ALL TESTS PASS" : failed + " TEST(S) FAILED — paste output to me")}");
 return failed;
