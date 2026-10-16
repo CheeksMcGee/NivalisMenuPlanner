@@ -699,7 +699,7 @@ Check("T23b cut dish's inputs still on the shopping list",
 var t24aStreak = PhaseGate.Streak.Start;
 for (int d = 0; d < 10; d++)
     t24aStreak = t24aStreak.Next(new PhaseGate.DayResult(1000m, 500m), ratingDipped: false);
-bool t24aEst = PhaseGate.IsEstablished(3, t24aStreak, 4.9f);
+bool t24aEst = PhaseGate.IsEstablished(true, t24aStreak, 4.9f);
 Check("T24a ten profitable days establish (level 3, rating 4.9)",
     t24aEst,
     $"streak count {t24aStreak.Count}, established {t24aEst}");
@@ -710,7 +710,7 @@ var t24bStreak = PhaseGate.Streak.Start;
 for (int d = 0; d < 5; d++)
     t24bStreak = t24bStreak.Next(new PhaseGate.DayResult(1000m, 500m), ratingDipped: false);
 t24bStreak = t24bStreak.Next(new PhaseGate.DayResult(1000m, 990m), ratingDipped: false);   // 1% day
-bool t24bEst = PhaseGate.IsEstablished(3, t24bStreak, 4.9f);
+bool t24bEst = PhaseGate.IsEstablished(true, t24bStreak, 4.9f);
 Check("T24b a 1%-profit day resets the streak (floor ruling)",
     !t24bEst && t24bStreak.Count == 0,
     $"after 5 good days + one 1% day: count {t24bStreak.Count} (reset to 0)");
@@ -744,8 +744,8 @@ Check("T24d a loss day resets even from freeze",
 var t24eStreak = PhaseGate.Streak.Start;
 for (int d = 0; d < 9; d++)
     t24eStreak = t24eStreak.Next(new PhaseGate.DayResult(1000m, 500m), ratingDipped: false);
-bool t24eEst = PhaseGate.IsEstablished(1, t24eStreak, 5.0f);
-Check("T24e level 1 blocks establishment regardless of streak (keystone)",
+bool t24eEst = PhaseGate.IsEstablished(false, t24eStreak, 5.0f);
+Check("T24e no manager blocks establishment regardless of streak (keystone)",
     !t24eEst,
     $"level 1, count 9, rating 5.0 -> established {t24eEst}");
 
@@ -753,7 +753,7 @@ Check("T24e level 1 blocks establishment regardless of streak (keystone)",
 var t24fStreak = PhaseGate.Streak.Start;
 for (int d = 0; d < 10; d++)
     t24fStreak = t24fStreak.Next(new PhaseGate.DayResult(1000m, 500m), ratingDipped: false);
-bool t24fEst = PhaseGate.IsEstablished(3, t24fStreak, 3.9f);
+bool t24fEst = PhaseGate.IsEstablished(true, t24fStreak, 3.9f);
 Check("T24f rating below threshold blocks (3.9 < 4.5)",
     !t24fEst,
     $"full streak, rating 3.9 -> established {t24fEst}");

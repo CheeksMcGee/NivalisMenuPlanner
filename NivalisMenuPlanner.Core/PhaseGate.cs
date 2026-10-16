@@ -68,14 +68,16 @@ public static class PhaseGate
     }
 
     /// <summary>
-    /// The complete gate. Level is the hard prerequisite (the game's own
-    /// delegation certification); the streak and rating are the earned proof.
+    /// The complete gate. The manager keystone (5g-2 reformulation): a hired manager
+    /// IS the delegation test - it implies level 3+ (the game's gate) and means the
+    /// venue actually runs on delegation, not just that it could. PhaseRequiresManager
+    /// (config) can loosen the keystone for operators who want it off.
     /// </summary>
-    public static bool IsEstablished(int venueLevel, Streak streak, float recentRating,
-        int minLevel = DefaultMinVenueLevel,
+    public static bool IsEstablished(bool hasManager, Streak streak, float recentRating,
+        bool requireManager = true,
         int consecutiveDays = DefaultConsecutiveDays,
         float recentThreshold = DefaultRecentRating) =>
-        venueLevel >= minLevel
+        (!requireManager || hasManager)
         && streak.MeetsDays(consecutiveDays)
         && recentRating >= recentThreshold;
 }

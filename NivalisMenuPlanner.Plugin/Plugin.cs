@@ -38,8 +38,11 @@ public class Plugin : BasePlugin
         FloorMarginHundredths = null!, MinVolumeGate = null!;
     internal static ConfigEntry<bool> RoundToWholeLims = null!;
 
-    // 5d-2 Step 2: phase gate
+    // Phase gate — 5g-2: the redesigned dials
     internal static ConfigEntry<float> PhaseRecentRating = null!, RaiseVetoDelta = null!;
+    internal static ConfigEntry<int> PhaseMinProfitPct = null!, PhaseConsecutiveDays = null!;
+    internal static ConfigEntry<bool> PhaseRequiresManager = null!;
+    // Retired (kept bound for config-file compatibility; the gate no longer reads it):
     internal static ConfigEntry<int> PhaseReviewCount = null!;
 
     // 5f-3: entry-posture menu concentration
@@ -77,10 +80,15 @@ public class Plugin : BasePlugin
         FloorMarginHundredths = Config.Bind("Pricing", "FloorMarginHundredths", 200, new ConfigDescription("Price never cuts below cost + this (hundredths).", new AcceptableValueRange<int>(0, 1000), new ModSetting { IsAdvanced = true }));
         MinVolumeGate = Config.Bind("Pricing", "MinVolumeGate", 3, new ConfigDescription("Dishes averaging fewer clean sales/day get NO price moves.", new AcceptableValueRange<int>(0, 20), new ModSetting { IsAdvanced = true }));
         RoundToWholeLims = Config.Bind("Pricing", "RoundToWholeLims", true, "Snap suggestions to whole lims (the edit UI only accepts whole lims).");
-        PhaseRecentRating = Config.Bind("Pricing", "PhaseRecentRating", 4.5f, new ConfigDescription("Recent rating at/above which a venue counts as established; below = entry posture. Calibrated on two 4.9-star venues.", new AcceptableValueRange<float>(1f, 5f), new ModSetting { IsAdvanced = true }));
-        PhaseReviewCount = Config.Bind("Pricing", "PhaseReviewCount", 500, new ConfigDescription("Minimum lifetime reviews for established status.", new AcceptableValueRange<int>(0, 10000), new ModSetting { IsAdvanced = true }));
+
+        // ---- Phase gate (5g-2): the redesigned dials — profit-streak semantics ----
+        PhaseRecentRating = Config.Bind("Pricing", "PhaseRecentRating", 4.5f, new ConfigDescription("Recent rating at/above which a venue counts as established (the rating prong).", new AcceptableValueRange<float>(1f, 5f), new ModSetting { IsAdvanced = true }));
         RaiseVetoDelta = Config.Bind("Pricing", "RaiseVetoDelta", 0.3f, new ConfigDescription("Day-over-day recent-rating drop that vetoes price RAISES for a day.", new AcceptableValueRange<float>(0f, 2f), new ModSetting { IsAdvanced = true }));
-        EntryPostureMaxSlots = Config.Bind("Pricing", "EntryPostureMaxSlots", 4, new ConfigDescription("Menu slot cap for entry-posture venues (cold start: focused menu, smaller seed order). Non-imperative - the venue may still hold fewer if fewer clear the bar.", new AcceptableValueRange<int>(1, 12), new ModSetting { IsAdvanced = true }));
+        PhaseMinProfitPct = Config.Bind("Pricing", "PhaseMinProfitPct", 20, new ConfigDescription("Daily profit must reach this % of revenue to count as a profitable day (the margin floor: a 1% day isn't a banger).", new AcceptableValueRange<int>(1, 100), new ModSetting { IsAdvanced = true }));
+        PhaseConsecutiveDays = Config.Bind("Pricing", "PhaseConsecutiveDays", 10, new ConfigDescription("Consecutive profitable days required for established status (a loss day resets the counter).", new AcceptableValueRange<int>(1, 60), new ModSetting { IsAdvanced = true }));
+        PhaseRequiresManager = Config.Bind("Pricing", "PhaseRequiresManager", true, new ConfigDescription("Require a hired manager for established status (the delegation keystone: a manager implies level 3+, and a manager-less venue isn't delegable regardless of level).", null, new ModSetting { IsAdvanced = true })); PhaseReviewCount = Config.Bind("Pricing", "PhaseReviewCount", 500, new ConfigDescription("[RETIRED - Patch #5 broke review semantics; the gate now uses the profit streak. Kept for config compatibility.]", new AcceptableValueRange<int>(0, 10000), new ModSetting { IsAdvanced = true }));
+
+        EntryPostureMaxSlots = Config.Bind("Pricing", "EntryPostureMaxSlots", 4, new ConfigDescription("Menu slot cap for entry-posture venues (cold start: focused menu, smaller seed order).", new AcceptableValueRange<int>(1, 12), new ModSetting { IsAdvanced = true }));
 
         ModMenu.ListSettings(Guid);
         ModMenu.AddPage(Guid, "Menu Planner", w => PlannerWindow.BuildPage(w, Current()));
@@ -95,7 +103,7 @@ public class Plugin : BasePlugin
         DevCommands.Register(Guid, "sales", "venue=N&day=N: stored SaleRecords as JSON", SalesCommand);
         DevCommands.Register(Guid, "prices", "dish=N: observed city prices as JSON", PricesCommand);
         DevCommands.Register(Guid, "suggest", "venue=N: pricing suggestions as JSON", SuggestCommand);
-        DevCommands.Register(Guid, "venueinfo", "venue=N: venue facts (reviews, ratings) as JSON", VenueInfoCommand);
+        DevCommands.Register(Guid, "venueinfo", "venue=N: venue facts (reviews, ratings, streak) as JSON", VenueInfoCommand);
         DevCommands.Register(Guid, "seedorder", "venue=N: the cold-start seed order for an unplanned pantry, as JSON", SeedOrderCommand);
 
         L.LogInfo($"Menu Planner 0.1.0 loaded — hotkey {Hotkey.Value} (scheduler-polled), kit {ModKit.Version}.");
@@ -152,6 +160,7 @@ public class Plugin : BasePlugin
         {
             int day = a.Day;
             int venues = 0, records = 0;
+            var revenueByVenue = new Dictionary<string, decimal>(StringComparer.OrdinalIgnoreCase);
             foreach (var area in Venues.PlayerOwned)
             {
                 string key = Safe(() => Venues.NameOf(area)) ?? "?";
@@ -173,6 +182,7 @@ public class Plugin : BasePlugin
                 }
                 var cookedForVenue = _cookedByVenue.GetValueOrDefault(key);
 
+                decimal venueRevenue = 0m;
                 foreach (var (dish, price) in menu)
                 {
                     int sold = soldByDish.GetValueOrDefault(dish);
@@ -182,9 +192,43 @@ public class Plugin : BasePlugin
                     var rec = new SaleRecord(day, price, sold, cooked, walked, null);
                     Data.Set($"sales.{key}.{dish}.{day}", rec);
                     records++;
+                    venueRevenue += (decimal)sold * price / 100m;
                 }
+                revenueByVenue[key] = venueRevenue;
             }
             _cookedByVenue.Clear();
+
+            // ---- 5g-2: PROFIT TRACKER — the streak's daily input (approximate cost side) ----
+            foreach (var kv in revenueByVenue)
+            {
+                string key = kv.Key;
+                decimal revenue = kv.Value;
+
+                decimal wages = 0m;
+                try
+                {
+                    foreach (var area in Venues.PlayerOwned)
+                    {
+                        if (!string.Equals(Safe(() => Venues.NameOf(area)), key, StringComparison.OrdinalIgnoreCase))
+                            continue;
+                        foreach (var s in Venues.StaffOf(area))
+                            wages += (decimal)s.Wage * (decimal)s.HoursLeftToday;
+                    }
+                }
+                catch { }
+
+                var shopping = Data.Get<List<ShoppingItem>>($"lastShopping.{key}", new List<ShoppingItem>());
+                decimal spend = shopping.Sum(s => (decimal)s.Needed * s.UnitPriceHundredths) / 100m;
+
+                var priorStreak = Data.Get<PhaseGate.Streak>($"profitStreak.{key}", PhaseGate.Streak.Start);
+                float priorRecent = _lastRecent.GetValueOrDefault(key, 5f);
+                bool ratingDipped = priorRecent < PhaseRecentRating.Value;
+                var dayResult = new PhaseGate.DayResult(revenue, wages + spend);
+                var newStreak = priorStreak.Next(dayResult, ratingDipped);
+                Data.Set($"profitStreak.{key}", newStreak);
+                L.LogInfo($"[streak] {key}: revenue {revenue:0.00} - est.cost {(wages + spend):0.00} = profit {(revenue - wages - spend):0.00} ({(revenue > 0 ? (int)((revenue - wages - spend) * 100 / revenue) : 0)}% of revenue); streak {priorStreak.Count} -> {newStreak.Count}{(newStreak.Frozen ? " (frozen)" : "")}");
+            }
+
             foreach (var k in Data.Keys.Where(k => k.StartsWith("sales.", StringComparison.OrdinalIgnoreCase)).ToList())
             {
                 int dot = k.LastIndexOf('.');
@@ -288,7 +332,27 @@ public class Plugin : BasePlugin
                 if (recentCount > 0) recentAvg = Math.Round(recentTotal / recentCount, 2);
             }
             catch (Exception e) { L.LogDebug($"ReviewsOf failed: {e.Message}"); }
-            result.Add(new { venue = key, display, reviewCount = count, lifetimeAvg, recentAvg, positivePct });
+            var streak = Data.Get<PhaseGate.Streak>($"profitStreak.{key}", PhaseGate.Streak.Start);
+            bool hasManager = false;
+            try
+            {
+                foreach (var s in Venues.StaffOf(area))
+                    if (s.Roles.Contains("Manager", StringComparison.OrdinalIgnoreCase))
+                    { hasManager = true; break; }
+            }
+            catch { }
+            result.Add(new
+            {
+                venue = key,
+                display,
+                reviewCount = count,
+                lifetimeAvg,
+                recentAvg,
+                positivePct,
+                profitStreak = streak.Count,
+                streakFrozen = streak.Frozen,
+                hasManager
+            });
         }
         return result;
     }
@@ -392,27 +456,40 @@ public class Plugin : BasePlugin
 
         _rotation.Clear();
         foreach (var (key, venue, facts) in GameAdapter.SnapshotAll(
-                     _catalog!, DefaultLocalExclusivity.Value, MaxSlots.Value,
-                     PhaseRecentRating.Value, PhaseReviewCount.Value))
+                     _catalog!, DefaultLocalExclusivity.Value, MaxSlots.Value))
         {
             var yesterday = Data.Get<List<string>>($"menus.{key}", new List<string>());
-            // 5f-3: entry-posture menu concentration (ruling: 4, non-imperative).
-            // Focused menu = smaller seed order (capital), less kitchen routing (service),
-            // denser per-dish learning (tuner), no spoilage on unrealizable demand.
-            var venueRules = facts.Established
-                ? Rules()
-                : Rules() with { MaxSlots = Math.Min(EntryPostureMaxSlots.Value, MaxSlots.Value) };
-            var suggestion = Planner.Plan(_catalog!, venue, venueRules, new MenuState(yesterday, DemandScale.Value));
 
-            // Step 2: the veto, computed where key and facts are both in scope
+            // ---- 5g-2: THE REDESIGNED GATE — PhaseGate.IsEstablished ----
+            // The manager keystone (operator's reformulation): "can I leave it in a
+            // manager's hands?" - asked directly. A hired manager implies level 3+
+            // (the game's gate), and a manager-less venue isn't delegable regardless
+            // of level. StaffOf exposes roles; the check is the delegation test itself.
+            // The kit's venue-level query doesn't exist (verified against the full
+            // method dump) - this reformulation made it unnecessary.
+            var streak = Data.Get<PhaseGate.Streak>($"profitStreak.{key}", PhaseGate.Streak.Start);
+
+            // The veto stays: a day-over-day rating drop still suppresses raises
+            // for a day, even for established venues (the fast-metric guard).
             float prior = _lastRecent.GetValueOrDefault(key, float.NaN);
             bool veto = !float.IsNaN(prior)
                         && facts.RecentRating.HasValue
                         && prior - facts.RecentRating.Value >= RaiseVetoDelta.Value;
-            bool established = facts.Established && !veto;
+            bool established = !veto && PhaseGate.IsEstablished(
+                facts.HasManager, streak,
+                facts.RecentRating ?? 0f,
+                requireManager: PhaseRequiresManager.Value,
+                consecutiveDays: PhaseConsecutiveDays.Value,
+                recentThreshold: PhaseRecentRating.Value);
             _lastRecent[key] = facts.RecentRating ?? prior;
 
-            L.LogInfo($"[phase] {key}: recent={facts.RecentRating?.ToString("0.0") ?? "n/a"} reviews={facts.ReviewCount} established={established} (veto={veto})");
+            L.LogInfo($"[phase] {key}: manager={facts.HasManager} streak={streak.Count}{(streak.Frozen ? " (frozen)" : "")} recent={facts.RecentRating?.ToString("0.0") ?? "n/a"} established={established} (veto={veto})");
+
+            // Entry-posture menu concentration (5f-3) rides the same gate:
+            var venueRules = established
+                ? Rules()
+                : Rules() with { MaxSlots = Math.Min(EntryPostureMaxSlots.Value, MaxSlots.Value) };
+            var suggestion = Planner.Plan(_catalog!, venue, venueRules, new MenuState(yesterday, DemandScale.Value));
 
             var priceSuggestions = new List<PriceSuggestion>();
             foreach (var line in suggestion.Dishes)
@@ -437,6 +514,9 @@ public class Plugin : BasePlugin
             }
 
             _rotation.Add(new Rotation(key, venue.Name, suggestion, priceSuggestions, established));
+
+            // Persist the shopping list for tomorrow's profit tracking (cost estimate).
+            Data.Set($"lastShopping.{key}", suggestion.Shopping.Select(s => s).ToList());
 
             decimal? priorProfit = Data.Has($"profit.{key}") ? Data.Get<decimal?>($"profit.{key}", null) : null;
             if (priorProfit is > 0 && suggestion.EstProfitPerDay > priorProfit * (1 + (decimal)NotifyGain.Value / 100m))
