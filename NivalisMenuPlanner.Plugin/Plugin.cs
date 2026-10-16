@@ -81,12 +81,12 @@ public class Plugin : BasePlugin
         MinVolumeGate = Config.Bind("Pricing", "MinVolumeGate", 3, new ConfigDescription("Dishes averaging fewer clean sales/day get NO price moves.", new AcceptableValueRange<int>(0, 20), new ModSetting { IsAdvanced = true }));
         RoundToWholeLims = Config.Bind("Pricing", "RoundToWholeLims", true, "Snap suggestions to whole lims (the edit UI only accepts whole lims).");
 
-        // ---- Phase gate (5g-2): the redesigned dials — profit-streak semantics ----
         PhaseRecentRating = Config.Bind("Pricing", "PhaseRecentRating", 4.5f, new ConfigDescription("Recent rating at/above which a venue counts as established (the rating prong).", new AcceptableValueRange<float>(1f, 5f), new ModSetting { IsAdvanced = true }));
         RaiseVetoDelta = Config.Bind("Pricing", "RaiseVetoDelta", 0.3f, new ConfigDescription("Day-over-day recent-rating drop that vetoes price RAISES for a day.", new AcceptableValueRange<float>(0f, 2f), new ModSetting { IsAdvanced = true }));
         PhaseMinProfitPct = Config.Bind("Pricing", "PhaseMinProfitPct", 20, new ConfigDescription("Daily profit must reach this % of revenue to count as a profitable day (the margin floor: a 1% day isn't a banger).", new AcceptableValueRange<int>(1, 100), new ModSetting { IsAdvanced = true }));
         PhaseConsecutiveDays = Config.Bind("Pricing", "PhaseConsecutiveDays", 10, new ConfigDescription("Consecutive profitable days required for established status (a loss day resets the counter).", new AcceptableValueRange<int>(1, 60), new ModSetting { IsAdvanced = true }));
-        PhaseRequiresManager = Config.Bind("Pricing", "PhaseRequiresManager", true, new ConfigDescription("Require a hired manager for established status (the delegation keystone: a manager implies level 3+, and a manager-less venue isn't delegable regardless of level).", null, new ModSetting { IsAdvanced = true })); PhaseReviewCount = Config.Bind("Pricing", "PhaseReviewCount", 500, new ConfigDescription("[RETIRED - Patch #5 broke review semantics; the gate now uses the profit streak. Kept for config compatibility.]", new AcceptableValueRange<int>(0, 10000), new ModSetting { IsAdvanced = true }));
+        PhaseRequiresManager = Config.Bind("Pricing", "PhaseRequiresManager", true, new ConfigDescription("Require a hired manager for established status (the delegation keystone: a manager implies level 3+, and a manager-less venue isn't delegable regardless of level).", null, new ModSetting { IsAdvanced = true }));
+        PhaseReviewCount = Config.Bind("Pricing", "PhaseReviewCount", 500, new ConfigDescription("[RETIRED - Patch #5 broke review semantics; the gate now uses the profit streak. Kept for config compatibility.]", new AcceptableValueRange<int>(0, 10000), new ModSetting { IsAdvanced = true }));
 
         EntryPostureMaxSlots = Config.Bind("Pricing", "EntryPostureMaxSlots", 4, new ConfigDescription("Menu slot cap for entry-posture venues (cold start: focused menu, smaller seed order).", new AcceptableValueRange<int>(1, 12), new ModSetting { IsAdvanced = true }));
 
@@ -105,6 +105,7 @@ public class Plugin : BasePlugin
         DevCommands.Register(Guid, "suggest", "venue=N: pricing suggestions as JSON", SuggestCommand);
         DevCommands.Register(Guid, "venueinfo", "venue=N: venue facts (reviews, ratings, streak) as JSON", VenueInfoCommand);
         DevCommands.Register(Guid, "seedorder", "venue=N: the cold-start seed order for an unplanned pantry, as JSON", SeedOrderCommand);
+        DevCommands.Register(Guid, "staffinfo", "venue=N: per-staff facts (wage, band, satisfaction, speed, shift, skills) as JSON", StaffInfoCommand);
 
         L.LogInfo($"Menu Planner 0.1.0 loaded — hotkey {Hotkey.Value} (scheduler-polled), kit {ModKit.Version}.");
     }
@@ -198,7 +199,7 @@ public class Plugin : BasePlugin
             }
             _cookedByVenue.Clear();
 
-            // ---- 5g-2: PROFIT TRACKER — the streak's daily input (approximate cost side) ----
+            // 5g-2: PROFIT TRACKER — the streak's daily input (approximate cost side)
             foreach (var kv in revenueByVenue)
             {
                 string key = kv.Key;
@@ -357,6 +358,99 @@ public class Plugin : BasePlugin
         return result;
     }
 
+    // 5g-3: STAFFINFO — the discovery session's payoff. Per-staff facts via the kit's
+    // StaffOf (which carries Person) -> Person.RuntimeData (the decoded model):
+    // WorkSatisfaction (Happiness/WageInfluence/SkillInfluence/Value), Wage, Speed,
+    // BaseWorkingHours vs WorkingHours (the shift-preference delta), Skills, and the
+    // wage band via CalculateWageRange. Every read individually try-wrapped: an
+    // IL2CPP edge case degrades to null rather than killing the pull.
+    static object StaffInfoCommand(CommandArgs args)
+    {
+        var result = new List<object>();
+        foreach (var area in Venues.PlayerOwned)
+        {
+            string key = Safe(() => Venues.NameOf(area)) ?? "?";
+            if (args.Has("venue") && !key.Contains(args.Get("venue", ""), StringComparison.OrdinalIgnoreCase))
+                continue;
+
+            var staff = new List<object>();
+            try
+            {
+                foreach (var s in Venues.StaffOf(area))
+                {
+                    object? satisfaction = null;
+                    float? speed = null;
+                    int? baseHours = null;
+                    object? workingHours = null;
+                    object? band = null;
+                    object? skills = null;
+                    int? wage = null;
+
+                    try
+                    {
+                        var rd = s.Person?.RuntimeData;
+                        if (rd != null)
+                        {
+                            try { wage = rd.Wage; } catch { }
+                            try
+                            {
+                                var ws = rd.WorkSatisfaction;
+                                satisfaction = new
+                                {
+                                    happiness = ws.Happiness.ToString(),
+                                    wageInfluence = ws.WageInfluence,
+                                    skillInfluence = ws.SkillInfluence,
+                                    value = ws.Value
+                                };
+                            }
+                            catch { }
+                            try { speed = rd.Speed; } catch { }
+                            try { baseHours = rd.BaseWorkingHours; } catch { }
+                            try { workingHours = new { start = rd.WorkingHours.x, end = rd.WorkingHours.y }; } catch { }
+                            try { band = rd.CalculateWageRange(0f); } catch { }
+                            try
+                            {
+                                var skillList = new List<object>();
+                                foreach (var kv in rd.Skills)
+                                {
+                                    try
+                                    {
+                                        skillList.Add(new
+                                        {
+                                            skill = kv.Key.ToString(),
+                                            level = kv.Value
+                                        });
+                                    }
+                                    catch { }
+                                }
+                                skills = skillList;
+                            }
+                            catch { }
+                        }
+                    }
+                    catch { }
+
+                    staff.Add(new
+                    {
+                        name = s.Name,
+                        roles = s.Roles,
+                        wage,
+                        band,
+                        satisfaction,
+                        speed,
+                        preferredShiftHours = baseHours,
+                        scheduledShift = workingHours,
+                        skills
+                    });
+                }
+            }
+            catch (Exception e) { L.LogDebug($"StaffOf failed for staffinfo: {e.Message}"); }
+
+            result.Add(new { venue = key, staff });
+        }
+        return result;
+    }
+
     static object SeedOrderCommand(CommandArgs args)
     {
         var picks = Current();
@@ -460,13 +554,6 @@ public class Plugin : BasePlugin
         {
             var yesterday = Data.Get<List<string>>($"menus.{key}", new List<string>());
 
-            // ---- 5g-2: THE REDESIGNED GATE — PhaseGate.IsEstablished ----
-            // The manager keystone (operator's reformulation): "can I leave it in a
-            // manager's hands?" - asked directly. A hired manager implies level 3+
-            // (the game's gate), and a manager-less venue isn't delegable regardless
-            // of level. StaffOf exposes roles; the check is the delegation test itself.
-            // The kit's venue-level query doesn't exist (verified against the full
-            // method dump) - this reformulation made it unnecessary.
             var streak = Data.Get<PhaseGate.Streak>($"profitStreak.{key}", PhaseGate.Streak.Start);
 
             // The veto stays: a day-over-day rating drop still suppresses raises
